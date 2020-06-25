@@ -154,16 +154,22 @@ class Recorder(Node):
     def write_data(self):
         self.get_logger().info('Writing data')
 
-        # optitrack data
-        opt_header = ["absolute_time", "relative_time"]
-        for f in self.recorded_frames:
-            opt_header = opt_header + [f + "_x", f + "_y", f + "_z", f + "_qw", f + "_qx", f + "_qy", f + "_qz"]
-        pd.DataFrame(self.opt_data).to_csv(self.exp_folder + "opt.csv", header=opt_header)
-
         # emg data
-        emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
-        emg_header = ["absolute_time", "relative_time"] + emg_header
-        pd.DataFrame(self.emg_data).to_csv(self.exp_folder + "emg.csv", header=emg_header)
+        if self.emg_data:
+            emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
+            emg_header = ["absolute_time", "relative_time"] + emg_header
+            pd.DataFrame(self.emg_data).to_csv(self.exp_folder + "emg.csv", header=emg_header)
+        else:
+            self.get_logger().info("No EMG data recorded")    
+
+        # optitrack data
+        if self.opt_data:
+            opt_header = ["absolute_time", "relative_time"]
+            for f in self.recorded_frames:
+                opt_header = opt_header + [f + "_x", f + "_y", f + "_z", f + "_qw", f + "_qx", f + "_qy", f + "_qz"]
+            pd.DataFrame(self.opt_data).to_csv(self.exp_folder + "opt.csv", header=opt_header)
+        else:
+            self.get_logger().info("No optitrack data recorded")
 
     def shutdown(self):
         self.emgClient.shutdown()
