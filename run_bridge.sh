@@ -1,6 +1,6 @@
 #!/bin/bash
 NAME=$(echo "${PWD##*/}" | tr _ -)
-ROS2_VERSION="eloquent"
+ROS2_VERSION="foxy"
 
 ROS_MASTER_URI="http://localhost:11311/"
 ROS_IP="127.0.0.1"
@@ -19,4 +19,4 @@ docker run \
 	--env="ROS_IP=$ROS_IP" \
 	--volume="${NAME}_config_vol:/config/:rw" \
 	osrf/ros:${ROS2_VERSION}-ros1-bridge \
-    "sh /config/start_bridge.sh"
+    sh /config/start_bridge.sh
