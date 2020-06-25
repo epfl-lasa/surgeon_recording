@@ -1,0 +1,3 @@
+[submodule "source/emgAcquire"]
+	path = source/emgAcquire
+	url = git@github.com:epfl-lasa/emgAcquire.git
