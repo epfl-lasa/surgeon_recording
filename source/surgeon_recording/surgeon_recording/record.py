@@ -42,7 +42,8 @@ class Recorder(Node):
         ###### Optitrack #######
         self._tf_buffer = Buffer()
         self._tf_listener = TransformListener(self._tf_buffer, self)
-        self.recorded_frames = ['blade', 'scissors', 'left_wrist', 'right_wrist', 'right_sup']
+        #self.recorded_frames = ['blade', 'scissors', 'left_wrist', 'right_wrist', 'right_sup']
+        self.recorded_frames = ['blade', 'wrist', 'elbow']
         self.opt_data = []
         self.create_timer(0.001, self.record_optitrack)
 
@@ -62,7 +63,7 @@ class Recorder(Node):
 
         ####### EMG ######
         # define number of channels to acquire
-        self.nb_ch = 14
+        self.nb_ch = 9
         emg_ip = "128.178.145.167"
         # create an emgClient object for acquiring the data
         self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=emg_ip, nb_channels=self.nb_ch)
