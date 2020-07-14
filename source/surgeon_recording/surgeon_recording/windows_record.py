@@ -2,7 +2,7 @@ import sys
 import pathlib
 import time
 import numpy as np
-import pandas as pd
+import csv
 import os
 import cv2
 import pyrealsense2 as rs
@@ -29,7 +29,7 @@ from NatNetClient import NatNetClient
 class Recorder(object):
     def __init__(self, data_folder):
         self.data_folder = data_folder
-        self.recording = False
+        self.recording = True
 
         ######## User input ######
         self.task_folder = input("Enter task name : ")
@@ -37,8 +37,14 @@ class Recorder(object):
         if not os.path.exists(self.exp_folder):
             os.makedirs(self.exp_folder)
 
+        # create csv writers
+        self.writers = {}
+        input("Press enter to start recording...")
+
         self.emg_data = []
         self.opt_data = []
+        self.camera_data = []
+        self.emg_init = False
         # init all sensors
         self.init_camera()
         self.init_emg()
@@ -58,12 +64,17 @@ class Recorder(object):
         # Handle any cleanup here
         print('recording stop')
         self.recording = False
-        self.write_data()
         self.stop_event.set()
 
     def init_optitrack(self):
         self.recorded_frames = ['blade', 'wrist', 'elbow']
-        self.opt_data = []
+
+        f = open(join(self.exp_folder, "opt.csv"), 'w', newline='')
+        self.writers["opt"] = {"file": f, "writer": csv.writer(f)}
+        opt_header = ["index", "absolute_time", "relative_time"]
+        for f in self.recorded_frames:
+            opt_header = opt_header + [f + "_x", f + "_y", f + "_z", f + "_qw", f + "_qx", f + "_qy", f + "_qz"]
+        self.writers["opt"]["writer"].writerow(opt_header)
     
     def init_camera(self):
         self.pipeline = rs.pipeline()
@@ -78,6 +89,10 @@ class Recorder(object):
 
         self.pipeline.start(self.config)
 
+        f = open(join(self.exp_folder, "camera.csv"), 'w', newline='')
+        self.writers["camera"] = {"file": f, "writer": csv.writer(f)}
+        self.writers["camera"]["writer"].writerow(["index", "absolute_time", "relative_time"])
+
     def init_emg(self):
         # define number of channels to acquire
         self.nb_ch = 9
@@ -85,12 +100,24 @@ class Recorder(object):
         # create an emgClient object for acquiring the data
         self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=emg_ip, nb_channels=self.nb_ch)
         # initialize the node
-        self.emgClient.initialize()
-        self.emg_data = []
+        self.emg_init = self.emgClient.initialize()
+        
+        f = open(join(self.exp_folder, "emg.csv"), 'w', newline='')
+        self.writers["emg"] = {"file": f, "writer": csv.writer(f)}
+        emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
+        emg_header = ["index", "absolute_time", "relative_time"] + emg_header
+        self.writers["emg"]["writer"].writerow(emg_header)
 
-    def record_camera(self):
-        while not self.stop_event.wait(0.001):
+    def record_camera(self, display=True):
+        print("Starting recording camera")
+        while not self.stop_event.wait(0.0001):
             if self.recording:
+                absolute_time = time.time()
+                index = 0 if not self.camera_data else self.camera_data[0] 
+                data = [index + 1, absolute_time, absolute_time - self.start_time]
+                self.writers["camera"]["writer"].writerow((data))
+                self.camera_data = data
+
                 # Wait for a coherent pair of frames: depth and color
                 frames = self.pipeline.wait_for_frames()
                 depth_frame = frames.get_depth_frame()
@@ -109,39 +136,46 @@ class Recorder(object):
                 self.colorwriter.write(color_image)
                 self.depthwriter.write(depth_colormap)
 
-                # Stack both images horizontally
-                #images = np.hstack((color_image, depth_colormap))
+                if display:
+                    # Stack both images horizontally
+                    images = np.hstack((color_image, depth_colormap))
 
-                # # Show images
-                #cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-                #cv2.imshow('RealSense', images)
-                #cv2.waitKey(1)
+                    # # Show images
+                    cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
+                    cv2.imshow('RealSense', images)
+                    cv2.waitKey(1)
 
     def record_emg(self):
         # start filling the buffer
+        print("Starting recording EMG")
         self.emgClient.start()
         while not self.stop_event.wait(0.001):
             # acquire the signals from the buffer
             emg_array = self.emgClient.getSignals()
             if self.recording:
                 # append the array with the new data
-                if len(self.emg_data) > 1:
-                    prev_time = self.emg_data[-1][0]
+                if self.emg_data:
+                    prev_time = self.emg_data[1]
+                    index = self.emg_data[0]
                 else:
                     prev_time = self.start_time
+                    index = 0
                 last_sample_time = time.time()
                 dt = (last_sample_time - prev_time)/len(emg_array[0])
                 for i in range(len(emg_array[0])):
-                    data = []
+                    data = [index + 1]
                     t = prev_time + (i+1) * dt
                     data.append(t)
                     # keep the updating period
                     data.append(t - self.start_time)
                     data = data + emg_array[:, i].tolist()
                     # append everything
-                    self.emg_data.append(data)
+                    self.writers["emg"]["writer"].writerow((data))
+                    self.emg_data = data
+                    index = data[0]
 
     def record_optitrack(self):
+        print("Starting recording Optitrack")
         while not self.stop_event.wait(0.001):
             if self.recording:
                 absolute_time = time.time()
@@ -151,38 +185,21 @@ class Recorder(object):
                 self.opt_data.append(data)
 
     def record(self):
-        input("Press enter to start recording...")
         print('Start recording')
         self.emg_data = []
         self.opt_data = []
+        self.camera_data = []
         self.start_time = time.time()
         self.recording = True
 
-    def write_data(self):
-        print('Writing data')
-
-        # emg data
-        if self.emg_data:
-            emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
-            emg_header = ["absolute_time", "relative_time"] + emg_header
-            pd.DataFrame(self.emg_data).to_csv(join(self.exp_folder, "emg.csv"), header=emg_header)
-        else:
-            print("No EMG data recorded")    
-
-        # optitrack data
-        if self.opt_data:
-            opt_header = ["absolute_time", "relative_time"]
-            for f in self.recorded_frames:
-                opt_header = opt_header + [f + "_x", f + "_y", f + "_z", f + "_qw", f + "_qx", f + "_qy", f + "_qz"]
-            pd.DataFrame(self.opt_data).to_csv(join(self.exp_folder, "opt.csv"), header=opt_header)
-        else:
-            print("No optitrack data recorded")
-
     def shutdown(self):
+        print("shutdown initiated")
         self.emgClient.shutdown()
         self.colorwriter.release()
         self.depthwriter.release()
         self.pipeline.stop()
+        for _, value in self.writers.items():
+            value["file"].close()
 
 
 def main(args=None):
