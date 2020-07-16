@@ -1,26 +1,20 @@
+import os
 from setuptools import setup
 
-package_name = 'surgeon_recording'
+# Utility function to read the README file.
+# Used for the long_description.  It's nice, because now 1) we have a top level
+# README file and 2) it's easier to type in the README file than to put a raw
+# string in below ...
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name=package_name,
-    version='0.0.0',
-    packages=[package_name],
-    data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-    ],
-    install_requires=['setuptools'],
-    zip_safe=True,
-    maintainer='ros2',
-    maintainer_email='ros2@todo.todo',
-    description='TODO: Package description',
-    license='TODO: License declaration',
-    tests_require=['pytest'],
-    entry_points={
-        'console_scripts': [
-            'recorder = surgeon_recording.record:main',
-        ],
-    },
+    name = "surgeon_recording",
+    version = "0.0.1",
+    author = "Baptiste Busch",
+    author_email = "baptiste.busch@epfl.ch",
+    description = ("Set of recorders for the surgeon recording project"),
+    license = "BSD",
+    packages=['surgeon_recording'],
+    long_description=read('README.md'),
 )
