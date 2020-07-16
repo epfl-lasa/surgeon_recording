@@ -1,3 +1,0 @@
-topics:
-    - {topic: "/tf", type: "tf2_msgs/msg/TFMessage"}
-    - {topic: "/tf_static", type: "tf2_msgs/msg/TFMessage"}
