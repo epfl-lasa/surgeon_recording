@@ -30,7 +30,7 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=1000, # 25 fps in milliseconds
+                                                    interval=40, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.RangeSlider(
@@ -71,13 +71,17 @@ app.layout = html.Div(
 
 )
 
-@app.callback([Output('start_index', 'data'), Output('stop_index', 'data')],
+@app.callback([Output('start_index', 'data'),
+               Output('stop_index', 'data'),
+               Output('auto-stepper', 'n_intervals')],
               [Input('slider_frame', 'value')])
 def select_frame(selected_percentage):
   start_index = int(selected_percentage[0] * (reader.get_nb_frames() - 1))
   stop_index = int(selected_percentage[1] * (reader.get_nb_frames() - 1))
-  reader.set_current_frame(start_index)
-  return start_index, stop_index
+  
+  # reader.set_starting_frame(start_index)
+  # reader.set_stopping_frame(stop_index)
+  return start_index, stop_index, start_index
 
 # @app.callback(Output('animate', 'data'),
 #               [Input('btn-play', 'n_clicks_timestamp')])
@@ -105,7 +109,7 @@ def select_frame(selected_percentage):
                Input('stop_index', 'data')])
 def on_click(n_intervals, start_index, stop_index):
   selected_frame = (n_intervals + 1) % stop_index
-  reader.get_next_frame()
+  reader.get_next_images()
   return selected_frame
 
 # @app.callback(Output('3d-scatter', 'children'),
@@ -133,24 +137,22 @@ def on_click(n_intervals, start_index, stop_index):
 @app.callback(Output('rgb_image', 'src'),
               [Input('selected_frame', 'data')])
 def update_rgb_image_src(selected_frame):
-    image = reader.get_image("rgb", selected_frame)
+    image = reader.get_image("rgb")
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 @app.callback(Output('depth_image', 'src'),
               [Input('selected_frame', 'data')])
 def update_depth_image_src(selected_frame):
-    image = reader.get_image("depth", selected_frame)
+    image = reader.get_image("depth")
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
-              [Input('selected_frame', 'data'),
-               Input('start_index', 'data'),
-               Input('stop_index', 'data')])
-def emg_graph(selected_frame, start_frame, stop_frame):
-    _, emg_data = reader.get_data(start_frame, stop_frame)
+              [Input('selected_frame', 'data')])
+def emg_graph(selected_frame):
+    _, emg_data = reader.get_emg(selected_frame)
     trace1 = []
     emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
     for i, emg in enumerate(emg_labels):
