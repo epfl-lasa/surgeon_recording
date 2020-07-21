@@ -15,6 +15,7 @@ app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
 
 reader = Reader()
+data_folder = 'data'
 
 app.layout = html.Div(
     children=[
@@ -28,7 +29,7 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Dropdown(id='exp_folder',
-                                                     options=[{'label': key, 'value': path} for key, path in reader.get_experiment_list().items()]),
+                                                     options=[{'label': key, 'value': path} for key, path in reader.get_experiment_list(data_folder).items()]),
                                         dcc.Interval(id='auto-stepper',
                                                     interval=200, # 25 fps in milliseconds
                                                     n_intervals=0

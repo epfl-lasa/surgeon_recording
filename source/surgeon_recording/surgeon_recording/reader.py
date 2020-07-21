@@ -24,11 +24,13 @@ class Reader(object):
         self.emg_rate = 40
         self.mutex = Lock()
 
-    def get_experiment_list(self):
+    def get_experiment_list(self, data_folder):
         res = {}
-        exp_list = ['data15', 'data30']
+        needed_files = ['emg.csv', 'opt.csv', 'rgb.avi', 'depth.avi', 'camera.csv']
+        exp_list = []
+        exp_list = [x[0] for x in os.walk(data_folder) if all(item in x[2] for item in needed_files)]
         for exp in exp_list:
-            res[exp] = join('data', exp)
+            res[exp] = exp
         return res
 
     def get_indexes(self, camera_index):
