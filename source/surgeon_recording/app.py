@@ -2,7 +2,7 @@ import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.graph_objects as go
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from surgeon_recording.reader import Reader
 from os.path import join
 import cv2
@@ -30,29 +30,33 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=40, # 25 fps in milliseconds
+                                                    interval=500, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.RangeSlider(
                                           id="slider_frame",
                                           min=0,
-                                          max=1,
-                                          step=0.01,
-                                          value=[0.,1.]
+                                          max=100,
+                                          step=1,
+                                          value=[0.,100.]
                                         ),
                                         dcc.Store(id='start_index'),
                                         dcc.Store(id='stop_index'),
-                                        dcc.Store(id='selected_frame')
+                                        dcc.Store(id='selected_frame'),
+                                        dcc.Store(id='selected_emg_frame'),
+                                        dcc.Store(id='emg_start_index'),
+                                        dcc.Store(id='emg_stop_index'),
+                                        dcc.Store(id='current_emg_start'),
+                                        dcc.Store(id='current_emg_stop'),
+                                        dcc.Store(id='window_size', data=2000)
                                      ],
                                      style={'color': '#1E1E1E'}),
                                  html.Div(
                                      className="buttons-bar",
                                      children=[
-                                      html.Button('Play', id='btn-play', n_clicks=0, n_clicks_timestamp=0),
-                                      html.Button('Pause', id='btn-pause', n_clicks=0, n_clicks_timestamp=0),
-                                      html.Button('Stop', id='btn-stop', n_clicks=0, n_clicks_timestamp=0),
+                                      dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
-                                      dcc.Store(id='animate', data=True)],
+                                      html.Div(id='output_text')]
                                   )
                                 ]
                              ),
@@ -63,54 +67,60 @@ app.layout = html.Div(
                                                    html.Img(id='depth_image', height="480", width="640")]
                                 ),
                                 html.Div(className='graphs',
-                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True),
-                                                   html.Div(id='3d-scatter')])
+                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)])
                                ])
                  ])
         ]
 
 )
 
+@app.callback(Output('output_text', 'children'),
+              [Input('btn-export', 'n_clicks')],
+              [State('export_folder', 'value'),
+               State('start_index', 'data'),
+               State('stop_index', 'data')])
+def export(n_clicks, value, start_index, stop_index):
+    if value is None:
+        return 'Empty folder specified, please enter a valid name'
+    reader.export(value, start_index, stop_index)
+    return 'Sequence exported to {} folder'.format(value)
+
+
 @app.callback([Output('start_index', 'data'),
                Output('stop_index', 'data'),
+               Output('emg_start_index', 'data'),
+               Output('emg_stop_index', 'data'),
                Output('auto-stepper', 'n_intervals')],
               [Input('slider_frame', 'value')])
 def select_frame(selected_percentage):
-  start_index = int(selected_percentage[0] * (reader.get_nb_frames() - 1))
-  stop_index = int(selected_percentage[1] * (reader.get_nb_frames() - 1))
-  
-  # reader.set_starting_frame(start_index)
-  # reader.set_stopping_frame(stop_index)
-  return start_index, stop_index, start_index
+  start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
+  stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
+  emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_emg_frames() - 1))
+  emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_emg_frames() - 1))
+  return start_index, stop_index, emg_start_index, emg_stop_index, start_index
 
-# @app.callback(Output('animate', 'data'),
-#               [Input('btn-play', 'n_clicks_timestamp')])
-# def play(timestamp):
-#   print(timestamp)
-#   if time.time() - timestamp < 1e-2:
-#     return True
+@app.callback([Output('current_emg_start', 'data'),
+               Output('current_emg_stop', 'data')],
+              [Input('selected_emg_frame', 'data'),
+               Input('emg_start_index', 'data'),
+               Input('emg_stop_index', 'data'),
+               Input('window_size', 'data')])
+def select_emg_frame(selected_frame, start_index, stop_index, window_size):
+  step = int(selected_frame / window_size)
+  start = step * window_size
+  stop = min((step + 1) * window_size, stop_index)
+  return start, stop
 
-# @app.callback(Output('animate', 'data'),
-#               [Input('btn-pause', 'n_clicks')])
-# def pause(btn):
-#   return False
-
-# @app.callback(Output('animate', 'data'),
-#               [Input('btn-stop', 'n_clicks'),
-#                Input('slider_frame', 'value')])
-# def stop(btn, selected_percentage):
-#   selected_frame = int(selected_percentage * reader.get_nb_frames())
-#   reader.set_current_frame(selected_frame)
-#   return False
-
-@app.callback(Output('selected_frame', 'data'),
+@app.callback([Output('selected_frame', 'data'),
+               Output('selected_emg_frame', 'data')],
               [Input('auto-stepper', 'n_intervals'),
-               Input('start_index', 'data'),
-               Input('stop_index', 'data')])
-def on_click(n_intervals, start_index, stop_index):
-  selected_frame = (n_intervals + 1) % stop_index
-  reader.get_next_images()
-  return selected_frame
+               Input('slider_frame', 'value')])
+def on_click(n_intervals, limits):
+  d = limits[1] - limits[0]
+  selected_percentage = ((n_intervals + 1 - limits[0]) % d + d) % d + limits[0]
+  selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
+  selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_emg_frames() - 1))
+  return selected_frame, selected_emg_frame
 
 # @app.callback(Output('3d-scatter', 'children'),
 #               [Input('frame_selector', 'value')])
@@ -137,22 +147,24 @@ def on_click(n_intervals, start_index, stop_index):
 @app.callback(Output('rgb_image', 'src'),
               [Input('selected_frame', 'data')])
 def update_rgb_image_src(selected_frame):
-    image = reader.get_image("rgb")
+    image = reader.get_image("rgb", selected_frame)
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 @app.callback(Output('depth_image', 'src'),
               [Input('selected_frame', 'data')])
 def update_depth_image_src(selected_frame):
-    image = reader.get_image("depth")
+    image = reader.get_image("depth", selected_frame)
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
-              [Input('selected_frame', 'data')])
-def emg_graph(selected_frame):
-    _, emg_data = reader.get_emg(selected_frame)
+              [Input('selected_emg_frame', 'data'),
+               Input('current_emg_start', 'data'),
+               Input('current_emg_stop', 'data'),])
+def emg_graph(selected_frame, current_emg_start, current_emg_stop):
+    emg_data = reader.emg_data.iloc[current_emg_start:current_emg_stop]
     trace1 = []
     emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
     for i, emg in enumerate(emg_labels):
@@ -162,6 +174,13 @@ def emg_graph(selected_frame):
                                  opacity=0.7,
                                  name=emg,
                                  textposition='bottom center'))
+    time = reader.emg_data.iloc[selected_frame]["relative_time"]
+    trace1.append(go.Scatter(x=[time, time],
+                             y=[-800, 800],
+                             mode='lines',
+                             opacity=0.7,
+                             name="current frame",
+                             textposition='bottom center'))
     traces = [trace1]
     data = [val for sublist in traces for val in sublist]
     figure = {'data': data,
