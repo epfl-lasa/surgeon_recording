@@ -15,7 +15,7 @@ app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
 
 reader = Reader()
-exp_folder = join('data', 'data15')
+exp_folder = join('data', 'data30')
 reader.play(exp_folder)
 
 app.layout = html.Div(
@@ -30,14 +30,14 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=500, # 25 fps in milliseconds
+                                                    interval=200, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.RangeSlider(
                                           id="slider_frame",
                                           min=0,
                                           max=100,
-                                          step=1,
+                                          step=0.1,
                                           value=[0.,100.]
                                         ),
                                         dcc.Store(id='start_index'),
@@ -114,10 +114,11 @@ def select_emg_frame(selected_frame, start_index, stop_index, window_size):
 @app.callback([Output('selected_frame', 'data'),
                Output('selected_emg_frame', 'data')],
               [Input('auto-stepper', 'n_intervals'),
-               Input('slider_frame', 'value')])
-def on_click(n_intervals, limits):
+               Input('slider_frame', 'value'),
+               Input('slider_frame', 'step')])
+def on_click(n_intervals, limits, step):
   d = limits[1] - limits[0]
-  selected_percentage = ((n_intervals + 1 - limits[0]) % d + d) % d + limits[0]
+  selected_percentage = ((n_intervals * step - limits[0]) % d + d) % d + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_emg_frames() - 1))
   return selected_frame, selected_emg_frame
