@@ -24,6 +24,13 @@ class Reader(object):
         self.emg_rate = 40
         self.mutex = Lock()
 
+    def get_experiment_list(self):
+        res = {}
+        exp_list = ['data15', 'data30']
+        for exp in exp_list:
+            res[exp] = join('data', exp)
+        return res
+
     def get_indexes(self, camera_index):
         max_index = self.camera_data.count()[0]
         if camera_index < 0 or camera_index > max_index:
