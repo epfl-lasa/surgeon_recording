@@ -11,9 +11,13 @@ from threading import Thread
 from threading import Event
 import signal
 from surgeon_recording.NatNetClient import NatNetClient
+import pandas as pd
+from multiprocessing import Lock
 
 # deifne the directory of the emgAcquireClient python_module 
-emgAcquire_dir = r"C:\Users\Baptiste Busch\Documents\GitHub\surgeon_recording\source\emgAcquire\python_module"
+# emgAcquire_dir = r"C:\Users\buschbapti\Documents\GitHub\surgeon_recording\source\emgAcquire\python_module"
+emgAcquire_dir = "/home/buschbapti/Documents/Zeiss/surgeon_recording/source/emgAcquire/python_module"
+
 # append the path including the directory of the python_module
 sys.path.append(emgAcquire_dir)
 # import the module
@@ -22,24 +26,23 @@ import emgAcquireClient
 class Recorder(object):
     def __init__(self, data_folder):
         self.data_folder = data_folder
-        self.recording = True
-
-        ######## User input ######
-        self.task_folder = input("Enter task name : ")
-        self.exp_folder = join(self.data_folder, self.task_folder)
-        if not os.path.exists(self.exp_folder):
-            os.makedirs(self.exp_folder)
+        self.recording = False
+        self.lock = Lock()
 
         # create csv writers
         self.writers = {}
-        input("Press enter to start recording...")
-
+        self.received_frames = {}
+        self.emg_header = []
+        self.opt_header = []
         self.emg_data = []
-        self.opt_data = {}
+        self.opt_data = []
+        self.buffered_depth = []
+        self.buffered_rgb = []
         self.camera_index = 0
         self.opt_index = 0
         self.emg_init = False
         self.timeout = 0.1
+        self.start_time = time.time()
         # init all sensors
         self.init_camera()
         self.init_emg()
@@ -55,6 +58,11 @@ class Recorder(object):
         for t in self.recording_threads:
             t.start()
 
+    def init_recording_folder(self, folder):
+        self.exp_folder = join(self.data_folder, folder)
+        if not os.path.exists(self.exp_folder):
+            os.makedirs(self.exp_folder)
+
     def stop_recording_handler(self):
         # Handle any cleanup here
         print('recording stop')
@@ -66,11 +74,11 @@ class Recorder(object):
 
         f = open(join(self.exp_folder, "opt.csv"), 'w', newline='')
         self.writers["opt"] = {"file": f, "writer": csv.writer(f)}
-        opt_header = ["index", "absolute_time", "relative_time"]
+        self.opt_header = ["index", "absolute_time", "relative_time"]
         for key, label in ids.items():
-            self.opt_data[key] = {"label": label, "position": [], "orientation": [], "timestamp": 0}
-            opt_header = opt_header + [label + "_x", label + "_y", label + "_z", label + "_qw", label + "_qx", label + "_qy", label + "_qz"]
-        self.writers["opt"]["writer"].writerow(opt_header)
+            self.received_frames[key] = {"label": label, "position": [], "orientation": [], "timestamp": 0}
+            self.opt_header = self.opt_header + [label + "_x", label + "_y", label + "_z", label + "_qw", label + "_qx", label + "_qy", label + "_qz"]
+        self.writers["opt"]["writer"].writerow(self.opt_header)
 
         self.opt_client = NatNetClient()
         # Configure the streaming client to call our rigid body handler on the emulator to send data out.
@@ -109,45 +117,41 @@ class Recorder(object):
         
         f = open(join(self.exp_folder, "emg.csv"), 'w', newline='')
         self.writers["emg"] = {"file": f, "writer": csv.writer(f)}
-        emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
-        emg_header = ["index", "absolute_time", "relative_time"] + emg_header
-        self.writers["emg"]["writer"].writerow(emg_header)
+        self.emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
+        self.emg_header = ["index", "absolute_time", "relative_time"] + self.emg_header
+        self.writers["emg"]["writer"].writerow(self.emg_header)
 
     def record_camera(self, display=True):
         print("Starting recording camera")
         while not self.stop_event.wait(0.001):
-            if self.recording:
+
+            # Wait for a coherent pair of frames: depth and color
+            frames = self.pipeline.wait_for_frames()
+            depth_frame = frames.get_depth_frame()
+            color_frame = frames.get_color_frame()
+            if not depth_frame or not color_frame:
+                return
+
+            # Convert images to numpy arrays
+            depth_image = np.asanyarray(depth_frame.get_data())
+            color_image = np.asanyarray(color_frame.get_data())
+
+            # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
+            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+
+            self.buffered_depth = cv2.imencode('.jpg', depth_colormap)
+            self.buffered_rgb = cv2.imencode('.jpg', color_image)
+
+            with self.lock:
                 absolute_time = time.time()
                 data = [self.camera_index + 1, absolute_time, absolute_time - self.start_time]
-                self.writers["camera"]["writer"].writerow((data))
                 self.camera_index = data[0]
-
-                # Wait for a coherent pair of frames: depth and color
-                frames = self.pipeline.wait_for_frames()
-                depth_frame = frames.get_depth_frame()
-                color_frame = frames.get_color_frame()
-                if not depth_frame or not color_frame:
-                    return
-
-                # Convert images to numpy arrays
-                depth_image = np.asanyarray(depth_frame.get_data())
-                color_image = np.asanyarray(color_frame.get_data())
-
-                # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-                depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-
-                # write the image
-                self.colorwriter.write(color_image)
-                self.depthwriter.write(depth_colormap)
-
-                if display:
-                    # Stack both images horizontally
-                    images = np.hstack((color_image, depth_colormap))
-
-                    # # Show images
-                    cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-                    cv2.imshow('RealSense', images)
-                    cv2.waitKey(1)
+                    
+                if self.recording:
+                    self.writers["camera"]["writer"].writerow((data))
+                    # write the images
+                    self.colorwriter.write(color_image)
+                    self.depthwriter.write(depth_colormap)
 
     def record_emg(self):
         # start filling the buffer
@@ -157,7 +161,8 @@ class Recorder(object):
             while not self.stop_event.wait(0.001):
                 # acquire the signals from the buffer
                 emg_array = self.emgClient.getSignals()
-                if self.recording:
+                
+                with self.lock:
                     # append the array with the new data
                     if self.emg_data:
                         prev_time = self.emg_data[1]
@@ -174,18 +179,20 @@ class Recorder(object):
                         # keep the updating period
                         data.append(t - self.start_time)
                         data = data + emg_array[:, i].tolist()
+                        index = data[0]
+                    self.emg_data = data
+
+                    if self.recording:
                         # append everything
                         self.writers["emg"]["writer"].writerow((data))
-                        self.emg_data = data
-                        index = data[0]
 
     def record_optitrack(self):
         print("Starting recording Optitrack")
         while not self.stop_event.wait(0.001):
-            if self.recording:
+            with self.lock:
                 absolute_time = time.time()
                 data = [self.opt_index + 1, absolute_time, absolute_time - self.start_time]
-                for key, f in self.opt_data.items():
+                for key, f in self.received_frames.items():
                     if absolute_time - f["timestamp"] < self.timeout:
                         for pos in f["position"]:
                             data.append(pos)
@@ -194,16 +201,36 @@ class Recorder(object):
                     else:
                         print("Frame " + f["label"] + " not visible")
                         return
-                self.writers["opt"]["writer"].writerow((data))
                 self.opt_index = data[0]
+                self.opt_data = [data]
+
+                if self.recording:
+                    self.writers["opt"]["writer"].writerow((data))
+
+    def get_buffered(self, data, header):
+        return pd.DataFrame(data=data[:,1:], index=data[:,0], columns=header[1:])
+
+    def get_buffered_emg(self):
+        return self.get_buffered(self.emg_data, self.emg_header)
+
+    def get_buffered_opt(self):
+        return self.get_buffered(self.opt_data, self.opt_header)
+
+    def get_buffered_rgb(self):
+        return self.buffered_rgb
+
+    def get_buffered_depth(self):
+        return self.buffered_depth
 
     def record(self):
         print('Start recording')
-        self.emg_data = []
-        self.camera_index = 0
-        self.opt_index = 0
-        self.start_time = time.time()
-        self.recording = True
+        with self.lock:
+            self.emg_data = []
+            self.opt_data = []
+            self.camera_index = 0
+            self.opt_index = 0
+            self.start_time = time.time()
+            self.recording = True
 
     def shutdown(self):
         print("Shutdown initiated")
@@ -221,9 +248,9 @@ class Recorder(object):
 
     # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
     def receive_rigid_body(self, id, position, rotation):
-        self.opt_data[id]["timestamp"] = time.time()
-        self.opt_data[id]["position"] = position
-        self.opt_data[id]["orientation"] = rotation
+        self.received_frames[id]["timestamp"] = time.time()
+        self.received_frames[id]["position"] = position
+        self.received_frames[id]["orientation"] = rotation
 
     # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
     def receive_frame(self, frameNumber, markerSetCount, unlabeledMarkersCount, rigidBodyCount, skeletonCount,
