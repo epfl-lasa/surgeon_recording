@@ -8,13 +8,16 @@ from os.path import join
 import cv2
 import base64
 import time
+import pyrealsense2 as rs
 
+recorder = None
+
+def intialize_recorder():
+    return Recorder('data')
 
 # Initialize the app
 app = dash.Dash(__name__)
 app.config.suppress_callback_exceptions = True
-
-recorder = Recorder('data')
 
 app.layout = html.Div(
     children=[
@@ -28,7 +31,7 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=200, # 25 fps in milliseconds
+                                                    interval=500, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                      ],
@@ -37,8 +40,9 @@ app.layout = html.Div(
                                      className="buttons-bar",
                                      children=[
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
-                                      html.Button('Export', id='btn-export', n_clicks=0),
-                                      html.Div(id='output_text')]
+                                      html.Button('Record', id='btn-record', n_clicks=0),
+                                      html.Button('Stop', id='btn-stop', n_clicks=0),
+                                      html.Div(id='output_text', children='Not recording')]
                                   )
                                 ]
                              ),
@@ -53,17 +57,24 @@ app.layout = html.Div(
                                ])
                  ])
         ]
-
 )
 
 @app.callback(Output('output_text', 'children'),
-              [Input('btn-export', 'n_clicks')],
+              [Input('btn-record', 'n_clicks'),
+               Input('btn-stop', 'n_clicks')],
               [State('export_folder', 'value')])
-def export(n_clicks, value, start_index, stop_index):
+def export(record_click, stop_click, value):
     if value is None:
         return 'Empty folder specified, please enter a valid name'
-    reader.export(value, start_index, stop_index)
-    return 'Sequence exported to {} folder'.format(value)
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    if 'btn-record' in changed_id:
+        if not recorder.recording:
+            recorder.record(value)
+        return 'Recording in {} folder, press stop to stop recording'.format(value)
+    elif 'btn-stop' in changed_id:
+        recorder.stop_recording()
+        return 'Recording finished, check {} folder'.format(value)
+    return 'Not recording'
 
 # @app.callback(Output('3d-scatter', 'children'),
 #               [Input('frame_selector', 'value')])
@@ -92,14 +103,14 @@ def export(n_clicks, value, start_index, stop_index):
 def update_rgb_image_src(step):
     image = recorder.get_buffered_rgb()
     encoded_image = base64.b64encode(image)
-    return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
+    return 'data:image/png;base64,{}'.format(encoded_image.decode())
 
 @app.callback(Output('depth_image', 'src'),
               [Input('auto-stepper', 'n_intervals')])
 def update_depth_image_src(step):
     image = recorder.get_buffered_depth()
     encoded_image = base64.b64encode(image)
-    return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
+    return 'data:image/png;base64,{}'.format(encoded_image.decode())
 
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
@@ -115,13 +126,6 @@ def emg_graph(step):
                                  opacity=0.7,
                                  name=emg,
                                  textposition='bottom center'))
-    time = reader.emg_data.iloc[selected_frame]["relative_time"]
-    trace1.append(go.Scatter(x=[time, time],
-                             y=[-800, 800],
-                             mode='lines',
-                             opacity=0.7,
-                             name="current frame",
-                             textposition='bottom center'))
     traces = [trace1]
     data = [val for sublist in traces for val in sublist]
     figure = {'data': data,
@@ -143,4 +147,7 @@ def emg_graph(step):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    if recorder is None:
+        recorder = intialize_recorder()
+
+    app.run_server(debug=False, use_reloader=False)
