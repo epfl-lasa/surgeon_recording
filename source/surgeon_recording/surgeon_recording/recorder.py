@@ -85,17 +85,6 @@ class Recorder(object):
         self.writers["opt"] = {"file": f, "writer": csv.writer(f)}
         self.writers["opt"]["writer"].writerow(self.opt_header)
 
-    def init_camera(self):
-        self.pipeline = rs.pipeline()
-        self.config = rs.config()
-        self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-        self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-
-        try:
-            self.pipeline.start(self.config)
-        except:
-            print("Error initializing the camera")
-
     def init_camera_writer(self):
         color_path = join(self.exp_folder, 'rgb.avi')
         depth_path = join(self.exp_folder, 'depth.avi')
@@ -107,14 +96,7 @@ class Recorder(object):
         self.writers["camera"]["writer"].writerow(["index", "absolute_time", "relative_time"])
 
     def init_emg(self):
-        # define number of channels to acquire
-        self.nb_ch = 9
-        emg_ip = "localhost"
-        # create an emgClient object for acquiring the data
-        self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=emg_ip, nb_channels=self.nb_ch)
-        # initialize the node
-        init_value = self.emgClient.initialize()
-        self.emg_init = init_value == 0
+        
 
         self.emg_header = ["emg" + str(i) for i in range(self.nb_ch)]
         self.emg_header = ["index", "absolute_time", "relative_time"] + self.emg_header
@@ -128,19 +110,7 @@ class Recorder(object):
         print("Starting recording camera")
         while not self.stop_event.wait(0.001):
 
-            # Wait for a coherent pair of frames: depth and color
-            frames = self.pipeline.wait_for_frames()
-            depth_frame = frames.get_depth_frame()
-            color_frame = frames.get_color_frame()
-            if not depth_frame or not color_frame:
-                return
-
-            # Convert images to numpy arrays
-            depth_image = np.asanyarray(depth_frame.get_data())
-            color_image = np.asanyarray(color_frame.get_data())
-
-            # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+            
 
             self.buffered_rgb = color_image
             self.buffered_depth = depth_colormap
@@ -158,33 +128,31 @@ class Recorder(object):
     def record_emg(self):
         # start filling the buffer
         print("Starting recording EMG")
-        if self.emg_init:
-            self.emgClient.start()
-            while not self.stop_event.wait(0.001):
-                # acquire the signals from the buffer
-                emg_array = self.emgClient.getSignals()
-                # append the array with the new data
-                if self.emg_data:
-                    prev_time = self.emg_data[-1][1]
-                    index = self.emg_data[-1][0]
-                else:
-                    prev_time = self.start_time
-                    index = 0
-                last_sample_time = time.time()
-                dt = (last_sample_time - prev_time)/len(emg_array[0])
-                for i in range(len(emg_array[0])):
-                    data = [index + 1]
-                    t = prev_time + (i+1) * dt
-                    data.append(t)
-                    # keep the updating period
-                    data.append(t - self.start_time)
-                    data = data + emg_array[:, i].tolist()
-                    index = data[0]
-                    self.emg_data.append(data)
+        while not self.stop_event.wait(0.001):
+            # acquire the signals from the buffer
+            emg_array = self.emgClient.getSignals()
+            # append the array with the new data
+            if self.emg_data:
+                prev_time = self.emg_data[-1][1]
+                index = self.emg_data[-1][0]
+            else:
+                prev_time = self.start_time
+                index = 0
+            last_sample_time = time.time()
+            dt = (last_sample_time - prev_time)/len(emg_array[0])
+            for i in range(len(emg_array[0])):
+                data = [index + 1]
+                t = prev_time + (i+1) * dt
+                data.append(t)
+                # keep the updating period
+                data.append(t - self.start_time)
+                data = data + emg_array[:, i].tolist()
+                index = data[0]
+                self.emg_data.append(data)
 
-                    if self.recording:
-                        # append everything
-                        self.writers["emg"]["writer"].writerow(data)
+                if self.recording:
+                    # append everything
+                    self.writers["emg"]["writer"].writerow(data)
 
     def record_optitrack(self):
         print("Starting recording Optitrack")
@@ -202,10 +170,7 @@ class Recorder(object):
                     return
             self.opt_index = data[0]
             self.opt_data = [data]
-
-            print("Here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             if self.recording:
-                print("good!!!!!!!!!!!!!!")
                 self.writers["opt"]["writer"].writerow(data)
 
     def get_buffered(self, data, header):
@@ -249,12 +214,8 @@ class Recorder(object):
 
     def shutdown(self):
         print("Shutdown initiated")
-        if self.emg_init:
-            self.emgClient.shutdown()
-        print("EMG shutdown")
         self.colorwriter.release()
         self.depthwriter.release()
-        self.pipeline.stop()
         print("Camera shutdown")
         self.opt_client.shutdown()
         print("Optitrack shutdown")
