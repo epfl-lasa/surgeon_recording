@@ -3,7 +3,6 @@ import numpy as np
 import zmq
 import cv2
 import csv
-from threading import Thread, Event
 import os
 from os.path import join
 import time
@@ -11,7 +10,7 @@ from surgeon_recording.sensor_handler import SensorHandler
 
 class CameraHandler(SensorHandler):
     def __init__(self, ip="127.0.0.1", port=5556):
-        SensorHandler.__init__(self, camera, 1./30., ip, port)
+        SensorHandler.__init__(self, 'camera', ip=ip, port=port)
         self.pipeline = rs.pipeline()
         self.config = rs.config()
         self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -40,8 +39,13 @@ class CameraHandler(SensorHandler):
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
         self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
+        absolute_time = time.time()
+        data = [self.index + 1, absolute_time, absolute_time - self.start_time]
+        self.index = data[0]
+        return data
+
     def send_data(self, topic, data):
-        super().send_data(topic, data):
+        super().send_data(topic, data)
         super().send_data('rgb', self.color_image)
         super().send_data('depth', self.depth_colormap)
 
@@ -56,22 +60,25 @@ class CameraHandler(SensorHandler):
 
     def setup_recording(self, recording_folder, start_time):
         super().setup_recording(recording_folder, start_time)
-        color_path = join(recording_folder, 'rgb.avi')
-        depth_path = join(recording_folder, 'depth.avi')
-        self.colorwriter = cv2.VideoWriter(color_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
-        self.depthwriter = cv2.VideoWriter(depth_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
+        with self.lock:
+            color_path = join(recording_folder, 'rgb.avi')
+            depth_path = join(recording_folder, 'depth.avi')
+            self.colorwriter = cv2.VideoWriter(color_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
+            self.depthwriter = cv2.VideoWriter(depth_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
 
     def stop_recording(self):
         super().stop_recording()
-        self.colorwriter.release()
-        self.depthwriter.release()
+        with self.lock:
+            self.colorwriter.release()
+            self.depthwriter.release()
 
-    def record(self):
-        super().record()
+    def record(self, data):
+        super().record(data)
         if self.recording:
-            # write the images
-            self.colorwriter.write(self.color_image)
-            self.depthwriter.write(self.depth_colormap)
+            with self.lock:
+                # write the images
+                self.colorwriter.write(self.color_image)
+                self.depthwriter.write(self.depth_colormap)
 
     def shutdown(self):
         super().shutdown()

@@ -1,7 +1,7 @@
 import numpy as np
 import zmq
 import csv
-from threading import Thread, Event
+from threading import Thread, Event, Lock
 import os
 from os.path import join
 import time
@@ -12,9 +12,8 @@ class SensorHandler(object):
         self.sensor_name = sensor_name
         self.recording = False
         self.header = header
-        self.data = []
         self.index = 0
-        self.start_time = 0
+        self.start_time = time.time()
         
         # socket for publisher
         context = zmq.Context()
@@ -29,6 +28,10 @@ class SensorHandler(object):
         self.stop_event = Event()
         self.recording_thread = Thread(target=self.recording_request_handler)
         self.recording_thread.start()
+        self.lock = Lock()
+
+    def generate_fake_data(self, dim, mean=0., var=1.):
+        return np.random.normal(size=dim, loc=mean, scale=var)
 
     def acquire_data(self):
         return []
@@ -41,7 +44,7 @@ class SensorHandler(object):
     def receive_data(socket):
         topic = socket.recv_string()
         data = socket.recv_pyobj()
-        return {'topic': data}
+        return {topic: data}
 
     def recording_request_handler(self):
         while not self.stop_event.wait(0.01):
@@ -59,26 +62,31 @@ class SensorHandler(object):
                 self.recorder_socket.send_string("recording" if self.recording else "not recording")
 
     def setup_recording(self, recording_folder, start_time):
-        if not os.path.exists(recording_folder):
-            os.makedirs(recording_folder)
+        with self.lock:
+            if not os.path.exists(recording_folder):
+                os.makedirs(recording_folder)
 
-        f = open(join(recording_folder, self.sensor_name + '.csv'), 'w', newline='')
-        self.writer = {"file": f, "writer": csv.writer(f)}
-        self.writer["writer"].writerow(["index", "absolute_time", "relative_time"] + self.header)
+            f = open(join(recording_folder, self.sensor_name + '.csv'), 'w', newline='')
+            self.writer = {"file": f, "writer": csv.writer(f)}
+            self.writer["writer"].writerow(["index", "absolute_time", "relative_time"] + self.header)
 
-        self.index = 0
-        self.start_time = start_time
-        self.recording = True
+            self.index = 0
+            self.start_time = start_time
+            self.recording = True
 
     def stop_recording(self):
-        self.recording = False
+        with self.lock:
+            self.recording = False
+            self.writer['file'].close()
 
     def record(self, data):
         if self.recording:
-            absolute_time = time.time()
-            metadata = [self.index + 1, absolute_time, absolute_time - self.start_time]
-            self.index = metadata[0]   
-            self.writer["writer"].writerow(metadata + data)
+            with self.lock:
+                if isinstance(data[0], list):
+                    for d in data:
+                        self.writer["writer"].writerow(d)
+                else:
+                    self.writer["writer"].writerow(data)
 
     def shutdown(self):
         self.stop_event.set()

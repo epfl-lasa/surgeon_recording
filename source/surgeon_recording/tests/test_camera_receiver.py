@@ -20,8 +20,9 @@ def main(args=None):
     images = {}
     while True:
         try:
-            type_image, image = CameraHandler.receive_image(socket)
-            images[type_image] = image
+            data = CameraHandler.receive_data(socket)
+            images.update(data)
+
             if 'rgb' in images.keys() and 'depth' in images.keys():
                 CameraHandler.display_images(images['rgb'], images['depth'])
 

@@ -125,3 +125,11 @@ class Reader(object):
         cut_opt_data, cut_emg_data = self.get_window_data(start_index, stop_index)
         cut_opt_data.to_csv(join(export_folder, 'opt.csv'))
         cut_emg_data.to_csv(join(export_folder, 'emg.csv'))
+
+        self.export_video(export_folder, start_index, stop_index)
+
+    def export_video(self, folder, start_index, stop_index):
+        for t in ["rgb", "depth"]:
+            video = cv2.VideoWriter(join(folder, t + '.avi'), 0, 1, (640, 480))
+            for image in self.images[t][start_index:stop_index]:
+                video.write(image)
