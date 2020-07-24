@@ -30,8 +30,12 @@ app.layout = html.Div(
                                  html.Div(
                                      className='div-for-dropdown',
                                      children=[
-                                        dcc.Interval(id='auto-stepper',
-                                                    interval=500, # 25 fps in milliseconds
+                                        dcc.Interval(id='emg-stepper',
+                                                    interval=100, # 25 fps in milliseconds
+                                                    n_intervals=0
+                                        ),
+                                        dcc.Interval(id='image-stepper',
+                                                    interval=40, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                      ],
@@ -99,14 +103,14 @@ def export(record_click, stop_click, value):
 #     return dcc.Graph(id = '3d_scat', figure=f)
 
 @app.callback(Output('rgb_image', 'src'),
-              [Input('auto-stepper', 'n_intervals')])
+              [Input('image-stepper', 'n_intervals')])
 def update_rgb_image_src(step):
     image = recorder.get_buffered_rgb()
     encoded_image = base64.b64encode(image)
     return 'data:image/png;base64,{}'.format(encoded_image.decode())
 
 @app.callback(Output('depth_image', 'src'),
-              [Input('auto-stepper', 'n_intervals')])
+              [Input('image-stepper', 'n_intervals')])
 def update_depth_image_src(step):
     image = recorder.get_buffered_depth()
     encoded_image = base64.b64encode(image)
@@ -114,7 +118,7 @@ def update_depth_image_src(step):
 
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
-              [Input('auto-stepper', 'n_intervals')])
+              [Input('emg-stepper', 'n_intervals')])
 def emg_graph(step):
     emg_data = recorder.get_buffered_emg()
     trace1 = []
