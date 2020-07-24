@@ -14,12 +14,12 @@ from surgeon_recording.sensor_handler import SensorHandler
 # import emgAcquireClient
 
 class EMGHandler(SensorHandler):
-    def __init__(self, nb_channels, emg_ip="localhost", streaming_ip="127.0.0.1", port=5558):
-        SensorHandler.__init__(self, 'emg', timestep=0.01, header=['emg' + str(i) for i in range(nb_channels)], ip=streaming_ip, port=port)
+    def __init__(self, parameters):
+        SensorHandler.__init__(self, 'emg', parameters)
         # define number of channels to acquire
-        self.nb_channels = nb_channels
+        self.nb_channels = parameters["nb_channels"]
         # create an emgClient object for acquiring the data
-        #self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=emg_ip, nb_channels=self.nb_channels)
+        #self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["emg_ip"], nb_channels=self.nb_channels)
         # initialize the node
         #init_value = self.emgClient.initialize()
 
@@ -31,6 +31,13 @@ class EMGHandler(SensorHandler):
         
         if self.emg_init:
             self.emgClient.start()
+
+    @staticmethod
+    def get_parameters():
+        parameters = SensorHandler.read_config_file()
+        param = parameters['emg']
+        param.update({ 'header': ['emg' + str(i) for i in range(parameters['emg']['nb_channels'])]})
+        return param
 
     def acquire_data(self):
         # acquire the signals from the buffer
@@ -72,7 +79,8 @@ class EMGHandler(SensorHandler):
 
 
 def main(args=None):
-    emg_handler = EMGHandler(9)
+    parameters = EMGHandler.get_parameters()
+    emg_handler = EMGHandler(parameters)
     emg_handler.run()
     
 if __name__ == '__main__':

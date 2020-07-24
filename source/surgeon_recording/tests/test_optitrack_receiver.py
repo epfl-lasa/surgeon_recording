@@ -1,16 +1,16 @@
-from surgeon_recording.emg_handler import EMGHandler
+from surgeon_recording.optitrack_handler import OptitrackHandler
 import zmq
 import time
 
 def main(args=None):
-    parameters = EMGHandler.get_parameters()
+    parameters = OptitrackHandler.get_parameters()
     ip = parameters["streaming_ip"]
     port = parameters["port"]
 
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.connect("tcp://%s:%s" % (ip, port))
-    socket.setsockopt(zmq.SUBSCRIBE, b'emg')
+    socket.setsockopt(zmq.SUBSCRIBE, b'optitrack')
 
     context = zmq.Context()
     socket_recorder = context.socket(zmq.REQ)
@@ -19,7 +19,7 @@ def main(args=None):
     count = 0
     while True:
         try:
-            signal = EMGHandler.receive_data(socket)
+            signal = OptitrackHandler.receive_data(socket)
             print (signal)
 
         except KeyboardInterrupt:

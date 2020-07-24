@@ -1,0 +1,8 @@
+{
+	"emg": { "nb_channels": 9, "timestep": 0.01, "emg_ip": "localhost", "streaming_ip": "127.0.0.1", "port": 5556 },
+	"optitrack": { "frames": [
+		{ "label": "test", "streaming_id": 1 },
+		{ "label": "test2", "streaming_id": 2 }
+	], "frame_timeout": 0.01, "timestep": 0.01, "streaming_ip": "127.0.0.1", "port": 5558 },
+	"camera": { "timestep": 0.0, "streaming_ip": "127.0.0.1", "port": 5560 }
+}

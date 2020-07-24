@@ -5,13 +5,17 @@ from threading import Thread, Event, Lock
 import os
 from os.path import join
 import time
+import json
 
 class SensorHandler(object):
-    def __init__(self, sensor_name, header=[], timestep=0, ip="127.0.0.1", port=5556):
-        self.timestep = timestep
+    def __init__(self, sensor_name, parameters):
         self.sensor_name = sensor_name
+        self.timestep = parameters["timestep"]
+        self.header = parameters["header"]
+        ip = parameters["streaming_ip"]
+        port = parameters["port"]
+
         self.recording = False
-        self.header = header
         self.index = 0
         self.start_time = time.time()
         
@@ -29,6 +33,12 @@ class SensorHandler(object):
         self.recording_thread = Thread(target=self.recording_request_handler)
         self.recording_thread.start()
         self.lock = Lock()
+
+    @staticmethod
+    def read_config_file():
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        with open(join(filepath, '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
+            return json.load(paramfile)
 
     def generate_fake_data(self, dim, mean=0., var=1.):
         return np.random.normal(size=dim, loc=mean, scale=var)

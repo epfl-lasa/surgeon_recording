@@ -9,8 +9,8 @@ import time
 from surgeon_recording.sensor_handler import SensorHandler
 
 class CameraHandler(SensorHandler):
-    def __init__(self, ip="127.0.0.1", port=5556):
-        SensorHandler.__init__(self, 'camera', ip=ip, port=port)
+    def __init__(self, parameters):
+        SensorHandler.__init__(self, 'camera', parameters)
         self.pipeline = rs.pipeline()
         self.config = rs.config()
         self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -23,6 +23,13 @@ class CameraHandler(SensorHandler):
             self.pipeline.start(self.config)
         except:
             print("Error initializing the camera")
+
+    @staticmethod
+    def get_parameters():
+        parameters = SensorHandler.read_config_file()
+        param = parameters['camera']
+        param.update({ 'header': [] })
+        return param
 
     def acquire_data(self):
         # Wait for a coherent pair of frames: depth and color
@@ -86,7 +93,8 @@ class CameraHandler(SensorHandler):
 
 
 def main(args=None):
-    camera_handler = CameraHandler()
+    parameters = CameraHandler.get_parameters()
+    camera_handler = CameraHandler(parameters)
     camera_handler.run()
     
 if __name__ == '__main__':

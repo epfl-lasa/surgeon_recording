@@ -6,13 +6,12 @@ import cv2
 from os.path import join
 from threading import Thread
 from threading import Event
-import signal
-from surgeon_recording.NatNetClient import NatNetClient
 import pandas as pd
 from collections import deque
 import zmq
 from surgeon_recording.camera_handler import CameraHandler
 from surgeon_recording.emg_handler import EMGHandler
+from surgeon_recording.optitrack_handler import OptitrackHandler
 
 class Recorder(object):
     def __init__(self, data_folder):
@@ -28,14 +27,14 @@ class Recorder(object):
         self.socket_recorders = []
         self.init_camera()
         self.init_emg()
-        #self.init_optitrack()
+        self.init_optitrack()
 
         # initiliaze the threads
         self.stop_event = Event()
         self.recording_threads = []
         self.recording_threads.append(Thread(target=self.get_camera_data))
         self.recording_threads.append(Thread(target=self.get_emg_data))
-        #self.recording_threads.append(Thread(target=self.record_optitrack))
+        self.recording_threads.append(Thread(target=self.get_optitrack_data))
 
         for t in self.recording_threads:
             t.start()
@@ -46,49 +45,49 @@ class Recorder(object):
             os.makedirs(self.exp_folder)    
 
     def init_camera(self):
-        ip = "127.0.0.1"
-        port = "5556"
+        parameters = CameraHandler.get_parameters()
+        ip = parameters["streaming_ip"]
+        port = parameters["port"]
+
         context = zmq.Context()
         self.socket_camera = context.socket(zmq.SUB)
         self.socket_camera.connect("tcp://%s:%s" % (ip, port))
         self.socket_camera.setsockopt(zmq.SUBSCRIBE, b'rgb')
         self.socket_camera.setsockopt(zmq.SUBSCRIBE, b'depth')
 
-        port = "5557"
         context = zmq.Context()
         socket_camera_recorder = context.socket(zmq.REQ)
-        socket_camera_recorder.connect("tcp://%s:%s" % (ip, port))
+        socket_camera_recorder.connect("tcp://%s:%s" % (ip, port + 1))
         self.socket_recorders.append(socket_camera_recorder)
 
-    #def init_optitrack(self):
-        # ids = {2: "test", 3: "test2",}
-        # self.opt_header = ["index", "absolute_time", "relative_time"]
-        # for key, label in ids.items():
-        #     self.received_frames[key] = {"label": label, "position": [], "orientation": [], "timestamp": 0}
-        #     self.opt_header = self.opt_header + [label + "_x", label + "_y", label + "_z", label + "_qw", label + "_qx", label + "_qy", label + "_qz"]
+    def init_optitrack(self):
+        parameters = OptitrackHandler.get_parameters()
+        ip = parameters["streaming_ip"]
+        port = parameters["port"]
 
-        # self.opt_client = NatNetClient()
-        # # Configure the streaming client to call our rigid body handler on the emulator to send data out.
-        # self.opt_client.newFrameListener = self.receive_frame
-        # self.opt_client.rigidBodyListener = self.receive_rigid_body
-        # # Start up the streaming client now that the callbacks are set up.
-        # # This will run perpetually, and operate on a separate thread.
-        # self.opt_client.run()
+        context = zmq.Context()
+        self.socket_optitrack = context.socket(zmq.SUB)
+        self.socket_optitrack.connect("tcp://%s:%s" % (ip, port))
+        self.socket_optitrack.setsockopt(zmq.SUBSCRIBE, b'optitrack')
 
-    
+        context = zmq.Context()
+        socket_optitrack_recorder = context.socket(zmq.REQ)
+        socket_optitrack_recorder.connect("tcp://%s:%s" % (ip, port + 1))
+        self.socket_recorders.append(socket_optitrack_recorder)    
 
     def init_emg(self):
-        ip = "127.0.0.1"
-        port = "5558"
+        parameters = EMGHandler.get_parameters()
+        ip = parameters["streaming_ip"]
+        port = parameters["port"]
+
         context = zmq.Context()
         self.socket_emg = context.socket(zmq.SUB)
         self.socket_emg.connect("tcp://%s:%s" % (ip, port))
         self.socket_emg.setsockopt(zmq.SUBSCRIBE, b'emg')
 
-        port = "5559"
         context = zmq.Context()
         socket_emg_recorder = context.socket(zmq.REQ)
-        socket_emg_recorder.connect("tcp://%s:%s" % (ip, port))
+        socket_emg_recorder.connect("tcp://%s:%s" % (ip, port + 1))
         self.socket_recorders.append(socket_emg_recorder)
 
 
@@ -103,24 +102,10 @@ class Recorder(object):
             for s in signal['emg']:
                 self.emg_data.append(s)
 
-    # def record_optitrack(self):
-    #     print("Starting recording Optitrack")
-    #     while not self.stop_event.wait(0.01):
-    #         absolute_time = time.time()
-    #         data = [self.opt_index + 1, absolute_time, absolute_time - self.start_time]
-    #         for key, f in self.received_frames.items():
-    #             if absolute_time - f["timestamp"] < self.timeout:
-    #                 for pos in f["position"]:
-    #                     data.append(pos)
-    #                 for rot in f["orientation"]:
-    #                     data.append(rot)
-    #             else:
-    #                 print("Frame " + f["label"] + " not visible")
-    #                 return
-    #         self.opt_index = data[0]
-    #         self.opt_data = [data]
-    #         if self.recording:
-    #             self.writers["opt"]["writer"].writerow(data)
+    def get_optitrack_data(self):
+        while not self.stop_event.is_set():
+            data = OptitrackHandler.receive_data(self.socket_opt)
+            self.opt_data.append(data['optitrack'])
 
     def get_buffered(self, data, header):
         if data:
@@ -128,11 +113,12 @@ class Recorder(object):
         return pd.DataFrame(columns=header[1:])
 
     def get_buffered_emg(self):
-        header = ["index", "absolute_time", "relative_time"] + ['emg' + str(i) for i in range(9)]
+        header = ["index", "absolute_time", "relative_time"] + EMGHandler.get_parameters()["header"]
         return self.get_buffered(self.emg_data, header)
 
     def get_buffered_opt(self):
-        return self.get_buffered(self.opt_data, self.opt_header)
+        header = ["index", "absolute_time", "relative_time"] + OptitrackHandler.get_parameters()["header"]
+        return self.get_buffered(self.opt_data, header)
 
     def get_buffered_rgb(self):
         return cv2.imencode('.jpg', self.buffered_images['rgb'])[1]
@@ -163,17 +149,6 @@ class Recorder(object):
         self.socket_emg.close()
         for s in self.socket_recorders:
             s.close()
-
-    # # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
-    # def receive_rigid_body(self, id, position, rotation):
-    #     self.received_frames[id]["timestamp"] = time.time()
-    #     self.received_frames[id]["position"] = position
-    #     self.received_frames[id]["orientation"] = rotation
-
-    # # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
-    # def receive_frame(self, frameNumber, markerSetCount, unlabeledMarkersCount, rigidBodyCount, skeletonCount,
-    #                   labeledMarkerCount, timecode, timecodeSub, timestamp, isRecording, trackedModelsChanged ):
-    #     return
 
 
 # def main(args=None):
