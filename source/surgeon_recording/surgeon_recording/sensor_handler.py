@@ -1,0 +1,103 @@
+import numpy as np
+import zmq
+import csv
+from threading import Thread, Event
+import os
+from os.path import join
+import time
+
+class SensorHandler(object):
+    def __init__(self, sensor_name, header=[], timestep=0, ip="127.0.0.1", port=5556):
+        self.timestep = timestep
+        self.sensor_name = sensor_name
+        self.recording = False
+        self.header = header
+        self.data = []
+        self.index = 0
+        self.start_time = 0
+        
+        # socket for publisher
+        context = zmq.Context()
+        self.socket = context.socket(zmq.PUB)
+        self.socket.bind("tcp://%s:%s" % (ip, port))
+        self.socket.setsockopt(zmq.LINGER, 0)
+        # socker for recorder server
+        self.recorder_socket = context.socket(zmq.REP)
+        self.recorder_socket.bind("tcp://%s:%s" % (ip, port + 1))
+        self.recorder_socket.setsockopt(zmq.LINGER, 0)
+
+        self.stop_event = Event()
+        self.recording_thread = Thread(target=self.recording_request_handler)
+        self.recording_thread.start()
+
+    def acquire_data(self):
+        return []
+
+    def send_data(self, topic, data):
+        self.socket.send_string(topic, zmq.SNDMORE)
+        self.socket.send_pyobj(data)
+
+    @staticmethod
+    def receive_data(socket):
+        topic = socket.recv_string()
+        data = socket.recv_pyobj()
+        return {'topic': data}
+
+    def recording_request_handler(self):
+        while not self.stop_event.wait(0.01):
+            print('Waiting for commands')
+            message = self.recorder_socket.recv_json()
+            if message['recording'] and not self.recording:
+                self.setup_recording(message['folder'], message['start_time'])
+                self.recorder_socket.send_string("recording started")
+                print('Recording started')
+            elif not message['recording'] and self.recording:
+                self.stop_recording()
+                self.recorder_socket.send_string("recording stopped")
+                print('Recording stopped')
+            else:
+                self.recorder_socket.send_string("recording" if self.recording else "not recording")
+
+    def setup_recording(self, recording_folder, start_time):
+        if not os.path.exists(recording_folder):
+            os.makedirs(recording_folder)
+
+        f = open(join(recording_folder, self.sensor_name + '.csv'), 'w', newline='')
+        self.writer = {"file": f, "writer": csv.writer(f)}
+        self.writer["writer"].writerow(["index", "absolute_time", "relative_time"] + self.header)
+
+        self.index = 0
+        self.start_time = start_time
+        self.recording = True
+
+    def stop_recording(self):
+        self.recording = False
+
+    def record(self, data):
+        if self.recording:
+            absolute_time = time.time()
+            metadata = [self.index + 1, absolute_time, absolute_time - self.start_time]
+            self.index = metadata[0]   
+            self.writer["writer"].writerow(metadata + data)
+
+    def shutdown(self):
+        self.stop_event.set()
+        self.socket.close()
+        self.recorder_socket.close()
+        self.recording_thread.join()
+
+    def run(self):
+        while True:
+            try:
+                start = time.time()
+                data = self.acquire_data()
+                self.record(data)
+                self.send_data(self.sensor_name, data)
+                effective_time = time.time() - start
+                wait_period = self.timestep - effective_time
+                if wait_period > 0:
+                    time.sleep(wait_period)
+            except KeyboardInterrupt:
+                print('Interruption, shutting down')
+                break
+        self.shutdown()
