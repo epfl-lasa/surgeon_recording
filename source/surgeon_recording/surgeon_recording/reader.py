@@ -26,7 +26,7 @@ class Reader(object):
 
     def get_experiment_list(self, data_folder):
         res = {}
-        needed_files = ['emg.csv', 'opt.csv', 'rgb.avi', 'depth.avi', 'camera.csv']
+        needed_files = ['emg.csv', 'optitrack.csv', 'rgb.avi', 'depth.avi', 'camera.csv']
         exp_list = []
         exp_list = [x[0] for x in os.walk(data_folder) if all(item in x[2] for item in needed_files)]
         for exp in exp_list:
@@ -111,7 +111,7 @@ class Reader(object):
     def play(self, exp_folder):
         self.exp_folder = exp_folder
         self.camera_data = pd.read_csv(join(exp_folder, "camera.csv")).set_index('index')
-        self.opt_data = pd.read_csv(join(exp_folder, "opt.csv")).set_index('index')
+        self.opt_data = pd.read_csv(join(exp_folder, "optitrack.csv")).set_index('index')
         self.emg_data = pd.read_csv(join(exp_folder, "emg.csv")).set_index('index')
         self.extract_images()
         
@@ -123,7 +123,7 @@ class Reader(object):
         cut_camera_data.to_csv(join(export_folder, 'camera.csv'))
         
         cut_opt_data, cut_emg_data = self.get_window_data(start_index, stop_index)
-        cut_opt_data.to_csv(join(export_folder, 'opt.csv'))
+        cut_opt_data.to_csv(join(export_folder, 'optitrack.csv'))
         cut_emg_data.to_csv(join(export_folder, 'emg.csv'))
 
         self.export_video(export_folder, start_index, stop_index)
