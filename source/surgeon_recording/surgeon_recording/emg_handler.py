@@ -73,7 +73,7 @@ class EMGHandler(SensorHandler):
 
     def shutdown(self):
         super().shutdown()
-        if self.emg_init:
+        if not self.simulate and self.emg_init:
             self.emgClient.shutdown()
 
 
