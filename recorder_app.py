@@ -31,11 +31,11 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Interval(id='emg-stepper',
-                                                    interval=100, # 25 fps in milliseconds
+                                                    interval=200, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.Interval(id='image-stepper',
-                                                    interval=40, # 25 fps in milliseconds
+                                                    interval=100, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                      ],
