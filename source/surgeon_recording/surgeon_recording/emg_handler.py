@@ -18,19 +18,16 @@ class EMGHandler(SensorHandler):
         SensorHandler.__init__(self, 'emg', parameters)
         # define number of channels to acquire
         self.nb_channels = parameters["nb_channels"]
-        # create an emgClient object for acquiring the data
-        #self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["emg_ip"], nb_channels=self.nb_channels)
-        # initialize the node
-        #init_value = self.emgClient.initialize()
+        self.simulate = parameters["simulate"]
 
-        init_value = -1
-
-        self.emg_init = init_value == 0
-
-        self.emg_data = []
-        
-        if self.emg_init:
+        if not self.simulate:
+            # create an emgClient object for acquiring the data
+            self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["emg_ip"], nb_channels=self.nb_channels)
+            # initialize the node
+            init_value = self.emgClient.initialize()
+            self.emg_init = init_value == 0
             self.emgClient.start()
+        self.emg_data = []
 
     @staticmethod
     def get_parameters():
@@ -41,8 +38,10 @@ class EMGHandler(SensorHandler):
 
     def acquire_data(self):
         # acquire the signals from the buffer
-        # emg_array = self.emgClient.getSignals()
-        emg_array = self.generate_fake_data([self.nb_channels, 50])
+        if not self.simulate:
+            emg_array = self.emgClient.getSignals()
+        else:
+            emg_array = self.generate_fake_data([self.nb_channels, 50])
 
         returned_data = []
         with self.lock:
