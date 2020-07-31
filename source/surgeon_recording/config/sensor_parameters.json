@@ -6,5 +6,5 @@
 		{ "label": "test3", "streaming_id": 3 }
 	], "frame_timeout": 0.01, "timestep": 0.01, "streaming_ip": "127.0.0.1", "streaming_port": 5558, "simulate": true },
 	"camera": { "timestep": 0.0, "streaming_ip": "127.0.0.1", "streaming_port": 5560 },
-	"tps": { "timestep": 0.0, "streaming_ip": "127.0.0.1", "streaming_port": 5562, "sensor_ip": "128.179.160.123", "sensor_port": 4242 }
+	"tps": { "timestep": 0.0, "streaming_ip": "127.0.0.1", "streaming_port": 5562, "sensor_ip": "127.0.0.1", "sensor_port": 4242 }
 }
