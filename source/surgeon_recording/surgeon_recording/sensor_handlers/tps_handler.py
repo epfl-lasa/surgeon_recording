@@ -18,7 +18,7 @@ class TPSHandler(SensorHandler):
     def get_parameters():
         parameters = SensorHandler.read_config_file()
         param = parameters['tps']
-        param.update({ 'header': [] })
+        param.update({ 'header': ["tps" + str(i) for i in range(param["nb_adapters"] * 6)] })
         return param
 
     def acquire_data(self):
