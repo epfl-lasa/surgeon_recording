@@ -1,4 +1,4 @@
-from surgeon_recording.sensor_handlers.emg_handler import EMGHandler
+from surgeon_recording.sensor_handlers.tps_handler import TPSHandler
 import zmq
 import time
 

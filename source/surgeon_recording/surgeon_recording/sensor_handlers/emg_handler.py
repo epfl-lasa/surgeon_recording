@@ -2,7 +2,7 @@ import numpy as np
 import zmq
 import time
 import sys
-from surgeon_recording.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
 # # deifne the directory of the emgAcquireClient python_module 
 # emgAcquire_dir = r"C:\Users\buschbapti\Documents\GitHub\surgeon_recording\source\emgAcquire\python_module"
@@ -22,7 +22,7 @@ class EMGHandler(SensorHandler):
 
         if not self.simulate:
             # create an emgClient object for acquiring the data
-            self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["emg_ip"], nb_channels=self.nb_channels)
+            self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["sensor_ip"], nb_channels=self.nb_channels)
             # initialize the node
             init_value = self.emgClient.initialize()
             self.emg_init = init_value == 0

@@ -2,8 +2,8 @@ import numpy as np
 import zmq
 import time
 import sys
-from surgeon_recording.NatNetClient import NatNetClient
-from surgeon_recording.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.NatNetClient import NatNetClient
+from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
 
 class OptitrackHandler(SensorHandler):

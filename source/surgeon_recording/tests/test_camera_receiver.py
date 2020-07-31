@@ -1,4 +1,4 @@
-from surgeon_recording.camera_handler import CameraHandler
+from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 import zmq
 import time
 

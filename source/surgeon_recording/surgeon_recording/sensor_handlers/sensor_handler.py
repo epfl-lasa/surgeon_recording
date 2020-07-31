@@ -13,7 +13,7 @@ class SensorHandler(object):
         self.timestep = parameters["timestep"]
         self.header = parameters["header"]
         ip = parameters["streaming_ip"]
-        port = parameters["port"]
+        port = parameters["streaming_port"]
 
         self.recording = False
         self.index = 0
@@ -37,7 +37,7 @@ class SensorHandler(object):
     @staticmethod
     def read_config_file():
         filepath = os.path.abspath(os.path.dirname(__file__))
-        with open(join(filepath, '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
+        with open(join(filepath, '..', '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
             return json.load(paramfile)
 
     def generate_fake_data(self, dim, mean=0., var=1.):
