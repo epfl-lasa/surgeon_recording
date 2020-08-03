@@ -65,14 +65,15 @@ class OptitrackHandler(SensorHandler):
         self.index = data[0]
         
         if self.simulate:
-            tmp = self.generate_fake_data([1, len(self.received_frames.keys()) * 7])
-            for v in tmp[0]:
+            tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
+            for v in tmp:
                 data.append(v)
         return data 
 
     def shutdown(self):
         super().shutdown()
-        # self.opt_client.shutdown()
+        if not self.simulate:
+            self.opt_client.shutdown()
 
 
 def main(args=None):
