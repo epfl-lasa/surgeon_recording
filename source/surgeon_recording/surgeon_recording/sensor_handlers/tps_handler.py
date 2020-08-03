@@ -9,10 +9,13 @@ class TPSHandler(SensorHandler):
         port = parameters["sensor_port"]
 
         # socket for receiving sensor data
+
+        print("socket initializing")
         context = zmq.Context()
         self.data_socket = context.socket(zmq.SUB)
-        self.data_socket.bind("tcp://%s:%s" % (ip, port))
+        self.data_socket.connect("tcp://%s:%s" % (ip, port))
         self.data_socket.setsockopt(zmq.SUBSCRIBE, b'tps_data')
+        print("socket initialized")
 
     @staticmethod
     def get_parameters():
