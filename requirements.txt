@@ -2,3 +2,5 @@ numpy
 pyrealsense2
 dash
 zmq
+pandas
+opencv-python
