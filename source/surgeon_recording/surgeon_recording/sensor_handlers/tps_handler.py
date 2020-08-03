@@ -29,14 +29,12 @@ class TPSHandler(SensorHandler):
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
         if not self.simulate:
             topic = self.data_socket.recv_string()
-            tmp = map(float, self.data_socket.recv_string().split(","))
+            tmp = [float(x) for x in self.data_socket.recv_string().split(",")[:-1]]
         else:
             tmp = self.generate_fake_data(12)
         for v in tmp:
                 data.append(v)
         self.index = data[0]
-
-        print(data)
         return data
 
     def shutdown(self):

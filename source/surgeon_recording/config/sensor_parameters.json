@@ -25,5 +25,5 @@
 			 "streaming_port": 5562,
 			 "sensor_ip": "127.0.0.1",
 			 "sensor_port": 4242,
-			 "simulate": true }
+			 "simulate": false }
 }
