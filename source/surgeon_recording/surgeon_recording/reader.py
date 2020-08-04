@@ -91,6 +91,9 @@ class Reader(object):
     def get_nb_emg_frames(self):
         return self.emg_data.count()[0]
 
+    def get_nb_opt_frames(self):
+        return self.opt_data.count()[0]
+
     def extract_images(self):
         for t in ["rgb", "depth"]:
             self.images[t] = []
