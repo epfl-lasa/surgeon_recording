@@ -123,9 +123,12 @@ class Reader(object):
     def extract_images(self):
         while True:
             if self.data_changed:
+                self.data_changed = False
                 rgb_video = cv2.VideoCapture(join(self.exp_folder, "rgb.avi"))
                 depth_video = cv2.VideoCapture(join(self.exp_folder, "depth.avi"))
                 for i in range(self.get_nb_frames()):
+                    if self.data_changed:
+                        break
                     rgb_image = self.extract_image(rgb_video)
                     depth_image = self.extract_image(depth_video)
                     with self.mutex:
@@ -133,8 +136,6 @@ class Reader(object):
                         self.images["depth"][i] = depth_image
                 rgb_video.release()
                 depth_video.release()
-                self.data_changed = False
-                print('video extractions complete')
             time.sleep(0.01)
 
     def get_image(self, video_type, frame_index):
