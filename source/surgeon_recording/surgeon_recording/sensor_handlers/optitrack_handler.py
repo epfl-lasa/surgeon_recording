@@ -39,9 +39,10 @@ class OptitrackHandler(SensorHandler):
 
     # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
     def receive_rigid_body(self, id, position, rotation):
-        self.received_frames[id]["timestamp"] = time.time()
-        self.received_frames[id]["position"] = position
-        self.received_frames[id]["orientation"] = rotation
+        if id in self.received_frames.keys():
+            self.received_frames[id]["timestamp"] = time.time()
+            self.received_frames[id]["position"] = position
+            self.received_frames[id]["orientation"] = rotation
 
     # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
     def receive_frame(self, frameNumber, markerSetCount, unlabeledMarkersCount, rigidBodyCount, skeletonCount,
