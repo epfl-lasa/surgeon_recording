@@ -7,12 +7,15 @@ class TPSHandler(SensorHandler):
         SensorHandler.__init__(self, 'tps', parameters)
         ip = parameters["sensor_ip"]
         port = parameters["sensor_port"]
+        self.simulate = parameters["simulate"]
 
         # socket for receiving sensor data
+        print("socket initializing")
         context = zmq.Context()
         self.data_socket = context.socket(zmq.SUB)
-        self.data_socket.bind("tcp://%s:%s" % (ip, port))
+        self.data_socket.connect("tcp://%s:%s" % (ip, port))
         self.data_socket.setsockopt(zmq.SUBSCRIBE, b'tps_data')
+        print("socket initialized")
 
     @staticmethod
     def get_parameters():
@@ -22,8 +25,16 @@ class TPSHandler(SensorHandler):
         return param
 
     def acquire_data(self):
-        topic = self.data_socket.recv_string()
-        data = map(float, self.data_socket.recv_string().split(","))
+        absolute_time = time.time()
+        data = [self.index + 1, absolute_time, absolute_time - self.start_time]
+        if not self.simulate:
+            topic = self.data_socket.recv_string()
+            tmp = [float(x) for x in self.data_socket.recv_string().split(",")[:-1]]
+        else:
+            tmp = self.generate_fake_data(12)
+        for v in tmp:
+                data.append(v)
+        self.index = data[0]
         return data
 
     def shutdown(self):

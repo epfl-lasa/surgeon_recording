@@ -3,8 +3,11 @@ from os.path import join
 import pandas as pd
 import numpy as np
 import cv2
+from threading import Thread, Event
 from multiprocessing import Lock
 import os
+import asyncio
+import time
 
 
 class Reader(object):
@@ -23,6 +26,12 @@ class Reader(object):
         self.opt_rate = 2.5
         self.emg_rate = 40
         self.mutex = Lock()
+        self.blank_image = self.create_blank_image()
+        self.data_changed = False
+        self.stop_event = Event()
+        self.image_extractor_thread = Thread(target=self.extract_images)
+        self.image_extractor_thread.daemon = True
+        self.image_extractor_thread.start()
 
     def get_experiment_list(self, data_folder):
         res = {}
@@ -94,29 +103,59 @@ class Reader(object):
     def get_nb_opt_frames(self):
         return self.opt_data.count()[0]
 
-    def extract_images(self):
+    def create_blank_image(self):
+        image = np.zeros((480, 640, 3), np.uint8)
+        # Since OpenCV uses BGR, convert the color first
+        color = tuple((0, 0, 0))
+        # Fill image with color
+        image[:] = color
+        return cv2.imencode('.jpg', image)[1]
+
+    def init_image_list(self):
         for t in ["rgb", "depth"]:
             self.images[t] = []
-            video = cv2.VideoCapture(join(self.exp_folder, t + ".avi"))
-            for i in range(self.get_nb_frames()):
-                _, frame = video.read()
-                _, buffer = cv2.imencode('.jpg', frame)
-                self.images[t].append(buffer)
-            video.release()
+            for i in range(len(self.camera_data)):
+                with self.mutex:
+                    self.images[t].append(self.blank_image)
+
+    def extract_image(self, video):
+        _, frame = video.read()
+        _, buffer = cv2.imencode('.jpg', frame)
+        return buffer
+
+    def extract_images(self):
+        while True:
+            if self.data_changed:
+                rgb_video = cv2.VideoCapture(join(self.exp_folder, "rgb.avi"))
+                depth_video = cv2.VideoCapture(join(self.exp_folder, "depth.avi"))
+                for i in range(self.get_nb_frames()):
+                    rgb_image = self.extract_image(rgb_video)
+                    depth_image = self.extract_image(depth_video)
+                    with self.mutex:
+                        self.images["rgb"][i] = rgb_image
+                        self.images["depth"][i] = depth_image
+                rgb_video.release()
+                depth_video.release()
+                self.data_changed = False
+                print('video extractions complete')
+            time.sleep(0.01)
 
     def get_image(self, video_type, frame_index):
         max_index = self.camera_data.count()[0]
         if frame_index < 0 or frame_index > max_index:
             print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(frame_index))
             return -1
-        return self.images[video_type][frame_index]
+        with self.mutex:
+            image = self.images[video_type][frame_index]
+        return image
 
     def play(self, exp_folder):
         self.exp_folder = exp_folder
         self.camera_data = pd.read_csv(join(exp_folder, "camera.csv")).set_index('index')
         self.opt_data = pd.read_csv(join(exp_folder, "optitrack.csv")).set_index('index')
         self.emg_data = pd.read_csv(join(exp_folder, "emg.csv")).set_index('index')
-        self.extract_images()
+        self.init_image_list()
+        self.data_changed = True
         
     def export(self, folder, start_index, stop_index):
         export_folder = join(self.exp_folder, folder)

@@ -80,28 +80,6 @@ def export(record_click, stop_click, value):
         return 'Recording finished, check {} folder'.format(value)
     return 'Not recording'
 
-# @app.callback(Output('3d-scatter', 'children'),
-#               [Input('frame_selector', 'value')])
-# def update_3d_scatter(selected_percentage):
-#   selected_frame = int(selected_percentage * reader.get_nb_frames())
-#     trace1 = []
-#     opt_data,_ = reader.get_frame(selected_frame, window_width=25)
-#     opt_labels = ["test"]
-#     for i, opt in enumerate(opt_labels):
-#         trace1.append(go.Scatter(x=emg_data["relative_time"],
-#                                  y=emg_data["emg" + str(i)],
-#                                  mode='lines',
-#                                  opacity=0.7,
-#                                  name=emg,
-#                                  textposition='bottom center'))
-#     traces = [trace1]    
-#     f = go.FigureWidget(px.scatter_3d(df, x = 'x_val', y = 'y_val', z = 'z_val', hover_name = 'company_nm'))
-
-#     f.layout.clickmode = 'event+select'
-#     f.data[0].on_click(handle_click) # if click, then update point/df.      
-
-#     return dcc.Graph(id = '3d_scat', figure=f)
-
 @app.callback(Output('rgb_image', 'src'),
               [Input('image-stepper', 'n_intervals')])
 def update_rgb_image_src(step):
@@ -120,7 +98,7 @@ def update_depth_image_src(step):
 @app.callback(Output('timeseries', 'figure'),
               [Input('emg-stepper', 'n_intervals')])
 def emg_graph(step):
-    emg_data = recorder.get_buffered_emg()
+    emg_data = recorder.get_buffered_data("emg")
     trace1 = []
     emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
     for i, emg in enumerate(emg_labels):
