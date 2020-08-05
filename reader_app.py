@@ -2,6 +2,8 @@ import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
 from dash.dependencies import Input, Output, State
 from surgeon_recording.reader import Reader
 from os.path import join
@@ -17,6 +19,9 @@ app.config.suppress_callback_exceptions = True
 reader = Reader()
 data_folder = 'data'
 
+
+
+
 app.layout = html.Div(
     children=[
         html.Div(className='row',
@@ -26,23 +31,32 @@ app.layout = html.Div(
                                  html.H2('SURGEON RECORDING APP'),
                                  html.P('Experiment data selection'),
                                  html.Div(
+
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Dropdown(id='exp_folder',
                                                      options=[{'label': key, 'value': path} for key, path in reader.get_experiment_list(data_folder).items()]),
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=200, # 25 fps in milliseconds
+                                                    interval=500, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.Store(id='selected_exp'),
                                         dcc.Store(id='start_index'),
                                         dcc.Store(id='stop_index'),
                                         dcc.Store(id='selected_frame'),
+
                                         dcc.Store(id='selected_emg_frame'),
                                         dcc.Store(id='emg_start_index'),
                                         dcc.Store(id='emg_stop_index'),
                                         dcc.Store(id='current_emg_start'),
                                         dcc.Store(id='current_emg_stop'),
+
+                                        dcc.Store(id='selected_opt_frame'),
+                                        dcc.Store(id='opt_start_index'),
+                                        dcc.Store(id='opt_stop_index'),
+                                        dcc.Store(id='current_opt_start'),
+                                        dcc.Store(id='current_opt_stop'),
+
                                         dcc.Store(id='window_size', data=2000)
                                      ],
                                      style={'color': '#1E1E1E'}),
@@ -68,15 +82,70 @@ app.layout = html.Div(
                                children=[
                                 html.Div(className='images',
                                          children=[html.Img(id='rgb_image', height="480", width="640"),
-                                                   html.Img(id='depth_image', height="480", width="640")]
-                                ),
+                                                   html.Img(id='depth_image', height="480", width="640")]),
                                 html.Div(className='graphs',
-                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)])
+                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)]),
+
+                                #html.Div(className='graphs',
+                                 #        children=[dcc.Graph(id='optitrack', config={'displayModeBar': False}, animate=False)]),
+                                html.Div(className='graphs',
+                                         children=[dcc.Graph(id='opt')])
+
                                ])
                  ])
         ]
 
 )
+
+
+
+
+'''
+@app.callback(
+    dash.dependencies.Output('crossfilter-indicator-scatter', 'figure'),
+    [dash.dependencies.Input('crossfilter-xaxis-column', 'value'),
+     dash.dependencies.Input('crossfilter-yaxis-column', 'value'),
+     dash.dependencies.Input('crossfilter-xaxis-type', 'value'),
+     dash.dependencies.Input('crossfilter-yaxis-type', 'value'),
+     dash.dependencies.Input('crossfilter-year--slider', 'value')])
+def update_graph(xaxis_column_name, yaxis_column_name,
+                 xaxis_type, yaxis_type,
+                 year_value):
+    dff = df[df['Year'] == year_value]
+
+    fig = px.scatter(x=dff[dff['Indicator Name'] == xaxis_column_name]['Value'],
+            y=dff[dff['Indicator Name'] == yaxis_column_name]['Value'],
+            hover_name=dff[dff['Indicator Name'] == yaxis_column_name]['Country Name']
+            )
+
+    fig.update_traces(customdata=dff[dff['Indicator Name'] == yaxis_column_name]['Country Name'])
+
+    fig.update_xaxes(title=xaxis_column_name, type='linear' if xaxis_type == 'Linear' else 'log')
+
+    fig.update_yaxes(title=yaxis_column_name, type='linear' if yaxis_type == 'Linear' else 'log')
+
+    fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0}, hovermode='closest')
+
+    return fig
+'''
+
+
+
+
+
+
+
+def handle_click(trace, points, selector):
+    #c = list(f.data[0].marker.color)
+    #s = list(f.data[0].marker.size)
+    #for i in points.point_inds:
+    #    c[i] = '#bae2be'
+    #    s[i] = 20
+    #    with f.batch_update():
+    #        f.data[0].marker.color = c
+    #        f.data[0].marker.size = s
+    return 0 # f.data[0]
+
 
 @app.callback(Output('selected_exp', 'data'),
               [Input('exp_folder', 'value')])
@@ -105,20 +174,35 @@ def export(n_clicks, value, start_index, stop_index, selected_exp):
                Output('stop_index', 'data'),
                Output('emg_start_index', 'data'),
                Output('emg_stop_index', 'data'),
-               Output('auto-stepper', 'n_intervals')],
+               Output('auto-stepper', 'n_intervals'),
+
+               Output('opt_start_index', 'data'),
+               Output('opt_stop_index', 'data')
+               ],
+
               [Input('slider_frame', 'value'),
                Input('selected_exp', 'data')])
 def select_frame(selected_percentage, selected_exp):
   if selected_exp is None:
-    return 0, 0, 0, 0, 0
+    return 0, 0, 0, 0, 0, 0, 0
   start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
   stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
   emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_emg_frames() - 1))
   emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_emg_frames() - 1))
-  return start_index, stop_index, emg_start_index, emg_stop_index, start_index
+  opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_opt_frames() - 1))
+  opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_opt_frames() - 1))
+  print('hello')
+  print(opt_start_index)
+  return start_index, stop_index, emg_start_index, emg_stop_index, start_index, opt_start_index, opt_stop_index
+
+
+
+
 
 @app.callback([Output('current_emg_start', 'data'),
-               Output('current_emg_stop', 'data')],
+               Output('current_emg_stop', 'data')
+                
+              ],
               [Input('selected_emg_frame', 'data'),
                Input('emg_start_index', 'data'),
                Input('emg_stop_index', 'data'),
@@ -132,20 +216,39 @@ def select_emg_frame(selected_frame, start_index, stop_index, window_size, selec
   stop = min((step + 1) * window_size, stop_index)
   return start, stop
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.callback([Output('selected_frame', 'data'),
-               Output('selected_emg_frame', 'data')],
+               Output('selected_emg_frame', 'data'),
+               Output('selected_opt_frame', 'data')],
               [Input('auto-stepper', 'n_intervals'),
                Input('slider_frame', 'value'),
                Input('slider_frame', 'step')],
               [State('selected_exp', 'data')])
 def on_click(n_intervals, limits, step, selected_exp):
   if selected_exp is None:
-    return 0, 0
+    return 0, 0 ,0
   d = limits[1] - limits[0]
   selected_percentage = ((n_intervals * step - limits[0]) % d + d) % d + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_emg_frames() - 1))
-  return selected_frame, selected_emg_frame
+  selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_opt_frames() - 1))
+  print('callback on click')
+  print(selected_opt_frame)
+  return selected_frame, selected_emg_frame, selected_opt_frame
 
 # @app.callback(Output('3d-scatter', 'children'),
 #               [Input('frame_selector', 'value')])
@@ -189,6 +292,11 @@ def update_depth_image_src(selected_frame, selected_exp):
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
+
+
+
+
+
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
               [Input('selected_emg_frame', 'data'),
@@ -196,6 +304,10 @@ def update_depth_image_src(selected_frame, selected_exp):
                Input('current_emg_stop', 'data')],
               [State('selected_exp', 'data')])
 def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp):
+
+
+    print('printing emg graph')
+
     emg_data = reader.emg_data.iloc[current_emg_start:current_emg_stop]
     trace1 = []
     emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
@@ -206,7 +318,9 @@ def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp)
                                  opacity=0.7,
                                  name=emg,
                                  textposition='bottom center'))
+
     time = reader.emg_data.iloc[selected_frame]["relative_time"]
+
     trace1.append(go.Scatter(x=[time, time],
                              y=[-800, 800],
                              mode='lines',
@@ -214,7 +328,10 @@ def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp)
                              name="current frame",
                              textposition='bottom center'))
     traces = [trace1]
+
     data = [val for sublist in traces for val in sublist]
+
+
     figure = {'data': data,
               'layout': go.Layout(
                   colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
@@ -231,6 +348,167 @@ def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp)
               }
 
     return figure
+
+
+
+# Callback for opt price
+@app.callback(Output('opt', 'figure'),
+              [Input('selected_opt_frame', 'data')
+               #Input('current_opt_start', 'data'),
+               #Input('current_opt_stop', 'data')
+               ],
+              [State('selected_exp', 'data')])
+def opt_graph(selected_frame, selected_exp):
+
+    print('printing opt  graph')
+    opt_data = reader.opt_data.iloc[selected_frame]
+
+
+    print('selected_opt_frame')
+    print(selected_frame)
+
+    print('opt_data')
+    print(opt_data)
+    
+    print('jesuislq')
+
+    lenght= int(((opt_data.count()-2)/7))
+
+    print('lenght')
+    print(lenght)
+    
+    opt_dot_x = [0  for y in range(lenght)]
+    opt_dot_y = [0  for y in range(lenght)]
+    opt_dot_z = [0  for y in range(lenght)]
+      
+    colora = [y  for y in range(0,lenght)]
+
+
+    for i in range (0,lenght):
+    
+      opt_dot_x[i]=opt_data["test"+str(i+1)+"_x"]
+      opt_dot_y[i]=opt_data["test"+str(i+1)+"_y"]
+      opt_dot_z[i]=opt_data["test"+str(i+1)+"_z"]
+
+
+    print('lalalal')
+    print(opt_dot_x)  
+    #df = px.data.iris()
+    #print('df')
+    #print(df)
+    opt_labels = ["channel " + str(i) for i in range (0,lenght)]
+
+
+    fig = go.Figure(data=[go.Scatter3d(x=opt_dot_x, y=opt_dot_y, z=opt_dot_z, mode='markers',
+    marker=dict(
+        size=20, 
+        color=colora,                # set color to an array/list of desired values   
+        colorscale='Bluered',   # choose a colorscale
+        opacity=1))])
+
+
+    fig.update_layout(
+                        scene = dict(
+                        xaxis = dict(
+                             backgroundcolor="rgb(200, 200, 230)",
+                             gridcolor="white",
+                             showbackground=True,
+                             zerolinecolor="white",),
+                        yaxis = dict(
+                            backgroundcolor="rgb(230, 200,230)",
+                            gridcolor="white",
+                            showbackground=True,
+                            zerolinecolor="white"),
+                        zaxis = dict(
+                            backgroundcolor="rgb(230, 230,200)",
+                            gridcolor="white",
+                            showbackground=True,
+                            zerolinecolor="white",),),
+                        title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
+                        hovermode='x',
+                        paper_bgcolor='rgba(0, 0, 0, 0)',
+                        template='plotly_dark'
+
+                      )
+
+    fig.update_layout(scene = dict(
+                        xaxis_title='X AXIS ',
+                        yaxis_title='Y AXIS ',
+                        zaxis_title='Z AXIS '),
+                        width=700,
+                        margin=dict(r=20, b=30, l=10, t=30))
+
+    fig.update_layout(
+        scene = dict(
+                        xaxis = dict(nticks=10, range=[-2,2],),
+                         yaxis = dict(nticks=10, range=[min(opt_dot_y)-0.5,max(opt_dot_y)+0.5],),
+                         zaxis = dict(nticks=10, range=[min(opt_dot_z)-0.5,max(opt_dot_z)+0.5],),),
+       )
+             
+
+    #fig = px.scatter_3d(df, x='sepal_length', y='sepal_width', z='petal_width',
+    #          color='species')
+
+    # fig = px.scatter_3d(opt_data, x='test_x', y='test_y', z='test_z',
+              # color='species')
+    #fig = go.Figure(data=[go.Scatter3d(x=[opt_dot[:,0]], y=[opt_dot[:,1]], z=[opt_dot[:,2]], mode='markers')])
+    #fig = go.Figure(data=[go.Scatter3d(x=[opt_data["test_x"]], y=[opt_data["test_y"]], z=[opt_data["test_z"]], mode='markers')])
+    
+    #print('opt_data[test]')
+    
+   
+  #trace1=go.Scatter3d(x=opt_data['x_test'], y=opt_data['y_test'], z=opt_data['z_test'], mode='markers')
+  #print('newcallback')
+  #print(opt_data['x_test'])
+  #layout= go.Layout(margin=dict(
+  #  l=0,
+  #  r=0,
+  #  b=0,
+  #  t=0))
+
+    #on recupere les donnees
+   
+
+    
+
+
+   # fig = px.scatter_3d(opt_data, x="test_x", y="test_y", z="test_z",
+    #          color='species')
+
+
+    
+   # trace1 = []
+
+    #opti label
+  #opti_labels = ["no label for now"]
+    
+
+    
+    #fig.update_traces(customdata=dff[dff['Indicator Name'] == yaxis_column_name]['Country Name'])
+
+    #fig.update_xaxes(title=xaxis_column_name, type='linear' if xaxis_type == 'Linear' else 'log')
+
+    #fig.update_yaxes(title=yaxis_column_name, type='linear' if yaxis_type == 'Linear' else 'log')
+
+    #fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0}, hovermode='closest')
+
+  
+   
+
+  #fig = {'data': trace1,
+  #            'layout': layout
+  #                }               
+
+  #  fig = go.Figure(
+  #      data=[go.Bar(x=[1, 2, 3], y=[1, 3, 2])],
+  #      layout=go.Layout(
+  #        title=go.layout.Title(text="A Figure Specified By A Graph Object")
+  #      )
+  #  )
+  
+    return fig
+
+
 
 
 if __name__ == '__main__':
