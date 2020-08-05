@@ -304,13 +304,6 @@ def update_depth_image_src(selected_frame, selected_exp):
                Input('current_emg_stop', 'data')],
               [State('selected_exp', 'data')])
 def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp):
-
-
-
-    print('printing emg graph')
-
-    
-
     emg_data = reader.data["emg"].iloc[current_emg_start:current_emg_stop+1]
     trace1 = []
     emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
@@ -356,71 +349,27 @@ def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp)
 
 # Callback for opt price
 @app.callback(Output('opt', 'figure'),
-              [Input('selected_opt_frame', 'data')
-               #Input('current_opt_start', 'data'),
-               #Input('current_opt_stop', 'data')
-               ],
+              [Input('selected_opt_frame', 'data')],
               [State('selected_exp', 'data')])
 def opt_graph(selected_frame, selected_exp):
-
-    print('printing opt  graph')
-
     range_frame=3
-
-
     selected_frame=selected_frame+3
+
     opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame-1]
-
-
-
-    print(())
-
-
-    print('selected_opt_frame')
-    print(selected_frame)
-
-    print('opt_data')
-    #print(opt_data)
-    
-  
-
-    lenght= int(((len(opt_data.columns)-2)/7))
-
-    print('lenght')
-    print(lenght)
-    
-      
     header=list(opt_data.columns)[2:]
-
-
-
     nb_frames=int(len(header)/7)
     names=[]
 
     for i in range(nb_frames):
       names.append(header[i*7].replace('_x', ''))
     
-    print(names)  
-
-    
-    #df = px.data.iris()
-    #print('df')
-    #print(df)
-    opt_labels = ["channel " + str(i) for i in range (0,lenght)]
-
-
-    print(opt_labels)
-
+    opt_labels = ["channel " + str(i) for i in range (0, nb_frames)]
 
     fig = go.Figure()
-      #5 frame centered on current frame
     for i, opt in enumerate(opt_labels):
-     
-
       multiplier0=str(i*100)
       multiplier1=str(100-i*50)
       multiplier2=str(50+i*25)
-      print('jesuis la')
     
       fig.add_trace(go.Scatter3d(
           x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
@@ -431,14 +380,9 @@ def opt_graph(selected_frame, selected_exp):
              
           marker=dict(
               size=[5, 8, 11, 14,17 ], 
-                          # set color to an array/list of desired values   
-              #colorscale='Bluered',   # choose a colorscale
               opacity=0.5)
           ))
 
-
-      print('jesuis la  1')
-    
         #current frame
       fig.add_trace(go.Scatter3d(
           x=[opt_data[names[i]+"_x"][selected_frame]], y=[opt_data[names[i]+"_y"][selected_frame]], 
@@ -449,161 +393,61 @@ def opt_graph(selected_frame, selected_exp):
           marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
          
           marker=dict(
-              size=20, 
-             # color=[i],                # set color to an array/list of desired values   
-              #colorscale='Bluered',   # choose a colorscale
+              size=20,
               opacity=1)
           ))
 
+    max_x = [0] * nb_frames
+    max_y = [0] * nb_frames
+    max_z = [0] * nb_frames
+    min_x = [0] * nb_frames
+    min_y = [0] * nb_frames
+    min_z = [0] * nb_frames
 
+    for i in range (0,nb_frames):
+      max_x[i] = max(reader.data['optitrack'][names[i]+"_x"])
+      max_y[i] = max(reader.data['optitrack'][names[i]+"_y"])
+      max_z[i] = max(reader.data['optitrack'][names[i]+"_z"])
 
-      print('yolo')
-
-
-
+      min_x[i] = min(reader.data['optitrack'][names[i]+"_x"])
+      min_y[i] = min(reader.data['optitrack'][names[i]+"_y"])
+      min_z[i] = min(reader.data['optitrack'][names[i]+"_z"])
 
     fig.update_layout(
                         scene = dict(
-                        xaxis = dict(
-                             backgroundcolor="rgb(200, 200, 230)",
-                             gridcolor="white",
-                             showbackground=True,
-                             zerolinecolor="white",),
-                        yaxis = dict(
-                            backgroundcolor="rgb(230, 200,230)",
-                            gridcolor="white",
-                            showbackground=True,
-                            zerolinecolor="white"),
-                        zaxis = dict(
-                            backgroundcolor="rgb(230, 230,200)",
-                            gridcolor="white",
-                            showbackground=True,
-                            zerolinecolor="white",),),
+                          xaxis = dict(
+                               backgroundcolor="rgb(200, 200, 230)",
+                               gridcolor="white",
+                               showbackground=True,
+                               zerolinecolor="white",
+                               nticks=10,
+                               range=[min(min_x)-0.5,max(max_x)+0.5]),
+                          yaxis = dict(
+                              backgroundcolor="rgb(230, 200,230)",
+                              gridcolor="white",
+                              showbackground=True,
+                              zerolinecolor="white",
+                              nticks=10,
+                              range=[min(min_y)-0.5,max(max_y)+0.5]),
+                          zaxis = dict(
+                              backgroundcolor="rgb(230, 230,200)",
+                              gridcolor="white",
+                              showbackground=True,
+                              zerolinecolor="white",
+                               nticks=10,
+                               range=[min(min_z)-0.5,max(max_z)+0.5]),
+                          xaxis_title='X AXIS ',
+                          yaxis_title='Y AXIS ',
+                          zaxis_title='Z AXIS '),
+                        width=450,
+                        margin=dict(r=20, b=100, l=10, t=50),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',
                         paper_bgcolor='rgba(0, 0, 0, 0)',
-                        template='plotly_dark'
-
+                        template='plotly_dark',
+                        scene_aspectmode='cube'
                       )
-
-    fig.update_layout(scene = dict(
-                        xaxis_title='X AXIS ',
-                        yaxis_title='Y AXIS ',
-                        zaxis_title='Z AXIS '),
-                        width=450,
-                        margin=dict(r=20, b=100, l=10, t=50))
-
-
-    maxim_x=[0  for y in range(lenght)]
-    maxim_y=[0  for y in range(lenght)]
-    maxim_z=[0  for y in range(lenght)]
-
-    min_x=[0  for y in range(lenght)]
-    min_y=[0  for y in range(lenght)]
-    min_z=[0  for y in range(lenght)]
-
-    
-
-
-
-
-
-
-
-
-    for i in range (0,nb_frames):
-        
-          maxim_x[i]=max(reader.data['optitrack'][names[i]+"_x"])
-          maxim_y[i]=max(reader.data['optitrack'][names[i]+"_y"])
-          maxim_z[i]=max(reader.data['optitrack'][names[i]+"_z"])
-          
-          min_x[i]=min(reader.data['optitrack'][names[i]+"_x"])
-          min_y[i]=min(reader.data['optitrack'][names[i]+"_y"])
-          min_z[i]=min(reader.data['optitrack'][names[i]+"_z"])
-
-    print('maxim_x')     
-
-    print(maxim_x)     
-
-
-    print('maxim_x')
-    print(maxim_x)
-
-
-    #range of the axes
-    fig.update_layout(
-        scene = dict(
-                        xaxis = dict(nticks=10, range=[min(min_x)-0.5,max(maxim_x)+0.5],),
-                        yaxis = dict(nticks=10, range=[min(min_y)-0.5,max(maxim_y)+0.5],),
-                        zaxis = dict(nticks=10, range=[min(min_z)-0.5,max(maxim_z)+0.5],),),
-       )
-
-    fig.update_layout(scene_aspectmode='cube')
-             
-
-    #fig = px.scatter_3d(df, x='sepal_length', y='sepal_width', z='petal_width',
-    #          color='species')
-
-    # fig = px.scatter_3d(opt_data, x='test_x', y='test_y', z='test_z',
-              # color='species')
-    #fig = go.Figure(data=[go.Scatter3d(x=[opt_dot[:,0]], y=[opt_dot[:,1]], z=[opt_dot[:,2]], mode='markers')])
-    #fig = go.Figure(data=[go.Scatter3d(x=[opt_data["test_x"]], y=[opt_data["test_y"]], z=[opt_data["test_z"]], mode='markers')])
-    
-    #print('opt_data[test]')
-    
-   
-  #trace1=go.Scatter3d(x=opt_data['x_test'], y=opt_data['y_test'], z=opt_data['z_test'], mode='markers')
-  #print('newcallback')
-  #print(opt_data['x_test'])
-  #layout= go.Layout(margin=dict(
-  #  l=0,
-  #  r=0,
-  #  b=0,
-  #  t=0))
-
-    #on recupere les donnees
-   
-
-    
-
-
-   # fig = px.scatter_3d(opt_data, x="test_x", y="test_y", z="test_z",
-    #          color='species')
-
-
-    
-   # trace1 = []
-
-    #opti label
-  #opti_labels = ["no label for now"]
-    
-
-    
-    #fig.update_traces(customdata=dff[dff['Indicator Name'] == yaxis_column_name]['Country Name'])
-
-    #fig.update_xaxes(title=xaxis_column_name, type='linear' if xaxis_type == 'Linear' else 'log')
-
-    #fig.update_yaxes(title=yaxis_column_name, type='linear' if yaxis_type == 'Linear' else 'log')
-
-    #fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0}, hovermode='closest')
-
-  
-   
-
-  #fig = {'data': trace1,
-  #            'layout': layout
-  #                }               
-
-  #  fig = go.Figure(
-  #      data=[go.Bar(x=[1, 2, 3], y=[1, 3, 2])],
-  #      layout=go.Layout(
-  #        title=go.layout.Title(text="A Figure Specified By A Graph Object")
-  #      )
-  #  )
-  
     return fig
-
-
 
 
 if __name__ == '__main__':
