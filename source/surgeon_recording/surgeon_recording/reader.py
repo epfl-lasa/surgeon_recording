@@ -8,6 +8,7 @@ from multiprocessing import Lock
 import os
 import asyncio
 import time
+from surgeon_recording.sensor_handlers.camera_handler.CameraHandler import create_blank_image
 
 
 class Reader(object):
@@ -23,15 +24,17 @@ class Reader(object):
         self.stop_opt_frame = 1000000
         self.start_emg_frame = 0
         self.stop_emg_frame = 1000000
-        self.opt_rate = 2.5
-        self.emg_rate = 40
         self.mutex = Lock()
-        self.blank_image = self.create_blank_image()
+        self.blank_image = self.create_blank_image(encode=True)
         self.data_changed = False
         self.stop_event = Event()
         self.image_extractor_thread = Thread(target=self.extract_images)
         self.image_extractor_thread.daemon = True
         self.image_extractor_thread.start()
+
+    def initialize_sensor_rates(self):
+        self.opt_rate = self.get_nb_opt_frames / self.get_nb_frames
+        self.emg_rate = self.get_nb_emg_frames / self.get_nb_frames
 
     def get_experiment_list(self, data_folder):
         res = {}
@@ -99,14 +102,6 @@ class Reader(object):
 
     def get_nb_emg_frames(self):
         return self.emg_data.count()[0]
-
-    def create_blank_image(self):
-        image = np.zeros((480, 640, 3), np.uint8)
-        # Since OpenCV uses BGR, convert the color first
-        color = tuple((0, 0, 0))
-        # Fill image with color
-        image[:] = color
-        return cv2.imencode('.jpg', image)[1]
 
     def init_image_list(self):
         for t in ["rgb", "depth"]:
