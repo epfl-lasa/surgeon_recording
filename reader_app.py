@@ -37,7 +37,7 @@ app.layout = html.Div(
                                         dcc.Dropdown(id='exp_folder',
                                                      options=[{'label': key, 'value': path} for key, path in reader.get_experiment_list(data_folder).items()]),
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=500, # 25 fps in milliseconds
+                                                    interval=200, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.Store(id='selected_exp'),
@@ -75,7 +75,11 @@ app.layout = html.Div(
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
                                       html.Div(id='output_text')]
-                                  )
+
+
+                                  ),
+                                 html.Div(className='graphs',
+                                         children=[dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False)])
                                 ]
                              ),
                       html.Div(className='nine columns div-for-charts bg-grey',
@@ -88,8 +92,8 @@ app.layout = html.Div(
 
                                 #html.Div(className='graphs',
                                  #        children=[dcc.Graph(id='optitrack', config={'displayModeBar': False}, animate=False)]),
-                                html.Div(className='graphs',
-                                         children=[dcc.Graph(id='opt')])
+                                #html.Div(className='graphs',
+                                #         children=[dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False)])
 
                                ])
                  ])
@@ -360,50 +364,102 @@ def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp)
 def opt_graph(selected_frame, selected_exp):
 
     print('printing opt  graph')
-    opt_data = reader.opt_data.iloc[selected_frame]
+
+    range_frame=3
+
+
+    selected_frame=selected_frame+3
+    opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame-1]
+
+
+
+    print(())
 
 
     print('selected_opt_frame')
     print(selected_frame)
 
     print('opt_data')
-    print(opt_data)
+    #print(opt_data)
     
-    print('jesuislq')
+  
 
-    lenght= int(((opt_data.count()-2)/7))
+    lenght= int(((len(opt_data.columns)-2)/7))
 
     print('lenght')
     print(lenght)
     
-    opt_dot_x = [0  for y in range(lenght)]
-    opt_dot_y = [0  for y in range(lenght)]
-    opt_dot_z = [0  for y in range(lenght)]
       
-    colora = [y  for y in range(0,lenght)]
+    header=list(opt_data.columns)[2:]
 
 
-    for i in range (0,lenght):
+
+    nb_frames=int(len(header)/7)
+    names=[]
+
+    for i in range(nb_frames):
+      names.append(header[i*7].replace('_x', ''))
     
-      opt_dot_x[i]=opt_data["test"+str(i+1)+"_x"]
-      opt_dot_y[i]=opt_data["test"+str(i+1)+"_y"]
-      opt_dot_z[i]=opt_data["test"+str(i+1)+"_z"]
+    print(names)  
 
-
-    print('lalalal')
-    print(opt_dot_x)  
+    
     #df = px.data.iris()
     #print('df')
     #print(df)
     opt_labels = ["channel " + str(i) for i in range (0,lenght)]
 
 
-    fig = go.Figure(data=[go.Scatter3d(x=opt_dot_x, y=opt_dot_y, z=opt_dot_z, mode='markers',
-    marker=dict(
-        size=20, 
-        color=colora,                # set color to an array/list of desired values   
-        colorscale='Bluered',   # choose a colorscale
-        opacity=1))])
+    print(opt_labels)
+
+
+    fig = go.Figure()
+      #5 frame centered on current frame
+    for i, opt in enumerate(opt_labels):
+     
+
+      multiplier0=str(i*100)
+      multiplier1=str(100-i*50)
+      multiplier2=str(50+i*25)
+      print('jesuis la')
+    
+      fig.add_trace(go.Scatter3d(
+          x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
+          name='history '+opt,
+          mode='markers',
+          showlegend = True,
+          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
+             
+          marker=dict(
+              size=[5, 8, 11, 14,17 ], 
+                          # set color to an array/list of desired values   
+              #colorscale='Bluered',   # choose a colorscale
+              opacity=0.5)
+          ))
+
+
+      print('jesuis la  1')
+    
+        #current frame
+      fig.add_trace(go.Scatter3d(
+          x=[opt_data[names[i]+"_x"][selected_frame]], y=[opt_data[names[i]+"_y"][selected_frame]], 
+          z=[opt_data[names[i]+"_z"][selected_frame]],
+          name="current "+opt,
+          mode='markers',
+          showlegend = True,
+          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
+         
+          marker=dict(
+              size=20, 
+             # color=[i],                # set color to an array/list of desired values   
+              #colorscale='Bluered',   # choose a colorscale
+              opacity=1)
+          ))
+
+
+
+      print('yolo')
+
+
 
 
     fig.update_layout(
@@ -434,15 +490,55 @@ def opt_graph(selected_frame, selected_exp):
                         xaxis_title='X AXIS ',
                         yaxis_title='Y AXIS ',
                         zaxis_title='Z AXIS '),
-                        width=700,
-                        margin=dict(r=20, b=30, l=10, t=30))
+                        width=450,
+                        margin=dict(r=20, b=100, l=10, t=50))
 
+
+    maxim_x=[0  for y in range(lenght)]
+    maxim_y=[0  for y in range(lenght)]
+    maxim_z=[0  for y in range(lenght)]
+
+    min_x=[0  for y in range(lenght)]
+    min_y=[0  for y in range(lenght)]
+    min_z=[0  for y in range(lenght)]
+
+    
+
+
+
+
+
+
+
+
+    for i in range (0,nb_frames):
+        
+          maxim_x[i]=max(reader.data['optitrack'][names[i]+"_x"])
+          maxim_y[i]=max(reader.data['optitrack'][names[i]+"_y"])
+          maxim_z[i]=max(reader.data['optitrack'][names[i]+"_z"])
+          
+          min_x[i]=min(reader.data['optitrack'][names[i]+"_x"])
+          min_y[i]=min(reader.data['optitrack'][names[i]+"_y"])
+          min_z[i]=min(reader.data['optitrack'][names[i]+"_z"])
+
+    print('maxim_x')     
+
+    print(maxim_x)     
+
+
+    print('maxim_x')
+    print(maxim_x)
+
+
+    #range of the axes
     fig.update_layout(
         scene = dict(
-                        xaxis = dict(nticks=10, range=[-2,2],),
-                         yaxis = dict(nticks=10, range=[min(opt_dot_y)-0.5,max(opt_dot_y)+0.5],),
-                         zaxis = dict(nticks=10, range=[min(opt_dot_z)-0.5,max(opt_dot_z)+0.5],),),
+                        xaxis = dict(nticks=10, range=[min(min_x)-0.5,max(maxim_x)+0.5],),
+                        yaxis = dict(nticks=10, range=[min(min_y)-0.5,max(maxim_y)+0.5],),
+                        zaxis = dict(nticks=10, range=[min(min_z)-0.5,max(maxim_z)+0.5],),),
        )
+
+    fig.update_layout(scene_aspectmode='cube')
              
 
     #fig = px.scatter_3d(df, x='sepal_length', y='sepal_width', z='petal_width',
