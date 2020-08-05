@@ -190,7 +190,7 @@ def select_frame(selected_percentage, selected_exp):
 
   emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
-    opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
+  opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   return start_index, stop_index, emg_start_index, emg_stop_index, start_index, opt_start_index, opt_stop_index
 
