@@ -126,9 +126,12 @@ class Reader(object):
     def extract_images(self):
         while True:
             if self.data_changed:
+                self.data_changed = False
                 rgb_video = cv2.VideoCapture(join(self.exp_folder, "rgb.avi"))
                 depth_video = cv2.VideoCapture(join(self.exp_folder, "depth.avi"))
                 for i in range(self.get_nb_frames()):
+                    if self.data_changed:
+                        break
                     rgb_image = self.extract_image(rgb_video)
                     depth_image = self.extract_image(depth_video)
                     with self.mutex:
@@ -136,8 +139,6 @@ class Reader(object):
                         self.images["depth"][i] = depth_image
                 rgb_video.release()
                 depth_video.release()
-                self.data_changed = False
-                print('video extractions complete')
             time.sleep(0.01)
 
     def get_image(self, video_type, frame_index):
@@ -163,15 +164,24 @@ class Reader(object):
             os.makedirs(export_folder)
         cut_camera_data = self.camera_data.iloc[start_index:stop_index]
         cut_camera_data.to_csv(join(export_folder, 'camera.csv'))
-        
+        print("Camera data file exported")
         cut_opt_data, cut_emg_data = self.get_window_data(start_index, stop_index)
         cut_opt_data.to_csv(join(export_folder, 'optitrack.csv'))
+        print("Optitrack data file exported")
         cut_emg_data.to_csv(join(export_folder, 'emg.csv'))
-
+        print("EMG data file exported")
         self.export_video(export_folder, start_index, stop_index)
+        print("Export complete")
 
     def export_video(self, folder, start_index, stop_index):
         for t in ["rgb", "depth"]:
-            video = cv2.VideoWriter(join(folder, t + '.avi'), 0, 1, (640, 480))
-            for image in self.images[t][start_index:stop_index]:
-                video.write(image)
+            original_video = cv2.VideoCapture(join(self.exp_folder, t + '.avi'))
+            cut_video = cv2.VideoWriter(join(folder, t + '.avi'), cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
+            for i in range(stop_index + 1):
+                _, frame = original_video.read()
+                if i < start_index:
+                    continue
+                cut_video.write(frame)
+            print(t + " video file exported")
+            original_video.release()
+            cut_video.release()

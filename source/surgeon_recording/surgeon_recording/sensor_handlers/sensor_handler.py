@@ -92,11 +92,12 @@ class SensorHandler(object):
     def record(self, data):
         if self.recording:
             with self.lock:
-                if isinstance(data[0], list):
-                    for d in data:
-                        self.writer["writer"].writerow(d)
-                else:
-                    self.writer["writer"].writerow(data)
+                if data:
+                    if isinstance(data[0], list):
+                        for d in data:
+                            self.writer["writer"].writerow(d)
+                    else:
+                        self.writer["writer"].writerow(data)
 
     def shutdown(self):
         self.stop_event.set()
