@@ -40,6 +40,7 @@ class TPSHandler(SensorHandler):
     def shutdown(self):
         super().shutdown()
         self.data_socket.close()
+        print("tps closed cleanly")
 
 
 def main(args=None):

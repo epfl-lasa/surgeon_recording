@@ -90,8 +90,8 @@ class SensorHandler(object):
             self.writer['file'].close()
 
     def record(self, data):
-        if self.recording:
-            with self.lock:
+        with self.lock:
+            if self.recording:
                 if data:
                     if isinstance(data[0], list):
                         for d in data:

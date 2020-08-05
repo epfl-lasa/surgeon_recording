@@ -82,6 +82,7 @@ class OptitrackHandler(SensorHandler):
         super().shutdown()
         if not self.simulate:
             self.opt_client.shutdown()
+            print("optitrack closed cleanly")
 
 
 def main(args=None):
