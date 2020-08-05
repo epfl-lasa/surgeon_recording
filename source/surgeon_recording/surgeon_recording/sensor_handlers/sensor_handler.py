@@ -91,13 +91,12 @@ class SensorHandler(object):
 
     def record(self, data):
         if self.recording:
-            with self.lock:
-                if data:
-                    if isinstance(data[0], list):
-                        for d in data:
-                            self.writer["writer"].writerow(d)
-                    else:
-                        self.writer["writer"].writerow(data)
+            if data:
+                if isinstance(data[0], list):
+                    for d in data:
+                        self.writer["writer"].writerow(d)
+                else:
+                    self.writer["writer"].writerow(data)
 
     def shutdown(self):
         self.stop_event.set()
@@ -111,8 +110,8 @@ class SensorHandler(object):
                 start = time.time()
                 with self.lock:
                     data = self.acquire_data()
-                self.record(data)
-                self.send_data(self.sensor_name, data)
+                    self.record(data)
+                    self.send_data(self.sensor_name, data)
                 effective_time = time.time() - start
                 wait_period = self.timestep - effective_time
                 if wait_period > 0:

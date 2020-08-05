@@ -44,25 +44,24 @@ class EMGHandler(SensorHandler):
             emg_array = self.generate_fake_data([self.nb_channels, 50])
 
         returned_data = []
-        with self.lock:
-            # append the array with the new data
-            if self.emg_data:
-                prev_time = self.emg_data[-1][1]
-                index = self.emg_data[-1][0]
-            else:
-                prev_time = self.start_time
-                index = 0
-            last_sample_time = time.time()
-            dt = (last_sample_time - prev_time)/len(emg_array[0])
-            for i in range(len(emg_array[0])):
-                data = [index + 1]
-                t = prev_time + (i+1) * dt
-                data.append(t)
-                # keep the updating period
-                data.append(t - self.start_time)
-                data = data + emg_array[:, i].tolist()
-                index = data[0]
-                returned_data.append(data)
+        # append the array with the new data
+        if self.emg_data:
+            prev_time = self.emg_data[-1][1]
+            index = self.emg_data[-1][0]
+        else:
+            prev_time = self.start_time
+            index = 0
+        last_sample_time = time.time()
+        dt = (last_sample_time - prev_time)/len(emg_array[0])
+        for i in range(len(emg_array[0])):
+            data = [index + 1]
+            t = prev_time + (i+1) * dt
+            data.append(t)
+            # keep the updating period
+            data.append(t - self.start_time)
+            data = data + emg_array[:, i].tolist()
+            index = data[0]
+            returned_data.append(data)
         self.emg_data = returned_data
         return returned_data
 
@@ -75,6 +74,7 @@ class EMGHandler(SensorHandler):
         super().shutdown()
         if not self.simulate and self.emg_init:
             self.emgClient.shutdown()
+            print("emg closed cleanly")
 
 
 def main(args=None):

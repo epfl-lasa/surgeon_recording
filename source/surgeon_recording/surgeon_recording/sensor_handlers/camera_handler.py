@@ -12,18 +12,17 @@ class CameraHandler(SensorHandler):
     def __init__(self, parameters):
         SensorHandler.__init__(self, 'camera', parameters)
         self.simulate = parameters["simulate"]
+        self.color_image = []
+        self.depth_colormap = []
         if not self.simulate:
             self.pipeline = rs.pipeline()
             self.config = rs.config()
             self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
             self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-        self.color_image = []
-        self.depth_colormap = []
-
-        try:
-            self.pipeline.start(self.config)
-        except:
-            print("Error initializing the camera")
+            try:
+                self.pipeline.start(self.config)
+            except:
+                print("Error initializing the camera")
 
     @staticmethod
     def get_parameters():
@@ -59,8 +58,9 @@ class CameraHandler(SensorHandler):
             # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
             self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
         else:
-            self.color_image = create_blank_image()
-            self.depth_colormap = create_blank_image()
+            self.color_image = CameraHandler.create_blank_image()
+            self.depth_colormap = CameraHandler.create_blank_image()
+            time.sleep(0.03)
 
         absolute_time = time.time()
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
@@ -98,15 +98,15 @@ class CameraHandler(SensorHandler):
     def record(self, data):
         super().record(data)
         if self.recording:
-            with self.lock:
-                # write the images
-                self.colorwriter.write(self.color_image)
-                self.depthwriter.write(self.depth_colormap)
+            # write the images
+            self.colorwriter.write(self.color_image)
+            self.depthwriter.write(self.depth_colormap)
 
     def shutdown(self):
         super().shutdown()
         if not self.simulate:
             self.pipeline.stop()
+            print("camera closed cleanly")
 
 
 def main(args=None):
