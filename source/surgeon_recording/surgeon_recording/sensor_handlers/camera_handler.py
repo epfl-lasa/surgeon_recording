@@ -98,10 +98,9 @@ class CameraHandler(SensorHandler):
     def record(self, data):
         super().record(data)
         if self.recording:
-            with self.lock:
-                # write the images
-                self.colorwriter.write(self.color_image)
-                self.depthwriter.write(self.depth_colormap)
+            # write the images
+            self.colorwriter.write(self.color_image)
+            self.depthwriter.write(self.depth_colormap)
 
     def shutdown(self):
         super().shutdown()
