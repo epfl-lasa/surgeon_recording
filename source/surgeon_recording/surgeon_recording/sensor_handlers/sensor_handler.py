@@ -10,7 +10,6 @@ import json
 class SensorHandler(object):
     def __init__(self, sensor_name, parameters):
         self.sensor_name = sensor_name
-        self.timestep = parameters["timestep"]
         self.header = parameters["header"]
         ip = parameters["streaming_ip"]
         port = parameters["streaming_port"]
@@ -18,6 +17,7 @@ class SensorHandler(object):
         self.recording = False
         self.index = 0
         self.start_time = time.time()
+        self.timestep = 0.001 # security to not overfload the network
         
         # socket for publisher
         context = zmq.Context()
@@ -109,7 +109,8 @@ class SensorHandler(object):
         while True:
             try:
                 start = time.time()
-                data = self.acquire_data()
+                with self.lock:
+                    data = self.acquire_data()
                 self.record(data)
                 self.send_data(self.sensor_name, data)
                 effective_time = time.time() - start
