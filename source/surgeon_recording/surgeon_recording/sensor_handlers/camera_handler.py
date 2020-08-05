@@ -11,13 +11,14 @@ from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 class CameraHandler(SensorHandler):
     def __init__(self, parameters):
         SensorHandler.__init__(self, 'camera', parameters)
-        self.pipeline = rs.pipeline()
-        self.config = rs.config()
-        self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-        self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+        self.simulate = parameters["simulate"]
+        if not self.simulate:
+            self.pipeline = rs.pipeline()
+            self.config = rs.config()
+            self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+            self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
         self.color_image = []
         self.depth_colormap = []
-        self.recording = False
 
         try:
             self.pipeline.start(self.config)
@@ -31,20 +32,35 @@ class CameraHandler(SensorHandler):
         param.update({ 'header': [] })
         return param
 
+    @staticmethod
+    def create_blank_image(encode=False):
+        image = np.zeros((480, 640, 3), np.uint8)
+        # Since OpenCV uses BGR, convert the color first
+        color = tuple((0, 0, 0))
+        # Fill image with color
+        image[:] = color
+        if not encode:
+            return image
+        return cv2.imencode('.jpg', image)[1]
+
     def acquire_data(self):
-        # Wait for a coherent pair of frames: depth and color
-        frames = self.pipeline.wait_for_frames()
-        depth_frame = frames.get_depth_frame()
-        color_frame = frames.get_color_frame()
-        if not depth_frame or not color_frame:
-            return
+        if not self.simulate:
+            # Wait for a coherent pair of frames: depth and color
+            frames = self.pipeline.wait_for_frames()
+            depth_frame = frames.get_depth_frame()
+            color_frame = frames.get_color_frame()
+            if not depth_frame or not color_frame:
+                return
 
-        # Convert images to numpy arrays
-        depth_image = np.asanyarray(depth_frame.get_data())
-        self.color_image = np.asanyarray(color_frame.get_data())
+            # Convert images to numpy arrays
+            depth_image = np.asanyarray(depth_frame.get_data())
+            self.color_image = np.asanyarray(color_frame.get_data())
 
-        # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
-        self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+            # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
+            self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+        else:
+            self.color_image = create_blank_image()
+            self.depth_colormap = create_blank_image()
 
         absolute_time = time.time()
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
@@ -89,7 +105,8 @@ class CameraHandler(SensorHandler):
 
     def shutdown(self):
         super().shutdown()
-        self.pipeline.stop()
+        if not self.simulate:
+            self.pipeline.stop()
 
 
 def main(args=None):

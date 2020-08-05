@@ -11,6 +11,7 @@ class OptitrackHandler(SensorHandler):
         SensorHandler.__init__(self, 'optitrack', parameters)
         self.simulate = parameters["simulate"]
         self.timeout = parameters["frame_timeout"]
+        self.data_received = False
         self.received_frames = {}
         for frame in parameters["frames"]:
             label = frame["label"]
@@ -39,10 +40,12 @@ class OptitrackHandler(SensorHandler):
 
     # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
     def receive_rigid_body(self, id, position, rotation):
-        if id in self.received_frames.keys():
-            self.received_frames[id]["timestamp"] = time.time()
-            self.received_frames[id]["position"] = position
-            self.received_frames[id]["orientation"] = rotation
+        with self.lock:
+            if id in self.received_frames.keys():
+                self.received_frames[id]["timestamp"] = time.time()
+                self.received_frames[id]["position"] = position
+                self.received_frames[id]["orientation"] = rotation
+                self.data_received = True
 
     # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
     def receive_frame(self, frameNumber, markerSetCount, unlabeledMarkersCount, rigidBodyCount, skeletonCount,
@@ -50,25 +53,29 @@ class OptitrackHandler(SensorHandler):
         return
 
     def acquire_data(self):
-        absolute_time = time.time()
-        data = [self.index + 1, absolute_time, absolute_time - self.start_time]
-        for key, f in self.received_frames.items():
-            if absolute_time - f["timestamp"] < self.timeout:
-                for pos in f["position"]:
-                    data.append(pos)
-                for rot in f["orientation"]:
-                    data.append(rot)
-            else:
-                print("Frame " + f["label"] + " not visible")
-                if not self.simulate:
-                    return
-        
-        self.index = data[0]
-        
-        if self.simulate:
+        data = []
+        if self.data_received:
+            absolute_time = time.time()
+            data = [self.index + 1, absolute_time, absolute_time - self.start_time]
+            for key, f in self.received_frames.items():
+                if absolute_time - f["timestamp"] < self.timeout:
+                    for pos in f["position"]:
+                        data.append(pos)
+                    for rot in f["orientation"]:
+                        data.append(rot)
+                else:
+                    print("Frame " + f["label"] + " not visible")
+                    if not self.simulate:
+                        return []
+            self.index = data[0]
+            self.data_received = False
+        elif self.simulate:
+            absolute_time = time.time()
+            data = [self.index + 1, absolute_time, absolute_time - self.start_time]
             tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
             for v in tmp:
                 data.append(v)
+            self.index = data[0]
         return data 
 
     def shutdown(self):
