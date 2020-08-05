@@ -13,7 +13,7 @@ from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 
 class Reader(object):
     def __init__(self):
-        self.sensor_list = ["camera", "emg", "optitrack"]
+        self.sensor_list = ["camera", "emg", "optitrack", "tps"]
         self.data = {}
         self.images = {}
         self.frame_indexes = {}
