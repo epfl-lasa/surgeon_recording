@@ -12,7 +12,7 @@ import time
 
 # Initialize the app
 app = dash.Dash(__name__)
-app.config.suppress_callback_exceptions = True
+app.config.suppress_callback_exceptions = False
 
 reader = Reader()
 data_folder = 'data'
@@ -113,8 +113,8 @@ def select_frame(selected_percentage, selected_exp):
     return 0, 0, 0, 0, 0
   start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
   stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
-  emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_emg_frames() - 1))
-  emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_emg_frames() - 1))
+  emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
+  emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   return start_index, stop_index, emg_start_index, emg_stop_index, start_index
 
 @app.callback([Output('current_emg_start', 'data'),
@@ -144,7 +144,7 @@ def on_click(n_intervals, limits, step, selected_exp):
   d = limits[1] - limits[0]
   selected_percentage = ((n_intervals * step - limits[0]) % d + d) % d + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
-  selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_emg_frames() - 1))
+  selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   return selected_frame, selected_emg_frame
 
 # @app.callback(Output('3d-scatter', 'children'),
@@ -196,7 +196,7 @@ def update_depth_image_src(selected_frame, selected_exp):
                Input('current_emg_stop', 'data')],
               [State('selected_exp', 'data')])
 def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp):
-    emg_data = reader.emg_data.iloc[current_emg_start:current_emg_stop]
+    emg_data = reader.data["emg"].iloc[current_emg_start:current_emg_stop+1]
     trace1 = []
     emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
     for i, emg in enumerate(emg_labels):
@@ -206,7 +206,7 @@ def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp)
                                  opacity=0.7,
                                  name=emg,
                                  textposition='bottom center'))
-    time = reader.emg_data.iloc[selected_frame]["relative_time"]
+    time = reader.data["emg"].iloc[selected_frame]["relative_time"]
     trace1.append(go.Scatter(x=[time, time],
                              y=[-800, 800],
                              mode='lines',
