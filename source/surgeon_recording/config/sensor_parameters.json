@@ -18,6 +18,9 @@
 	            "simulate": true },
 
 	"tps": { "nb_adapters": 1,
+			 "fingers": [{ "label": "thumb", "streaming_id": 9 },
+						 { "label": "index", "streaming_id": 10 },
+						 { "label": "middle", "streaming_id": 11 }],
 			 "streaming_ip": "127.0.0.1",
 			 "streaming_port": 5562,
 			 "sensor_ip": "127.0.0.1",
