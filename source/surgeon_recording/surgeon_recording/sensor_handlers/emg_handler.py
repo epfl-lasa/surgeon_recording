@@ -66,9 +66,9 @@ class EMGHandler(SensorHandler):
         return returned_data
 
     def setup_recording(self, recording_folder, start_time):
-        super().setup_recording(recording_folder, start_time)
         with self.lock:
-            self.emg_data = [] 
+            self.emg_data = []
+        super().setup_recording(recording_folder, start_time)
 
     def shutdown(self):
         super().shutdown()

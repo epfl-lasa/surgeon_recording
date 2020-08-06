@@ -23,6 +23,8 @@ class CameraHandler(SensorHandler):
                 self.pipeline.start(self.config)
             except:
                 print("Error initializing the camera")
+        self.colorwriter = None
+        self.depthwriter = None
 
     @staticmethod
     def get_parameters():
@@ -82,25 +84,29 @@ class CameraHandler(SensorHandler):
         cv2.waitKey(1)
 
     def setup_recording(self, recording_folder, start_time):
-        super().setup_recording(recording_folder, start_time)
         with self.lock:
             color_path = join(recording_folder, 'rgb.avi')
             depth_path = join(recording_folder, 'depth.avi')
             self.colorwriter = cv2.VideoWriter(color_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
             self.depthwriter = cv2.VideoWriter(depth_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
+        super().setup_recording(recording_folder, start_time)
 
     def stop_recording(self):
         super().stop_recording()
         with self.lock:
-            self.colorwriter.release()
-            self.depthwriter.release()
+            if self.colorwriter is not None:
+                self.colorwriter.release()
+            if self.depthwriter is not None:
+                self.depthwriter.release()
 
     def record(self, data):
         super().record(data)
         if self.recording:
             # write the images
-            self.colorwriter.write(self.color_image)
-            self.depthwriter.write(self.depth_colormap)
+            if self.colorwriter is not None:
+                self.colorwriter.write(self.color_image)
+            if self.depthwriter is not None:
+                self.depthwriter.write(self.depth_colormap)
 
     def shutdown(self):
         super().shutdown()
