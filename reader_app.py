@@ -37,7 +37,7 @@ app.layout = html.Div(
                                         dcc.Dropdown(id='exp_folder',
                                                      options=[{'label': key, 'value': path} for key, path in reader.get_experiment_list(data_folder).items()]),
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=200, # 25 fps in milliseconds
+                                                    interval=300, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.Store(id='selected_exp'),
@@ -79,8 +79,10 @@ app.layout = html.Div(
 
                                   ),
                                  html.Div(className='graphs',
-                                         children=[dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False)])
-                                ]
+                                         children=[dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False)])
+                                ],
+                             
+
                              ),
                       html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
@@ -196,7 +198,9 @@ def select_frame(selected_percentage, selected_exp):
   emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
-  return start_index, stop_index, emg_start_index, emg_stop_index, start_index, opt_start_index, opt_stop_index
+  print('n_intervals should be reset')
+
+  return start_index, stop_index, emg_start_index, emg_stop_index, 0, opt_start_index, opt_stop_index
 
 
 @app.callback([Output('current_emg_start', 'data'),
@@ -242,11 +246,18 @@ def on_click(n_intervals, limits, step, selected_exp):
   if selected_exp is None:
     return 0, 0 ,0
   d = limits[1] - limits[0]
-  selected_percentage = ((n_intervals * step - limits[0]) % d + d) % d + limits[0]
+
+  print(limits[0])
+
+  selected_percentage = n_intervals * step + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
+  print('selected selected_percentage\n')
+  print(selected_percentage)
 
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
+
+  print(selected_emg_frame)
   return selected_frame, selected_emg_frame, selected_opt_frame
 
 
@@ -300,48 +311,122 @@ def update_depth_image_src(selected_frame, selected_exp):
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
               [Input('selected_emg_frame', 'data'),
-               Input('current_emg_start', 'data'),
-               Input('current_emg_stop', 'data')],
+               Input('emg_start_index', 'data'),
+               Input('emg_stop_index', 'data')],
               [State('selected_exp', 'data')])
-def emg_graph(selected_frame, current_emg_start, current_emg_stop, selected_exp):
-    emg_data = reader.data["emg"].iloc[current_emg_start:current_emg_stop+1]
-    trace1 = []
-    emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
+def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
+
+
+
+    print('emg bail')
+    figure = go.Figure()
+    
+
+    
+    print(emg_start_index)
+    print(emg_stop_index)
+
+    data_fraction=reader.data["emg"][0:-1:1000]
+
+    #print(data_fraction)
+    
+    emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) -2)]
+
+
     for i, emg in enumerate(emg_labels):
-        trace1.append(go.Scatter(x=emg_data["relative_time"],
-                                 y=emg_data["emg" + str(i)],
+         figure.add_trace(go.Scatter(x=data_fraction["relative_time"],
+                                 y=data_fraction["emg" + str(i)],
                                  mode='lines',
                                  opacity=0.7,
                                  name=emg,
                                  textposition='bottom center'))
 
-    time = reader.data["emg"].iloc[selected_frame]["relative_time"]
+    #print('qprs on est la') 
 
-    trace1.append(go.Scatter(x=[time, time],
-                             y=[-800, 800],
+    print(selected_frame)
+         
+    time = reader.data["emg"].iloc[selected_frame,1]
+
+    print('time')
+    print(time)
+    print('\n')
+   
+
+    y_max=data_fraction.iloc[:,2:].max().max()
+    y_min=data_fraction.iloc[:,2:].min().min()
+
+
+    x_min=data_fraction.iloc[0,1]
+    x_max=data_fraction.iloc[-1,1]
+
+    #print(data_fraction["relative_time"])
+    #print(data_fraction["emg" + str(i)])
+    
+    #print(y_max)
+    #current frame printing
+
+
+    #print('puis on enfin est la')
+    figure.add_trace(go.Scatter(x=[time, time],
+                             y=[y_min, y_max],
                              mode='lines',
                              opacity=0.7,
+
                              name="current frame",
-                             textposition='bottom center'))
-    traces = [trace1]
+                             textposition='bottom center',
+                             line=dict(
+                              
+                              width=5),
 
-    data = [val for sublist in traces for val in sublist]
+                             ))
 
 
-    figure = {'data': data,
-              'layout': go.Layout(
-                  colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
-                  template='plotly_dark',
-                  paper_bgcolor='rgba(0, 0, 0, 0)',
-                  plot_bgcolor='rgba(0, 0, 0, 0)',
-                  margin={'b': 15},
-                  hovermode='x',
-                  autosize=True,
-                  title={'text': 'EMG signals', 'font': {'color': 'white'}, 'x': 0.5},
-                  xaxis={'range': [emg_data["relative_time"].iloc[0], emg_data["relative_time"].iloc[-1]]},
-              ),
+    #figure.add_trace(go.Bar(
+    #                        x=months,
+    #                        y=[20, 14, 25, 16, 18, 22, 19, 15, 12, 16, 14, 17],
+    #                        name='Primary Product',
+    #                        marker_color='indianred'
+    #                        ))  
+    print('emg_index')
+    print(emg_stop_index)
+    print(emg_start_index)
 
-              }
+
+
+
+    x_start=reader.data["emg"].iloc[emg_start_index,1]
+    x_end=reader.data["emg"].iloc[emg_stop_index,1]
+
+
+    print(x_start)
+    print(x_end)
+    figure.add_trace(go.Bar(
+                                x=[int((x_end+x_start)/2)],
+                                y=[y_max-y_min],
+                                base=y_min,
+                                width= x_end-x_start,# customize width here
+                                opacity=0.3,
+                                marker_color='rgb(100, 118, 255)'
+                            ))
+    
+    figure.update_layout(
+          colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
+          template='plotly_dark',
+          paper_bgcolor='rgba(0, 0, 0, 0)',
+          plot_bgcolor='rgba(0, 0, 0, 0)',
+          margin={'b': 15},
+          hovermode='x',
+          autosize=True,
+          title={'text': 'EMG signals', 'font': {'color': 'white'}, 'x': 0.5},
+          xaxis={'range': [x_min, x_max]},
+          yaxis={'range': [y_min, y_max], 'nticks': 5},
+          uirevision='true',
+    )
+     
+
+
+ 
+              
 
     return figure
 
@@ -416,6 +501,7 @@ def opt_graph(selected_frame, selected_exp):
     fig.update_layout(
                         scene = dict(
                           xaxis = dict(
+
                                backgroundcolor="rgb(200, 200, 230)",
                                gridcolor="white",
                                showbackground=True,
@@ -423,6 +509,7 @@ def opt_graph(selected_frame, selected_exp):
                                nticks=10,
                                range=[min(min_x)-0.5,max(max_x)+0.5]),
                           yaxis = dict(
+                              
                               backgroundcolor="rgb(230, 200,230)",
                               gridcolor="white",
                               showbackground=True,
@@ -430,22 +517,28 @@ def opt_graph(selected_frame, selected_exp):
                               nticks=10,
                               range=[min(min_y)-0.5,max(max_y)+0.5]),
                           zaxis = dict(
+                             
                               backgroundcolor="rgb(230, 230,200)",
                               gridcolor="white",
                               showbackground=True,
                               zerolinecolor="white",
-                               nticks=10,
-                               range=[min(min_z)-0.5,max(max_z)+0.5]),
+                              nticks=10,
+                              range=[min(min_z)-0.5,max(max_z)+0.5]),
+                         
                           xaxis_title='X AXIS ',
                           yaxis_title='Y AXIS ',
                           zaxis_title='Z AXIS '),
-                        width=450,
-                        margin=dict(r=20, b=100, l=10, t=50),
+                        autosize=True,
+                        
+
+                        margin=dict(r=20, b=100, l=0, t=100),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',
                         paper_bgcolor='rgba(0, 0, 0, 0)',
                         template='plotly_dark',
-                        scene_aspectmode='cube'
+                        scene_aspectmode='cube',
+                        uirevision='true',
+                        
                       )
     return fig
 
