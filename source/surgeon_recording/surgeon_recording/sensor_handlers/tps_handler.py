@@ -1,5 +1,6 @@
 import zmq
 import time
+import numpy as np
 from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
 class TPSHandler(SensorHandler):
@@ -30,7 +31,7 @@ class TPSHandler(SensorHandler):
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
         if not self.simulate:
             topic = self.data_socket.recv_string()
-            tmp = [float(x) for x in self.data_socket.recv_string().split(",")[:-1]]
+            tmp = np.array([float(x) for x in self.data_socket.recv_string().split(",")[:-1]])
         else:
             tmp = self.generate_fake_data(12)
         for v in tmp[self.selected_fingers]:
