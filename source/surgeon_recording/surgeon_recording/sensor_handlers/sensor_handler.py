@@ -89,6 +89,8 @@ class SensorHandler(object):
     def stop_recording(self):
         with self.lock:
             self.recording = False
+            self.index = 0
+            self.start_time = start_time
             self.writer['file'].close()
 
     def record(self, data):
