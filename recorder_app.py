@@ -31,11 +31,11 @@ app.layout = html.Div(
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Interval(id='emg-stepper',
-                                                    interval=200, # 25 fps in milliseconds
+                                                    interval=400, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                         dcc.Interval(id='image-stepper',
-                                                    interval=100, # 25 fps in milliseconds
+                                                    interval=200, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
                                      ],
@@ -47,7 +47,9 @@ app.layout = html.Div(
                                       html.Button('Record', id='btn-record', n_clicks=0),
                                       html.Button('Stop', id='btn-stop', n_clicks=0),
                                       html.Div(id='output_text', children='Not recording')]
-                                  )
+                                  ),
+                                 html.Div(className='graphs',
+                                         children=[dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False)])
                                 ]
                              ),
                       html.Div(className='nine columns div-for-charts bg-grey',
@@ -126,6 +128,75 @@ def emg_graph(step):
               }
 
     return figure
+
+# Callback for opt price
+@app.callback(Output('opt', 'figure'),
+              [Input('emg-stepper', 'n_intervals')])
+def opt_graph(step):
+    opt_data = recorder.get_buffered_data("optitrack")
+    header=list(opt_data.columns)[2:]
+    nb_frames=int(len(header)/7)
+    names=[]
+    for i in range(nb_frames):
+      names.append(header[i*7].replace('_x', ''))
+    opt_labels = names
+
+    fig = go.Figure()
+      #5 frame centered on current frame
+    for i, opt in enumerate(opt_labels):
+      multiplier0=str(i*100)
+      multiplier1=str(100-i*50)
+      multiplier2=str(50+i*25)
+
+      #current frame
+      fig.add_trace(go.Scatter3d(
+          x=[opt_data[names[i]+"_x"].iloc[-1]],
+          y=[opt_data[names[i]+"_y"].iloc[-1]],
+          z=[opt_data[names[i]+"_z"].iloc[-1]],
+          name="current "+opt,
+          mode='markers',
+          showlegend = True,
+          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
+          marker=dict(
+              size=20,
+              opacity=1)
+          ))
+
+    fig.update_layout(
+                        scene = dict(
+                          xaxis = dict(
+                               backgroundcolor="rgb(200, 200, 230)",
+                               gridcolor="white",
+                               showbackground=True,
+                               zerolinecolor="white",
+                               nticks=10,
+                               range=[-3,3]),
+                          yaxis = dict(
+                              backgroundcolor="rgb(230, 200,230)",
+                              gridcolor="white",
+                              showbackground=True,
+                              zerolinecolor="white",
+                              nticks=10,
+                              range=[-3,3]),
+                          zaxis = dict(
+                              backgroundcolor="rgb(230, 230,200)",
+                              gridcolor="white",
+                              showbackground=True,
+                              zerolinecolor="white",
+                               nticks=10,
+                               range=[-3,3]),
+                          xaxis_title='X AXIS ',
+                          yaxis_title='Y AXIS ',
+                          zaxis_title='Z AXIS '),
+                        width=450,
+                        margin=dict(r=20, b=100, l=10, t=50),
+                        title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
+                        hovermode='x',
+                        paper_bgcolor='rgba(0, 0, 0, 0)',
+                        template='plotly_dark',
+                        scene_aspectmode='cube'
+                      )
+    return fig
 
 
 if __name__ == '__main__':
