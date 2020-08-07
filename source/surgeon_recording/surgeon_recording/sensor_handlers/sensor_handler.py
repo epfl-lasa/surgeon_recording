@@ -22,8 +22,9 @@ class SensorHandler(object):
         # socket for publisher
         context = zmq.Context()
         self.socket = context.socket(zmq.PUB)
+        self.socket.setsockopt(zmq.SNDHWM, 10)
+        self.socket.setsockopt(zmq.SNDBUF, 10*1024)
         self.socket.bind("tcp://%s:%s" % (ip, port))
-        self.socket.setsockopt(zmq.LINGER, 0)
         # socker for recorder server
         self.recorder_socket = context.socket(zmq.REP)
         self.recorder_socket.bind("tcp://%s:%s" % (ip, port + 1))
