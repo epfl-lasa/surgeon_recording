@@ -81,30 +81,42 @@ app.layout = html.Div(
                                       html.P('Export'),
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
-                                      html.Div(id='output_text')]
+                                      html.Div(id='output_text')],
+                                      style={'padding-bottom': 65}
                                   ),
                                 
                                  html.Div(className='graphs',
-                                         children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)])
+                                         children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)],
+                                         style={'padding-top': 0}
+
+                                         )
+
+
                                 ],
-                             
+                                #style={'margin-right': 2}
 
                             ),
                     html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
                                 html.Div(className='images',
-                                         children=[ html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block'}),
-                                                    dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False, style={'display': 'inline-block'})],
-
+                                         children=[ html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px' }),
+                                                    dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False, style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px'})],
+                                         style={'left-padding': 200}
                                         
                                          ),
                               
 
                                 html.Div(className='graphs',
-                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)]),
+                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False,  style={'margin-left': '10px'})],
+                                         
+
+                                         ),
+
 
                           
-                               ])
+                               ],
+                              style={'right-padding': '200px'}
+                               )
 
 
 
@@ -386,7 +398,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
     figure.update_layout(
           colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
           template='plotly_dark',
-          paper_bgcolor='rgba(0, 0, 0, 0)',
+          paper_bgcolor='rgba(0, 0, 10, 0.3)',
           plot_bgcolor='rgba(0, 0, 0, 0)',
           margin={'b': 15},
           hovermode='x',
@@ -422,9 +434,10 @@ def opt_graph(selected_frame, selected_exp):
 
     fig = go.Figure()
     for i, opt in enumerate(opt_labels):
-      multiplier0=str(i*100)
-      multiplier1=str(100-i*50)
-      multiplier2=str(50+i*25)
+      multiplier0=str(100+i*50)
+      multiplier1=str(118+i*30)
+      multiplier2=str(255-i*100)
+      
     
       fig.add_trace(go.Scatter3d(
           x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
@@ -434,7 +447,7 @@ def opt_graph(selected_frame, selected_exp):
           marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
              
           marker=dict(
-              size=[5, 8, 11, 14,17 ], 
+              size=[3, 5, 8, 10,12 ], 
               opacity=0.5)
           ))
 
@@ -448,8 +461,8 @@ def opt_graph(selected_frame, selected_exp):
           marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
          
           marker=dict(
-              size=20,
-              opacity=1)
+              size=15,
+              opacity=0.8)
           ))
 
     max_x = [0] * nb_frames
@@ -504,7 +517,7 @@ def opt_graph(selected_frame, selected_exp):
                         margin=dict(r=0, b=10, l=0, t=80),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',
-                        paper_bgcolor='rgba(0, 0, 0, 0)',
+                        paper_bgcolor='rgba(0, 0, 10, 0)',
                         template='plotly_dark',
                         scene_aspectmode='cube',
                         uirevision='true',
@@ -525,7 +538,8 @@ def tps_graph(selected_frame, selected_exp):
 
     fig = go.Figure( [go.Bar(x=header, 
                              y=frame_df,
-                             marker_color='rgb(50,50,100)',
+                             marker_color='rgb(100, 118, 255)',
+                             opacity=0.3,
                              textposition='auto',   )])
 
     y_max=reader.data['tps'].iloc[:,2:].max().max()
@@ -548,7 +562,7 @@ def tps_graph(selected_frame, selected_exp):
        
         bargap=0.15, # gap between bars of adjacent location coordinates.
         template='plotly_dark',
-        paper_bgcolor='rgba(0, 50, 0, 0)',
+        paper_bgcolor='rgba(150, 150 , 200, 0.1)',
         plot_bgcolor='rgba(0, 0, 0, 0)',
         hovermode='x',
         autosize=True,
