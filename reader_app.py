@@ -519,12 +519,9 @@ def opt_graph(selected_frame, selected_exp):
 @app.callback(Output('tps', 'figure'),
               [Input('selected_tps_frame', 'data')],
               [State('selected_exp', 'data')])
-def opt_graph(selected_frame, selected_exp):
-
-
+def tps_graph(selected_frame, selected_exp):
     frame_df=reader.data['tps'].iloc[selected_frame,2:]
     header=list(reader.data['tps'].columns)[2:]   
-    nb_frames=int(len(header)/7)
 
     fig = go.Figure( [go.Bar(x=header, 
                              y=frame_df,
