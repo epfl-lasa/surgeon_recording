@@ -49,14 +49,14 @@ app.layout = html.Div(
                                       html.Div(id='output_text', children='Not recording')]
                                   ),
                                  html.Div(className='graphs',
-                                         children=[dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False)])
+                                         children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)])
                                 ]
                              ),
                       html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
                                 html.Div(className='images',
-                                         children=[html.Img(id='rgb_image', height="480", width="640"),
-                                                   html.Img(id='depth_image', height="480", width="640")]
+                                         children=[html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block'}),
+                                                   dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False, style={'display': 'inline-block'})]
                                 ),
                                 html.Div(className='graphs',
                                          children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)])
@@ -196,6 +196,48 @@ def opt_graph(step):
                         template='plotly_dark',
                         scene_aspectmode='cube'
                       )
+    return fig
+
+    # Callback for tps price
+@app.callback(Output('tps', 'figure'),
+              [Input('emg-stepper', 'n_intervals')])
+def tps_graph(step):
+    tps_data = recorder.get_buffered_data("tps")
+    header=list(tps_data.columns)[2:]
+    fig = go.Figure( [go.Bar(x=header,
+                             y=tps_data.iloc[-1, 2:],
+                             marker_color='rgb(50,50,100)',
+                             textposition='auto',   )])
+
+    y_max=12000
+
+    fig.update_layout(
+        xaxis_tickfont_size=14,
+        yaxis=dict(
+            title='Y axis',
+            titlefont_size=16,
+            tickfont_size=14,
+            range=[0,y_max],
+        ),
+        legend=dict(
+            x=0,
+            y=1.0,
+            bgcolor='rgba(255, 255, 255, 0)',
+            bordercolor='rgba(255, 255, 255, 0)'
+        ),
+       
+        bargap=0.15, # gap between bars of adjacent location coordinates.
+        template='plotly_dark',
+        paper_bgcolor='rgba(0, 50, 0, 0)',
+        plot_bgcolor='rgba(0, 0, 0, 0)',
+        hovermode='x',
+        autosize=True,
+        title={'text': 'TPS signals', 'font': {'color': 'white'}, 'x': 0.5},
+        uirevision='true',
+    )
+
+
+
     return fig
 
 
