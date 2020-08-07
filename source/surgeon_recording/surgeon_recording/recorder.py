@@ -67,19 +67,21 @@ class Recorder(object):
             os.makedirs(self.exp_folder)    
 
     def init_sensor(self, sensor_name):
-        ip = self.parameters[sensor_name]["streaming_ip"]
+        ip = self.parameters[sensor_name]["streaming_ip"] if self.parameters[sensor_name]["streaming_ip"] != "*" else "127.0.0.1"
         port = self.parameters[sensor_name]["streaming_port"]
 
         context = zmq.Context()
         self.sensor_sockets[sensor_name] = context.socket(zmq.SUB)
-        self.sensor_sockets[sensor_name].connect("tcp://%s:%s" % (ip, port))
         for t in self.topics[sensor_name]:
-            self.sensor_sockets[sensor_name].setsockopt(zmq.SUBSCRIBE, str.encode(t))
+            self.sensor_sockets[sensor_name].subscribe(str.encode(t))
+        self.sensor_sockets[sensor_name].setsockopt(zmq.SNDHWM, 10)
+        self.sensor_sockets[sensor_name].setsockopt(zmq.SNDBUF, 10*1024)
+        self.sensor_sockets[sensor_name].connect("tcp://%s:%s" % (ip, port))
 
         context = zmq.Context()
-        socket_camera_recorder = context.socket(zmq.REQ)
-        socket_camera_recorder.connect("tcp://%s:%s" % (ip, port + 1))
-        self.recorder_sockets[sensor_name] = socket_camera_recorder
+        socket_recorder = context.socket(zmq.REQ)
+        socket_recorder.connect("tcp://%s:%s" % (ip, port + 1))
+        self.recorder_sockets[sensor_name] = socket_recorder
 
     def get_camera_data(self):
         while not self.stop_event.is_set():
