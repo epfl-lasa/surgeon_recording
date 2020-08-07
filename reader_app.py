@@ -57,6 +57,13 @@ app.layout = html.Div(
                                         dcc.Store(id='current_opt_start'),
                                         dcc.Store(id='current_opt_stop'),
 
+                                        dcc.Store(id='selected_tps_frame'),
+                                        dcc.Store(id='tps_start_index'),
+                                        dcc.Store(id='tps_stop_index'),
+                                        dcc.Store(id='current_tps_start'),
+                                        dcc.Store(id='current_tps_stop'),
+
+
                                         dcc.Store(id='window_size', data=2000)
                                      ],
                                      style={'color': '#1E1E1E'}),
@@ -75,29 +82,37 @@ app.layout = html.Div(
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
                                       html.Div(id='output_text')]
-
-
                                   ),
+                                
                                  html.Div(className='graphs',
-                                         children=[dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False)])
+                                         children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)])
                                 ],
                              
 
-                             ),
-                      html.Div(className='nine columns div-for-charts bg-grey',
+                            ),
+                    html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
                                 html.Div(className='images',
-                                         children=[html.Img(id='rgb_image', height="480", width="640"),
-                                                   html.Img(id='depth_image', height="480", width="640")]),
+                                         children=[ html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block'}),
+                                                    dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False, style={'display': 'inline-block'})],
+
+                                        
+                                         ),
+                              
+
                                 html.Div(className='graphs',
                                          children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)]),
 
-                                #html.Div(className='graphs',
-                                 #        children=[dcc.Graph(id='optitrack', config={'displayModeBar': False}, animate=False)]),
-                                #html.Div(className='graphs',
-                                #         children=[dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False)])
-
+                          
                                ])
+
+
+
+
+
+
+
+
                  ])
         ]
 
@@ -183,14 +198,18 @@ def export(n_clicks, value, start_index, stop_index, selected_exp):
                Output('auto-stepper', 'n_intervals'),
 
                Output('opt_start_index', 'data'),
-               Output('opt_stop_index', 'data')
+               Output('opt_stop_index', 'data'),
+
+               Output('tps_start_index', 'data'),
+               Output('tps_stop_index', 'data') 
+
                ],
 
               [Input('slider_frame', 'value'),
                Input('selected_exp', 'data')])
 def select_frame(selected_percentage, selected_exp):
   if selected_exp is None:
-    return 0, 0, 0, 0, 0, 0, 0
+    return 0, 0, 0, 0, 0, 0, 0,0 ,0
   start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
   stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
 
@@ -198,10 +217,12 @@ def select_frame(selected_percentage, selected_exp):
   emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
-  print('n_intervals should be reset')
 
-  return start_index, stop_index, emg_start_index, emg_stop_index, 0, opt_start_index, opt_stop_index
+  tps_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
+  tps_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
 
+  return start_index, stop_index, emg_start_index, emg_stop_index, 0, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index
+ 
 
 @app.callback([Output('current_emg_start', 'data'),
                Output('current_emg_stop', 'data')
@@ -237,7 +258,8 @@ def select_emg_frame(selected_frame, start_index, stop_index, window_size, selec
 
 @app.callback([Output('selected_frame', 'data'),
                Output('selected_emg_frame', 'data'),
-               Output('selected_opt_frame', 'data')],
+               Output('selected_opt_frame', 'data'),
+               Output('selected_tps_frame', 'data')],
               [Input('auto-stepper', 'n_intervals'),
                Input('slider_frame', 'value'),
                Input('slider_frame', 'step')],
@@ -247,18 +269,16 @@ def on_click(n_intervals, limits, step, selected_exp):
     return 0, 0 ,0
   d = limits[1] - limits[0]
 
-  print(limits[0])
 
   selected_percentage = n_intervals * step + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
-  print('selected selected_percentage\n')
-  print(selected_percentage)
+
 
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
+  selected_tps_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("tps") - 1))
 
-  print(selected_emg_frame)
-  return selected_frame, selected_emg_frame, selected_opt_frame
+  return selected_frame, selected_emg_frame, selected_opt_frame, selected_tps_frame
 
 
 # @app.callback(Output('3d-scatter', 'children'),
@@ -317,18 +337,10 @@ def update_depth_image_src(selected_frame, selected_exp):
 def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
 
 
-
-    print('emg bail')
     figure = go.Figure()
-    
-
-    
-    print(emg_start_index)
-    print(emg_stop_index)
 
     data_fraction=reader.data["emg"][0:-1:1000]
 
-    #print(data_fraction)
     
     emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) -2)]
 
@@ -341,72 +353,39 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
                                  name=emg,
                                  textposition='bottom center'))
 
-    #print('qprs on est la') 
 
-    print(selected_frame)
          
     time = reader.data["emg"].iloc[selected_frame,1]
 
-    print('time')
-    print(time)
-    print('\n')
-   
-
+    #  =>2 pour exclure les deux premiere colones
     y_max=data_fraction.iloc[:,2:].max().max()
     y_min=data_fraction.iloc[:,2:].min().min()
-
 
     x_min=data_fraction.iloc[0,1]
     x_max=data_fraction.iloc[-1,1]
 
-    #print(data_fraction["relative_time"])
-    #print(data_fraction["emg" + str(i)])
-    
-    #print(y_max)
-    #current frame printing
-
-
-    #print('puis on enfin est la')
     figure.add_trace(go.Scatter(x=[time, time],
                              y=[y_min, y_max],
                              mode='lines',
                              opacity=0.7,
-
                              name="current frame",
                              textposition='bottom center',
-                             line=dict(
-                              
+                             line=dict(                             
                               width=5),
-
                              ))
 
 
-    #figure.add_trace(go.Bar(
-    #                        x=months,
-    #                        y=[20, 14, 25, 16, 18, 22, 19, 15, 12, 16, 14, 17],
-    #                        name='Primary Product',
-    #                        marker_color='indianred'
-    #                        ))  
-    print('emg_index')
-    print(emg_stop_index)
-    print(emg_start_index)
-
-
-
-
+    #this is for the selction rectangle
     x_start=reader.data["emg"].iloc[emg_start_index,1]
     x_end=reader.data["emg"].iloc[emg_stop_index,1]
 
 
-    print(x_start)
-    print(x_end)
-    figure.add_trace(go.Bar(
-                                x=[int((x_end+x_start)/2)],
-                                y=[y_max-y_min],
-                                base=y_min,
-                                width= x_end-x_start,# customize width here
-                                opacity=0.3,
-                                marker_color='rgb(100, 118, 255)'
+    figure.add_trace(go.Bar(x=[int((x_end+x_start)/2)],
+                            y=[y_max-y_min],
+                            base=y_min,
+                            width= x_end-x_start,# customize width here
+                            opacity=0.3,
+                            marker_color='rgb(100, 118, 255)'
                             ))
     
     figure.update_layout(
@@ -422,11 +401,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
           yaxis={'range': [y_min, y_max], 'nticks': 5},
           uirevision='true',
     )
-     
-
-
- 
-              
+        
 
     return figure
 
@@ -438,7 +413,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
               [State('selected_exp', 'data')])
 def opt_graph(selected_frame, selected_exp):
     range_frame=3
-    selected_frame=selected_frame+3
+    #selected_frame=selected_frame+3
 
     opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame-1]
     header=list(opt_data.columns)[2:]
@@ -528,10 +503,10 @@ def opt_graph(selected_frame, selected_exp):
                           xaxis_title='X AXIS ',
                           yaxis_title='Y AXIS ',
                           zaxis_title='Z AXIS '),
-                        autosize=True,
-                        
+                        #autosize=True,
+                        width=600,
 
-                        margin=dict(r=20, b=100, l=0, t=100),
+                        margin=dict(r=0, b=10, l=0, t=80),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',
                         paper_bgcolor='rgba(0, 0, 0, 0)',
@@ -540,6 +515,57 @@ def opt_graph(selected_frame, selected_exp):
                         uirevision='true',
                         
                       )
+    return fig
+
+
+
+
+    # Callback for tps price
+@app.callback(Output('tps', 'figure'),
+              [Input('selected_tps_frame', 'data')],
+              [State('selected_exp', 'data')])
+def opt_graph(selected_frame, selected_exp):
+
+
+    frame_df=reader.data['tps'].iloc[selected_frame,2:]
+    header=list(reader.data['tps'].columns)[2:]   
+    nb_frames=int(len(header)/7)
+
+    fig = go.Figure( [go.Bar(x=header, 
+                             y=frame_df,
+                             marker_color='rgb(50,50,100)',
+                             textposition='auto',   )])
+
+    y_max=reader.data['tps'].iloc[:,2:].max().max()
+
+    fig.update_layout(
+       
+        xaxis_tickfont_size=14,
+        yaxis=dict(
+            title='Y axis',
+            titlefont_size=16,
+            tickfont_size=14,
+            range=[0,y_max],
+        ),
+        legend=dict(
+            x=0,
+            y=1.0,
+            bgcolor='rgba(255, 255, 255, 0)',
+            bordercolor='rgba(255, 255, 255, 0)'
+        ),
+       
+        bargap=0.15, # gap between bars of adjacent location coordinates.
+        template='plotly_dark',
+        paper_bgcolor='rgba(0, 50, 0, 0)',
+        plot_bgcolor='rgba(0, 0, 0, 0)',
+        hovermode='x',
+        autosize=True,
+        title={'text': 'TPS signals', 'font': {'color': 'white'}, 'x': 0.5},
+        uirevision='true',
+    )
+
+
+
     return fig
 
 

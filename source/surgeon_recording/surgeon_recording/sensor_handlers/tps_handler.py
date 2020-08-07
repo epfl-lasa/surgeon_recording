@@ -1,5 +1,6 @@
 import zmq
 import time
+import numpy as np
 from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
 class TPSHandler(SensorHandler):
@@ -8,6 +9,7 @@ class TPSHandler(SensorHandler):
         ip = parameters["sensor_ip"]
         port = parameters["sensor_port"]
         self.simulate = parameters["simulate"]
+        self.selected_fingers = [f["streaming_id"] for f in parameters["fingers"]]
 
         # socket for receiving sensor data
         print("socket initializing")
@@ -21,7 +23,7 @@ class TPSHandler(SensorHandler):
     def get_parameters():
         parameters = SensorHandler.read_config_file()
         param = parameters['tps']
-        param.update({ 'header': ["tps" + str(i) for i in range(param["nb_adapters"] * 6)] })
+        param.update({ 'header': [f["label"] for f in param["fingers"]] })
         return param
 
     def acquire_data(self):
@@ -29,10 +31,10 @@ class TPSHandler(SensorHandler):
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
         if not self.simulate:
             topic = self.data_socket.recv_string()
-            tmp = [float(x) for x in self.data_socket.recv_string().split(",")[:-1]]
+            tmp = np.array([float(x) for x in self.data_socket.recv_string().split(",")[:-1]])
         else:
             tmp = self.generate_fake_data(12)
-        for v in tmp:
+        for v in tmp[self.selected_fingers]:
                 data.append(v)
         self.index = data[0]
         return data

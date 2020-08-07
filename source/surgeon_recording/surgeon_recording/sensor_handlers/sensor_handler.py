@@ -47,8 +47,9 @@ class SensorHandler(object):
         return []
 
     def send_data(self, topic, data):
-        self.socket.send_string(topic, zmq.SNDMORE)
-        self.socket.send_pyobj(data)
+        if len(data) > 0:
+            self.socket.send_string(topic, zmq.SNDMORE)
+            self.socket.send_pyobj(data)
 
     @staticmethod
     def receive_data(socket):
