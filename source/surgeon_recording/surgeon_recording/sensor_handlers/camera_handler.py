@@ -85,6 +85,8 @@ class CameraHandler(SensorHandler):
 
     def setup_recording(self, recording_folder, start_time):
         with self.lock:
+            if not os.path.exists(recording_folder):
+                os.makedirs(recording_folder)
             color_path = join(recording_folder, 'rgb.avi')
             depth_path = join(recording_folder, 'depth.avi')
             self.colorwriter = cv2.VideoWriter(color_path, cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)

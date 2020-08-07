@@ -70,6 +70,11 @@ class EMGHandler(SensorHandler):
             self.emg_data = []
         super().setup_recording(recording_folder, start_time)
 
+    def stop_recording(self):
+        super().stop_recording
+        with self.lock:
+            self.emg_data = []
+
     def shutdown(self):
         super().shutdown()
         if not self.simulate and self.emg_init:
