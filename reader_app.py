@@ -73,7 +73,14 @@ app.layout = html.Div(
                                   min=0,
                                   max=100,
                                   step=0.1,
-                                  value=[0.,100.]
+                                  value=[0.,100.],
+                                  marks={
+                                      0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
+                                      50: {'label': '50', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
+                                      100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
+                                  },
                                   ),
                                  html.Div(
                                      className="buttons-bar",
@@ -273,7 +280,7 @@ def select_emg_frame(selected_frame, start_index, stop_index, window_size, selec
               [State('selected_exp', 'data')])
 def on_click(n_intervals, limits, step, selected_exp):
   if selected_exp is None:
-    return 0, 0 ,0
+    return 0, 0 ,0, 0
   d = limits[1] - limits[0]
 
 
@@ -320,15 +327,17 @@ def update_rgb_image_src(selected_frame, selected_exp):
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
-@app.callback(Output('depth_image', 'src'),
-              [Input('selected_frame', 'data')],
-              [State('selected_exp', 'data')])
-def update_depth_image_src(selected_frame, selected_exp):
-    if selected_exp is None:
-      return
-    image = reader.get_image("depth", selected_frame)
-    encoded_image = base64.b64encode(image)
-    return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
+#callbackfordepth
+
+#@app.callback(Output('depth_image', 'src'),
+#              [Input('selected_frame', 'data')],
+#              [State('selected_exp', 'data')])
+#def update_depth_image_src(selected_frame, selected_exp):
+#    if selected_exp is None:
+#      return
+#    image = reader.get_image("depth", selected_frame)
+#    encoded_image = base64.b64encode(image)
+#    return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 
 
@@ -342,6 +351,10 @@ def update_depth_image_src(selected_frame, selected_exp):
                Input('emg_stop_index', 'data')],
               [State('selected_exp', 'data')])
 def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
+   # if selected_exp is None:
+    #   return 0
+    if selected_exp is None:
+        return go.Figure()
 
 
     figure = go.Figure()
@@ -392,7 +405,8 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
                             base=y_min,
                             width= x_end-x_start,# customize width here
                             opacity=0.3,
-                            marker_color='rgb(100, 118, 255)'
+                            marker_color='rgb(100, 118, 255)',
+                            showlegend=False
                             ))
     
     figure.update_layout(
@@ -405,7 +419,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
           autosize=True,
           title={'text': 'EMG signals', 'font': {'color': 'white'}, 'x': 0.5},
           xaxis={'range': [x_min, x_max]},
-          yaxis={'range': [y_min, y_max], 'nticks': 5},
+          yaxis={'range': [y_min, y_max], 'nticks': 10},
           uirevision='true',
     )
         
@@ -419,6 +433,14 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
               [Input('selected_opt_frame', 'data')],
               [State('selected_exp', 'data')])
 def opt_graph(selected_frame, selected_exp):
+
+    if selected_exp is None:
+        return go.Figure()
+
+    print(selected_exp)
+    #if selected_exp is None:
+    #  print(selected_exp)
+    #  return 0
     range_frame=3
     #selected_frame=selected_frame+3
 
@@ -533,6 +555,10 @@ def opt_graph(selected_frame, selected_exp):
               [Input('selected_tps_frame', 'data')],
               [State('selected_exp', 'data')])
 def tps_graph(selected_frame, selected_exp):
+    if selected_exp is None:
+        return go.Figure()
+
+
     frame_df=reader.data['tps'].iloc[selected_frame,2:]
     header=list(reader.data['tps'].columns)[2:]   
 
