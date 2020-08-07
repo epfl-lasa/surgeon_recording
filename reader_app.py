@@ -108,11 +108,6 @@ app.layout = html.Div(
 
 
 
-
-
-
-
-
                  ])
         ]
 
