@@ -82,6 +82,21 @@ app.layout = html.Div(
                                       100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
                                   },
                                   ),
+                                 html.P('Playback speed selection'),
+                                 dcc.Slider(
+                                    id="speed_selector",
+                                    min=0,
+                                    max=2,
+                                    step=0.1,
+                                    value=1,
+                                    marks={
+                                        0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                        0.5: {'label': '0.5', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                        1: {'label': '1','style': {'color': 'rgb(200, 200, 255)'}},
+                                        1.5: {'label': '1.5', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                        2: {'label': '2','style': {'color': 'rgb(200, 200, 255)'}}
+                                    },
+                                  ),
                                  html.Div(
                                      className="buttons-bar",
                                      children=[
@@ -131,44 +146,6 @@ app.layout = html.Div(
         ]
 
 )
-
-
-
-
-'''
-@app.callback(
-    dash.dependencies.Output('crossfilter-indicator-scatter', 'figure'),
-    [dash.dependencies.Input('crossfilter-xaxis-column', 'value'),
-     dash.dependencies.Input('crossfilter-yaxis-column', 'value'),
-     dash.dependencies.Input('crossfilter-xaxis-type', 'value'),
-     dash.dependencies.Input('crossfilter-yaxis-type', 'value'),
-     dash.dependencies.Input('crossfilter-year--slider', 'value')])
-def update_graph(xaxis_column_name, yaxis_column_name,
-                 xaxis_type, yaxis_type,
-                 year_value):
-    dff = df[df['Year'] == year_value]
-
-    fig = px.scatter(x=dff[dff['Indicator Name'] == xaxis_column_name]['Value'],
-            y=dff[dff['Indicator Name'] == yaxis_column_name]['Value'],
-            hover_name=dff[dff['Indicator Name'] == yaxis_column_name]['Country Name']
-            )
-
-    fig.update_traces(customdata=dff[dff['Indicator Name'] == yaxis_column_name]['Country Name'])
-
-    fig.update_xaxes(title=xaxis_column_name, type='linear' if xaxis_type == 'Linear' else 'log')
-
-    fig.update_yaxes(title=yaxis_column_name, type='linear' if yaxis_type == 'Linear' else 'log')
-
-    fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0}, hovermode='closest')
-
-    return fig
-'''
-
-
-
-
-
-
 
 def handle_click(trace, points, selector):
     #c = list(f.data[0].marker.color)
@@ -256,35 +233,22 @@ def select_emg_frame(selected_frame, start_index, stop_index, window_size, selec
   return start, stop
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.callback([Output('selected_frame', 'data'),
                Output('selected_emg_frame', 'data'),
                Output('selected_opt_frame', 'data'),
                Output('selected_tps_frame', 'data')],
               [Input('auto-stepper', 'n_intervals'),
                Input('slider_frame', 'value'),
-               Input('slider_frame', 'step')],
+               Input('slider_frame', 'step'),
+               Input('speed_selector', 'value')],
               [State('selected_exp', 'data')])
-def on_click(n_intervals, limits, step, selected_exp):
+def on_click(n_intervals, limits, step, speed, selected_exp):
   if selected_exp is None:
     return 0, 0 ,0, 0
   d = limits[1] - limits[0]
 
-
-  selected_percentage = n_intervals * step + limits[0]
+  replay_speed = 3 * speed
+  selected_percentage = (replay_speed * (n_intervals * step - limits[0]) % d + d) % d + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
 
 
@@ -295,28 +259,6 @@ def on_click(n_intervals, limits, step, selected_exp):
   return selected_frame, selected_emg_frame, selected_opt_frame, selected_tps_frame
 
 
-# @app.callback(Output('3d-scatter', 'children'),
-#               [Input('frame_selector', 'value')])
-# def update_3d_scatter(selected_percentage):
-#   selected_frame = int(selected_percentage * reader.get_nb_frames())
-#     trace1 = []
-#     opt_data,_ = reader.get_frame(selected_frame, window_width=25)
-#     opt_labels = ["test"]
-#     for i, opt in enumerate(opt_labels):
-#         trace1.append(go.Scatter(x=emg_data["relative_time"],
-#                                  y=emg_data["emg" + str(i)],
-#                                  mode='lines',
-#                                  opacity=0.7,
-#                                  name=emg,
-#                                  textposition='bottom center'))
-#     traces = [trace1]    
-#     f = go.FigureWidget(px.scatter_3d(df, x = 'x_val', y = 'y_val', z = 'z_val', hover_name = 'company_nm'))
-
-#     f.layout.clickmode = 'event+select'
-#     f.data[0].on_click(handle_click) # if click, then update point/df.      
-
-#     return dcc.Graph(id = '3d_scat', figure=f)
-
 @app.callback(Output('rgb_image', 'src'),
               [Input('selected_frame', 'data')],
               [State('selected_exp', 'data')])
@@ -326,22 +268,6 @@ def update_rgb_image_src(selected_frame, selected_exp):
     image = reader.get_image("rgb", selected_frame)
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
-
-#callbackfordepth
-
-#@app.callback(Output('depth_image', 'src'),
-#              [Input('selected_frame', 'data')],
-#              [State('selected_exp', 'data')])
-#def update_depth_image_src(selected_frame, selected_exp):
-#    if selected_exp is None:
-#      return
-#    image = reader.get_image("depth", selected_frame)
-#    encoded_image = base64.b64encode(image)
-#    return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
-
-
-
-
 
 
 # Callback for timeseries price
@@ -436,13 +362,7 @@ def opt_graph(selected_frame, selected_exp):
 
     if selected_exp is None:
         return go.Figure()
-
-    print(selected_exp)
-    #if selected_exp is None:
-    #  print(selected_exp)
-    #  return 0
     range_frame=3
-    #selected_frame=selected_frame+3
 
     opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame-1]
     header=list(opt_data.columns)[2:]
