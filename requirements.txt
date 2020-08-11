@@ -4,3 +4,4 @@ dash
 zmq
 pandas
 opencv-python
+scikit-learn
