@@ -28,7 +28,7 @@ app.layout = html.Div(
                  children=[
                     html.Div(className='three columns div-user-controls',
                              children=[
-                                 html.H2('SURGEON RECORDING APP'),
+                                 html.H2('DATA VISUALISATION APP'),
                                  html.P('Experiment data selection'),
                                  html.Div(
 
