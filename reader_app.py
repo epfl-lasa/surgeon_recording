@@ -48,20 +48,14 @@ app.layout = html.Div(
                                         dcc.Store(id='selected_emg_frame'),
                                         dcc.Store(id='emg_start_index'),
                                         dcc.Store(id='emg_stop_index'),
-                                        dcc.Store(id='current_emg_start'),
-                                        dcc.Store(id='current_emg_stop'),
 
                                         dcc.Store(id='selected_opt_frame'),
                                         dcc.Store(id='opt_start_index'),
                                         dcc.Store(id='opt_stop_index'),
-                                        dcc.Store(id='current_opt_start'),
-                                        dcc.Store(id='current_opt_stop'),
 
                                         dcc.Store(id='selected_tps_frame'),
                                         dcc.Store(id='tps_start_index'),
                                         dcc.Store(id='tps_stop_index'),
-                                        dcc.Store(id='current_tps_start'),
-                                        dcc.Store(id='current_tps_stop'),
 
 
                                         dcc.Store(id='window_size', data=2000)
@@ -133,31 +127,13 @@ app.layout = html.Div(
                                          
 
                                          ),
-
-
-                          
                                ],
                               style={'right-padding': '200px'}
                                )
-
-
-
                  ])
         ]
 
 )
-
-def handle_click(trace, points, selector):
-    #c = list(f.data[0].marker.color)
-    #s = list(f.data[0].marker.size)
-    #for i in points.point_inds:
-    #    c[i] = '#bae2be'
-    #    s[i] = 20
-    #    with f.batch_update():
-    #        f.data[0].marker.color = c
-    #        f.data[0].marker.size = s
-    return 0 # f.data[0]
-
 
 @app.callback(Output('selected_exp', 'data'),
               [Input('exp_folder', 'value')])
@@ -172,13 +148,28 @@ def update_exp(path):
               [State('export_folder', 'value'),
                State('start_index', 'data'),
                State('stop_index', 'data'),
+               State('emg_start_index', 'data'),
+               State('emg_stop_index', 'data'),
+               State('opt_start_index', 'data'),
+               State('opt_stop_index', 'data'),
+               State('tps_start_index', 'data'),
+               State('tps_stop_index', 'data'),
                State('selected_exp', 'data')])
-def export(n_clicks, value, start_index, stop_index, selected_exp):
+def export(n_clicks, value, start_index, stop_index,
+           emg_start_index, emg_stop_index,
+           opt_start_index, opt_stop_index,
+           tps_start_index, tps_stop_index,
+           selected_exp):
     if selected_exp is None:
       return 'No data folder selected'
     if value is None:
       return 'Empty folder specified, please enter a valid name'
-    reader.export(value, start_index, stop_index)
+    sensor_indexes = {}
+    sensor_indexes["camera"] = [start_index, stop_index]
+    sensor_indexes["emg"] = [emg_start_index, emg_stop_index]
+    sensor_indexes["optitrack"] = [opt_start_index, opt_stop_index]
+    sensor_indexes["tps"] = [tps_start_index, tps_stop_index]
+    reader.export(value, sensor_indexes)
     return 'Sequence exported to {} folder'.format(value)
 
 
@@ -186,16 +177,11 @@ def export(n_clicks, value, start_index, stop_index, selected_exp):
                Output('stop_index', 'data'),
                Output('emg_start_index', 'data'),
                Output('emg_stop_index', 'data'),
-               Output('auto-stepper', 'n_intervals'),
-
                Output('opt_start_index', 'data'),
                Output('opt_stop_index', 'data'),
-
                Output('tps_start_index', 'data'),
-               Output('tps_stop_index', 'data') 
-
-               ],
-
+               Output('tps_stop_index', 'data'),
+               Output('auto-stepper', 'n_intervals')],
               [Input('slider_frame', 'value'),
                Input('selected_exp', 'data')])
 def select_frame(selected_percentage, selected_exp):
@@ -208,29 +194,9 @@ def select_frame(selected_percentage, selected_exp):
   emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
-
   tps_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
   tps_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
-
-  return start_index, stop_index, emg_start_index, emg_stop_index, 0, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index
- 
-
-@app.callback([Output('current_emg_start', 'data'),
-               Output('current_emg_stop', 'data')
-                
-              ],
-              [Input('selected_emg_frame', 'data'),
-               Input('emg_start_index', 'data'),
-               Input('emg_stop_index', 'data'),
-               Input('window_size', 'data')],
-              [State('selected_exp', 'data')])
-def select_emg_frame(selected_frame, start_index, stop_index, window_size, selected_exp):
-  if selected_exp is None:
-    return 0, 0
-  step = int(selected_frame / window_size)
-  start = step * window_size
-  stop = min((step + 1) * window_size, stop_index)
-  return start, stop
+  return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0
 
 
 @app.callback([Output('selected_frame', 'data'),
@@ -247,11 +213,9 @@ def on_click(n_intervals, limits, step, speed, selected_exp):
     return 0, 0 ,0, 0
   d = limits[1] - limits[0]
 
-  replay_speed = 3 * speed
-  selected_percentage = (replay_speed * (n_intervals * step - limits[0]) % d + d) % d + limits[0]
+  replay_speed = 25 * speed
+  selected_percentage = ((replay_speed * n_intervals * step - limits[0]) % d + d) % d + limits[0]
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
-
-
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   selected_tps_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("tps") - 1))
@@ -285,8 +249,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
 
     figure = go.Figure()
 
-    data_fraction=reader.data["emg"][0:-1:1000]
-
+    data_fraction=reader.data["emg"][0:-1:50]
     
     emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) -2)]
 
@@ -309,7 +272,6 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
 
     x_min=data_fraction.iloc[0,1]
     x_max=data_fraction.iloc[-1,1]
-
     figure.add_trace(go.Scatter(x=[time, time],
                              y=[y_min, y_max],
                              mode='lines',
@@ -325,8 +287,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
     x_start=reader.data["emg"].iloc[emg_start_index,1]
     x_end=reader.data["emg"].iloc[emg_stop_index,1]
 
-
-    figure.add_trace(go.Bar(x=[int((x_end+x_start)/2)],
+    figure.add_trace(go.Bar(x=[(x_end+x_start)/2.],
                             y=[y_max-y_min],
                             base=y_min,
                             width= x_end-x_start,# customize width here
@@ -364,7 +325,7 @@ def opt_graph(selected_frame, selected_exp):
         return go.Figure()
     range_frame=3
 
-    opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame-1]
+    opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame]
     header=list(opt_data.columns)[2:]
     nb_frames=int(len(header)/7)
     names=[]
@@ -379,7 +340,6 @@ def opt_graph(selected_frame, selected_exp):
       multiplier0=str(100+i*50)
       multiplier1=str(118+i*30)
       multiplier2=str(255-i*100)
-      
     
       fig.add_trace(go.Scatter3d(
           x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
@@ -393,10 +353,11 @@ def opt_graph(selected_frame, selected_exp):
               opacity=0.5)
           ))
 
-        #current frame
+      #current frame
       fig.add_trace(go.Scatter3d(
-          x=[opt_data[names[i]+"_x"][selected_frame]], y=[opt_data[names[i]+"_y"][selected_frame]], 
-          z=[opt_data[names[i]+"_z"][selected_frame]],
+          x=[reader.data['optitrack'][names[i]+"_x"].iloc[selected_frame]],
+          y=[reader.data['optitrack'][names[i]+"_y"].iloc[selected_frame]],
+          z=[reader.data['optitrack'][names[i]+"_z"].iloc[selected_frame]],
           name="current "+opt,
           mode='markers',
           showlegend = True,
