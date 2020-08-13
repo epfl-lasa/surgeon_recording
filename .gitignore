@@ -1,2 +1,5 @@
 data/
 /source/surgeon_recording/surgeon_recording/__pycache__/
+/notebooks/.ipynb_checkpoints
+/source/surgeon_recording/config/FingerTPS_EPFL1-cal.txt
+/source/surgeon_recording/config/FingerTPS_EPFL2-cal.txt

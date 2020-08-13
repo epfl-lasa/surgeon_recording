@@ -16,15 +16,8 @@ class Reader(object):
         self.sensor_list = ["camera", "emg", "optitrack", "tps"]
         self.data = {}
         self.images = {}
-        self.frame_indexes = {}
-        self.start_frames = {}
-        self.stop_frames = {}
-        self.sensor_rates = {}
         for s in self.sensor_list:
             self.data[s] = []
-            self.frame_indexes[s] = 0
-            self.start_frames[s] = 0
-            self.stop_frames[s] = 1000000
         self.mutex = Lock()
         self.blank_image = CameraHandler.create_blank_image(encode=True)
         self.data_changed = False
@@ -32,9 +25,6 @@ class Reader(object):
         self.image_extractor_thread = Thread(target=self.extract_images)
         self.image_extractor_thread.daemon = True
         self.image_extractor_thread.start()
-
-    def initialize_sensor_rate(self, sensor):
-        self.sensor_rates[sensor] = self.get_nb_sensor_frames(sensor) / self.get_nb_frames()
 
     def get_experiment_list(self, data_folder):
         res = {}
@@ -45,27 +35,34 @@ class Reader(object):
             res[exp] = exp
         return res
 
-    def get_indexes(self, camera_index):
+    def get_indexes(self, initial_guesses, idx):
         max_index = self.get_nb_frames()
-        if camera_index < 0 or camera_index > max_index:
-            print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(camera_index))
-            return -1
+        camera_index = initial_guesses["camera"][idx]
         camera_frame = self.data["camera"].iloc[camera_index]
         time = camera_frame[1]
         # extract the other sensor data (exept camera)
         indexes = {}
+        indexes["camera"] = camera_index
         for s in self.sensor_list[1:]:
-            index = int(camera_index * self.sensor_rates[s])
+            index = initial_guesses[s][idx]
             frame = self.data[s].iloc[index]
             indexes[s] = index
-            while abs(time - frame[1]) > 1e-3 and index <= (self.get_nb_sensor_frames(s) - 2) and index >= 1:
+            prev_sign = np.sign(time - frame[1])
+            while abs(time - frame[1]) > 1e-3:
                 sign = np.sign(time - frame[1])
+                if prev_sign - sign != 0:
+                    break
                 index = int(index + sign * 1)
+                if index < 0 or index >= self.get_nb_sensor_frames(s):
+                    break
                 frame = self.data[s].iloc[index]
                 indexes[s] = index
+                prev_sign = sign
         return indexes
 
-    def get_window_data(self, start_frame, stop_frame):
+    def get_window_data(self, indexes):
+        start_frame = indexes["camera"][0]
+        stop_frame = indexes["camera"][1]
         max_index = self.get_nb_frames()
         if start_frame < 0 or start_frame > max_index:
             print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(start_frame))
@@ -73,31 +70,11 @@ class Reader(object):
         if stop_frame < 0 or stop_frame > max_index:
             print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(stop_frame))
             return -1
-        start_indexes = self.get_indexes(start_frame)
-        stop_indexes = self.get_indexes(stop_frame)
-        window_data = {}
-        for s in self.sensor_list[1:]:
-            window_data[s] = self.data[s].iloc[start_indexes[s]:stop_indexes[s]+1]
-        return window_data
-
-    def set_starting_frame(self, start_frame):
-        max_index = self.get_nb_frames()
-        if start_frame < 0 or start_frame > max_index:
-            print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(start_frame))
-            return -1
-        self.start_frames = self.get_indexes(start_frame)
-
-    def set_stopping_frame(self, stop_frame):
-        max_index = self.get_nb_frames()
-        if stop_frame < 0 or stop_frame > max_index:
-            print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(stop_frame))
-            return -1
-        self.stop_frames = self.get_indexes(stop_frame)
-
-    def get_data(self):
+        start_indexes = self.get_indexes(indexes, 0)
+        stop_indexes = self.get_indexes(indexes, 1)
         window_data = {}
         for s in self.sensor_list:
-            window_data[s] = self.data[s].iloc[self.start_frames[s]:self.stopt_frames[s]]
+            window_data[s] = self.data[s].iloc[start_indexes[s]:stop_indexes[s]+1]
         return window_data
 
     def get_nb_frames(self):
@@ -145,22 +122,39 @@ class Reader(object):
             image = self.images[video_type][frame_index]
         return image
 
+    def align_relative_time(self):
+        min_time = max([self.data[s]['relative_time'].iloc[0] for s in self.sensor_list])
+        max_time = min([self.data[s]['relative_time'].iloc[-1] for s in self.sensor_list])
+
+        for s in self.sensor_list:
+            self.data[s] = self.data[s][self.data[s]['relative_time'] - min_time > 1e-3] - min_time
+            self.data[s] = self.data[s][self.data[s]['relative_time'] - max_time < 1e-3]
+
+        start_camera_index = self.data['camera'].index[0] - 1
+        stop_camera_index = self.data['camera'].index[-1]
+        self.offset = start_camera_index
+        for image in ['rgb', 'depth']:
+            self.images[image] = self.images[image][start_camera_index:stop_camera_index]
+
     def play(self, exp_folder):
         self.exp_folder = exp_folder
+        indexes = {}
         for s in self.sensor_list:
             self.data[s] = pd.read_csv(join(exp_folder, s + ".csv")).set_index('index')
-            self.initialize_sensor_rate(s)
         self.init_image_list()
+        self.align_relative_time()
         self.data_changed = True
         
-    def export(self, folder, start_index, stop_index):
+    def export(self, folder, indexes):
         export_folder = join(self.exp_folder, folder)
         if not os.path.exists(export_folder):
             os.makedirs(export_folder)
+        start_index = indexes["camera"][0]
+        stop_index = indexes["camera"][1]
         cut_camera_data = self.data["camera"].iloc[start_index:stop_index+1]
         cut_camera_data.to_csv(join(export_folder, 'camera.csv'))
         print("Camera data file exported")
-        cut_data = self.get_window_data(start_index, stop_index)
+        cut_data = self.get_window_data(indexes)
         for key, value in cut_data.items():
             value.to_csv(join(export_folder, key + '.csv'))
             print(key + " data file exported")
@@ -171,9 +165,9 @@ class Reader(object):
         for t in ["rgb", "depth"]:
             original_video = cv2.VideoCapture(join(self.exp_folder, t + '.avi'))
             cut_video = cv2.VideoWriter(join(folder, t + '.avi'), cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
-            for i in range(stop_index + 1):
+            for i in range(self.offset + stop_index + 1):
                 _, frame = original_video.read()
-                if i < start_index:
+                if i < self.offset + start_index:
                     continue
                 cut_video.write(frame)
             print(t + " video file exported")
