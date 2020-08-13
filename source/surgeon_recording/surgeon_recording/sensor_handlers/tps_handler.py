@@ -46,8 +46,6 @@ class TPSHandler(SensorHandler):
                 # if there is calibration data
                 if len(line) > 1:
                     calibration_factors.append(TPSHandler.compute_calibration_factor(line))
-                else:
-                    calibration_factors.append(None)
         return calibration_factors
 
     @staticmethod
@@ -75,9 +73,9 @@ class TPSHandler(SensorHandler):
             tmp = np.array([float(x) for x in self.data_socket.recv_string().split(",")])
         else:
             tmp = self.generate_fake_data(12)
-        for f in self.selected_fingers:
+        for i, f in enumerate(self.selected_fingers):
             value = tmp[f]
-            data.append(self.calibrations[f].predict([[value]]) if self.calibrations and self.calibrations[f] is not None else value)
+            data.append(self.calibrations[i].predict([[value]]) if self.calibrations)
         self.index = data[0]
         return data
 
