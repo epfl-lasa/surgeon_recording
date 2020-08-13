@@ -57,6 +57,10 @@ app.layout = html.Div(
                                         dcc.Store(id='tps_start_index'),
                                         dcc.Store(id='tps_stop_index'),
 
+                                        dcc.Store(id='max_interval'),
+                                        dcc.Store(id='max_cut_interval'),
+
+
 
                                         dcc.Store(id='window_size', data=2000)
                                      ],
@@ -98,7 +102,7 @@ app.layout = html.Div(
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
                                       html.Div(id='output_text')],
-                                      style={'padding-bottom': 65}
+                                      style={'padding-bottom': 35}
                                   ),
                                 
                                  html.Div(className='graphs',
@@ -181,12 +185,17 @@ def export(n_clicks, value, start_index, stop_index,
                Output('opt_stop_index', 'data'),
                Output('tps_start_index', 'data'),
                Output('tps_stop_index', 'data'),
-               Output('auto-stepper', 'n_intervals')],
+               Output('auto-stepper', 'n_intervals'),
+               Output('max_interval', 'data'),
+               Output('max_cut_interval', 'data')],
               [Input('slider_frame', 'value'),
-               Input('selected_exp', 'data')])
-def select_frame(selected_percentage, selected_exp):
+               Input('selected_exp', 'data'),
+               Input('speed_selector', 'value')],
+               [State('auto-stepper', 'interval')]
+               )
+def select_frame(selected_percentage, selected_exp,  speed, interval):
   if selected_exp is None:
-    return 0, 0, 0, 0, 0, 0, 0,0 ,0
+    return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
   stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
 
@@ -196,7 +205,14 @@ def select_frame(selected_percentage, selected_exp):
   opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   tps_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
   tps_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
-  return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0
+
+  total_time= reader.data["camera"].iloc[-1,1] - reader.data["camera"].iloc[0,1]
+  total_cut_time= reader.data["camera"].iloc[stop_index,1] - reader.data["camera"].iloc[start_index,1]
+
+  max_interval=int(total_time/(interval/1000)/speed)
+  max_cut_interval=int(total_cut_time/(interval/1000)/speed)
+
+  return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval
 
 
 @app.callback([Output('selected_frame', 'data'),
@@ -204,17 +220,20 @@ def select_frame(selected_percentage, selected_exp):
                Output('selected_opt_frame', 'data'),
                Output('selected_tps_frame', 'data')],
               [Input('auto-stepper', 'n_intervals'),
-               Input('slider_frame', 'value'),
-               Input('slider_frame', 'step'),
-               Input('speed_selector', 'value')],
+               Input('slider_frame', 'value'),                      
+               Input('max_interval', 'data'),
+               Input('max_cut_interval', 'data') ],
               [State('selected_exp', 'data')])
-def on_click(n_intervals, limits, step, speed, selected_exp):
+def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp):
   if selected_exp is None:
     return 0, 0 ,0, 0
-  d = limits[1] - limits[0]
+ 
+  #selected_percentage = ((replay_speed * n_intervals * step - limits[0]) % d + d) % d + limits[0]
 
-  replay_speed = 25 * speed
-  selected_percentage = ((replay_speed * n_intervals * step - limits[0]) % d + d) % d + limits[0]
+  idx=n_intervals%max_cut_interval
+  selected_percentage = (idx/max_interval*100) + limits[0]
+
+
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
@@ -234,22 +253,32 @@ def update_rgb_image_src(selected_frame, selected_exp):
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 
-# Callback for timeseries price
+   
+
+
+# Callback for timeseries price,  this is for the EMG Graph
 @app.callback(Output('timeseries', 'figure'),
               [Input('selected_emg_frame', 'data'),
                Input('emg_start_index', 'data'),
                Input('emg_stop_index', 'data')],
               [State('selected_exp', 'data')])
 def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
-   # if selected_exp is None:
-    #   return 0
+ 
     if selected_exp is None:
         return go.Figure()
 
 
     figure = go.Figure()
+   
+    nb_measures=len(reader.data["emg"])
 
-    data_fraction=reader.data["emg"][0:-1:50]
+    
+    data_divider=int(nb_measures/500)
+
+    if data_divider==0:
+      data_divider=1
+    #data divider is the step between selected frame
+    data_fraction=reader.data["emg"][0:-1:data_divider]
     
     emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) -2)]
 
@@ -323,9 +352,11 @@ def opt_graph(selected_frame, selected_exp):
 
     if selected_exp is None:
         return go.Figure()
-    range_frame=3
+    range_frame=75
 
-    opt_data = reader.data['optitrack'].iloc[selected_frame-range_frame:selected_frame+range_frame]
+   
+    opt_data = reader.data['optitrack'][selected_frame-range_frame:selected_frame+range_frame:(int(range_frame/5))]
+   
     header=list(opt_data.columns)[2:]
     nb_frames=int(len(header)/7)
     names=[]
@@ -339,8 +370,11 @@ def opt_graph(selected_frame, selected_exp):
     for i, opt in enumerate(opt_labels):
       multiplier0=str(100+i*50)
       multiplier1=str(118+i*30)
-      multiplier2=str(255-i*100)
+      multiplier2=str(255-i*50)
     
+
+
+      #history frame  add 
       fig.add_trace(go.Scatter3d(
           x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
           name='history '+opt,
@@ -349,7 +383,7 @@ def opt_graph(selected_frame, selected_exp):
           marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
              
           marker=dict(
-              size=[3, 5, 8, 10,12 ], 
+              size=np.linspace(3,12,10), 
               opacity=0.5)
           ))
 
@@ -364,8 +398,8 @@ def opt_graph(selected_frame, selected_exp):
           marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
          
           marker=dict(
-              size=15,
-              opacity=0.8)
+              size=13,
+              opacity=0.9)
           ))
 
     max_x = [0] * nb_frames
@@ -393,7 +427,7 @@ def opt_graph(selected_frame, selected_exp):
                                showbackground=True,
                                zerolinecolor="white",
                                nticks=10,
-                               range=[min(min_x)-0.5,max(max_x)+0.5]),
+                               range=[min(min_x)-abs(0.1*min(min_x)),max(max_x)+0.1*max(max_x)]),
                           yaxis = dict(
                               
                               backgroundcolor="rgb(230, 200,230)",
@@ -401,7 +435,7 @@ def opt_graph(selected_frame, selected_exp):
                               showbackground=True,
                               zerolinecolor="white",
                               nticks=10,
-                              range=[min(min_y)-0.5,max(max_y)+0.5]),
+                              range=[min(min_y)-abs(0.1*min(min_y)),max(max_y)+0.1*max(max_y)]),
                           zaxis = dict(
                              
                               backgroundcolor="rgb(230, 230,200)",
@@ -409,7 +443,7 @@ def opt_graph(selected_frame, selected_exp):
                               showbackground=True,
                               zerolinecolor="white",
                               nticks=10,
-                              range=[min(min_z)-0.5,max(max_z)+0.5]),
+                              range=[min(min_z)-abs(0.1*min(min_z)),max(max_z)+0.1*max(max_z)]),
                          
                           xaxis_title='X AXIS ',
                           yaxis_title='Y AXIS ',
