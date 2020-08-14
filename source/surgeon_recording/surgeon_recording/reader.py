@@ -78,7 +78,7 @@ class Reader(object):
         return window_data
 
     def get_nb_frames(self):
-        return self.data["camera"].count()[0]
+        return len(self.data["camera"])
 
     def get_nb_sensor_frames(self, sensor):
         return self.data[sensor].count()[0]
@@ -87,26 +87,25 @@ class Reader(object):
         for t in ["rgb", "depth"]:
             self.images[t] = []
             for i in range(len(self.data["camera"])):
-                with self.mutex:
-                    self.images[t].append(self.blank_image)
-
-    def extract_image(self, video):
-        _, frame = video.read()
-        _, buffer = cv2.imencode('.jpg', frame)
-        return buffer
+                self.images[t].append(self.blank_image)
 
     def extract_images(self):
+        def extract_image(video):
+            _, frame = video.read()
+            _, buffer = cv2.imencode('.jpg', frame)
+            return buffer
+
         while True:
             if self.data_changed:
                 self.data_changed = False
                 rgb_video = cv2.VideoCapture(join(self.exp_folder, "rgb.avi"))
                 depth_video = cv2.VideoCapture(join(self.exp_folder, "depth.avi"))
                 for i in range(self.get_nb_frames()):
-                    if self.data_changed:
-                        break
-                    rgb_image = self.extract_image(rgb_video)
-                    depth_image = self.extract_image(depth_video)
+                    rgb_image = extract_image(rgb_video)
+                    depth_image = extract_image(depth_video)
                     with self.mutex:
+                        if self.data_changed:
+                            break
                         self.images["rgb"][i] = rgb_image
                         self.images["depth"][i] = depth_image
                 rgb_video.release()
@@ -141,9 +140,10 @@ class Reader(object):
         indexes = {}
         for s in self.sensor_list:
             self.data[s] = pd.read_csv(join(exp_folder, s + ".csv")).set_index('index')
-        self.init_image_list()
-        self.align_relative_time()
-        self.data_changed = True
+        with self.mutex:
+            self.init_image_list()
+            self.align_relative_time()
+            self.data_changed = True
         
     def export(self, folder, indexes):
         export_folder = join(self.exp_folder, folder)
