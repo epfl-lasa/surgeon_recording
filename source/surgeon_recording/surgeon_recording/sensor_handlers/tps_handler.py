@@ -24,7 +24,9 @@ class TPSHandler(SensorHandler):
             context = zmq.Context()
             self.data_socket = context.socket(zmq.SUB)
             self.data_socket.connect("tcp://%s:%s" % (ip, port))
-            self.data_socket.setsockopt(zmq.SUBSCRIBE, b'tps_data')
+            self.data_socket.subscribe(b'tps_data')
+            self.data_socket.setsockopt(zmq.SNDHWM, 5)
+            self.data_socket.setsockopt(zmq.SNDBUF, 5*1024)
             print("socket initialized")
 
     @staticmethod
@@ -74,8 +76,11 @@ class TPSHandler(SensorHandler):
         else:
             tmp = self.generate_fake_data(12)
         for i, f in enumerate(self.selected_fingers):
-            value = tmp[f]
-            data.append(self.calibrations[i].predict([[value]]) if self.calibrations)
+            raw_value = tmp[f]
+            if raw_value < 1e-2:
+                return []
+            calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if self.calibrations else raw_value
+            data.append(calibrated_value)
         self.index = data[0]
         return data
 
