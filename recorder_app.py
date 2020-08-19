@@ -9,6 +9,7 @@ import cv2
 import base64
 import time
 import pyrealsense2 as rs
+import numpy as np
 
 recorder = None
 
@@ -56,7 +57,7 @@ app.layout = html.Div(
                                children=[
                                 html.Div(className='images',
                                          children=[html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block'}),
-                                                   dcc.Graph(id='opt',config={'displayModeBar': False}, animate=False, style={'display': 'inline-block'})]
+                                                   dcc.Graph(id='opt',config={'displayModeBar': True}, animate=False, style={'display': 'inline-block'})]
                                 ),
                                 html.Div(className='graphs',
                                          children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)])
@@ -158,9 +159,25 @@ def opt_graph(step):
           showlegend = True,
           marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
           marker=dict(
-              size=20,
-              opacity=1)
+              size=15,
+              opacity=0.8)
           ))
+
+    max_x = [0] * nb_frames
+    max_y = [0] * nb_frames
+    max_z = [0] * nb_frames
+    min_x = [0] * nb_frames
+    min_y = [0] * nb_frames
+    min_z = [0] * nb_frames
+
+    for i in range (0,nb_frames):
+      max_x[i] = max(opt_data[names[i]+"_x"])
+      max_y[i] = max(opt_data[names[i]+"_y"])
+      max_z[i] = max(opt_data[names[i]+"_z"])
+
+      min_x[i] = min(opt_data[names[i]+"_x"])
+      min_y[i] = min(opt_data[names[i]+"_y"])
+      min_z[i] = min(opt_data[names[i]+"_z"])
 
     fig.update_layout(
                         scene = dict(
@@ -170,21 +187,21 @@ def opt_graph(step):
                                showbackground=True,
                                zerolinecolor="white",
                                nticks=10,
-                               range=[-3,3]),
+                               range=[min(min_x)-abs(0.1*min(min_x)),max(max_x)+abs(0.1*max(max_x))]),
                           yaxis = dict(
                               backgroundcolor="rgb(230, 200,230)",
                               gridcolor="white",
                               showbackground=True,
                               zerolinecolor="white",
                               nticks=10,
-                              range=[-3,3]),
+                              range=[min(min_y)-abs(0.1*min(min_y)),max(max_y)+abs(0.1*max(max_y))]),
                           zaxis = dict(
                               backgroundcolor="rgb(230, 230,200)",
                               gridcolor="white",
                               showbackground=True,
                               zerolinecolor="white",
                                nticks=10,
-                               range=[-3,3]),
+                               range=[min(min_z)-abs(0.1*min(min_z)),max(max_z)+abs(0.1*max(max_z))]),
                           xaxis_title='X AXIS ',
                           yaxis_title='Y AXIS ',
                           zaxis_title='Z AXIS '),
@@ -192,9 +209,10 @@ def opt_graph(step):
                         margin=dict(r=20, b=100, l=10, t=50),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',
-                        paper_bgcolor='rgba(0, 0, 0, 0)',
+                        paper_bgcolor='rgba(0, 0, 200, 0)',
                         template='plotly_dark',
-                        scene_aspectmode='cube'
+                        scene_aspectmode='cube',
+                        uirevision='true',
                       )
     return fig
 
@@ -203,13 +221,20 @@ def opt_graph(step):
               [Input('emg-stepper', 'n_intervals')])
 def tps_graph(step):
     tps_data = recorder.get_buffered_data("tps")
+    tps_data_buff=tps_data.iloc[:,2:].copy()
+
+    #find the min of df tail
+    min_buff=tps_data_buff.min()
+
+    norm_data=tps_data_buff-min_buff
+    #axis range
+    y_max=norm_data.max().max()
+
     header=list(tps_data.columns)[2:]
     fig = go.Figure( [go.Bar(x=header,
-                             y=tps_data.iloc[-1, 2:],
+                             y=norm_data.iloc[-1],
                              marker_color='rgb(50,50,100)',
                              textposition='auto',   )])
-
-    y_max=12000
 
     fig.update_layout(
         xaxis_tickfont_size=14,
@@ -218,25 +243,29 @@ def tps_graph(step):
             titlefont_size=16,
             tickfont_size=14,
             range=[0,y_max],
+
         ),
         legend=dict(
             x=0,
             y=1.0,
             bgcolor='rgba(255, 255, 255, 0)',
-            bordercolor='rgba(255, 255, 255, 0)'
+            bordercolor='rgba(255, 255, 255, 0 )',
+             font=dict(
+                    family="Courier",
+                    size=12,
+                    color="white"
+                      ),
         ),
        
         bargap=0.15, # gap between bars of adjacent location coordinates.
         template='plotly_dark',
-        paper_bgcolor='rgba(0, 50, 0, 0)',
-        plot_bgcolor='rgba(0, 0, 0, 0)',
+        paper_bgcolor='rgba(150, 150, 200, 0.1)',
+        plot_bgcolor='rgba(100, 100, 200, 0)',
         hovermode='x',
         autosize=True,
         title={'text': 'TPS signals', 'font': {'color': 'white'}, 'x': 0.5},
         uirevision='true',
     )
-
-
 
     return fig
 
