@@ -19,9 +19,6 @@ app.config.suppress_callback_exceptions = False
 reader = Reader()
 data_folder = 'data'
 
-
-
-
 app.layout = html.Div(
     children=[
         html.Div(className='row',
@@ -101,35 +98,26 @@ app.layout = html.Div(
                                       html.P('Export'),
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
-                                      html.Div(id='output_text')],
+                                      html.Div(id='output_text'),
+                                      ],
                                       style={'padding-bottom': 35}
                                   ),
                                 
                                  html.Div(className='graphs',
                                          children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)],
                                          style={'padding-top': 0}
-
-                                         )
-
-
+                                       )
                                 ],
-                                #style={'margin-right': 2}
-
                             ),
                     html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
                                 html.Div(className='images',
                                          children=[ html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px' }),
                                                     dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False, style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px'})],
-                                         style={'left-padding': 200}
-                                        
+                                         style={'left-padding': 200}                                        
                                          ),
-                              
-
                                 html.Div(className='graphs',
-                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False,  style={'margin-left': '10px'})],
-                                         
-
+                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False,  style={'margin-left': '10px'})],                                        
                                          ),
                                ],
                               style={'right-padding': '200px'}
@@ -139,6 +127,7 @@ app.layout = html.Div(
 
 )
 
+
 @app.callback(Output('selected_exp', 'data'),
               [Input('exp_folder', 'value')])
 def update_exp(path):
@@ -146,6 +135,7 @@ def update_exp(path):
       return
     reader.play(path)
     return True
+
 
 @app.callback(Output('output_text', 'children'),
               [Input('btn-export', 'n_clicks')],
@@ -187,7 +177,8 @@ def export(n_clicks, value, start_index, stop_index,
                Output('tps_stop_index', 'data'),
                Output('auto-stepper', 'n_intervals'),
                Output('max_interval', 'data'),
-               Output('max_cut_interval', 'data')],
+               Output('max_cut_interval', 'data'),
+               Output('auto-stepper', 'disabled'),],
               [Input('slider_frame', 'value'),
                Input('selected_exp', 'data'),
                Input('speed_selector', 'value')],
@@ -195,7 +186,7 @@ def export(n_clicks, value, start_index, stop_index,
                )
 def select_frame(selected_percentage, selected_exp,  speed, interval):
   if selected_exp is None:
-    return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, True
   start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
   stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
 
@@ -209,10 +200,17 @@ def select_frame(selected_percentage, selected_exp,  speed, interval):
   total_time= reader.data["camera"].iloc[-1,1] - reader.data["camera"].iloc[0,1]
   total_cut_time= reader.data["camera"].iloc[stop_index,1] - reader.data["camera"].iloc[start_index,1]
 
-  max_interval=int(total_time/(interval/1000)/speed)
-  max_cut_interval=int(total_cut_time/(interval/1000)/speed)
 
-  return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval
+  if speed==0:
+    disabled=True
+    max_interval=1
+    max_cut_interval=1
+  else :
+    disabled=False
+    max_interval=total_time/(interval/1000)/speed
+    max_cut_interval=total_cut_time/(interval/1000)/speed
+
+  return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval, disabled
 
 
 @app.callback([Output('selected_frame', 'data'),
@@ -222,23 +220,20 @@ def select_frame(selected_percentage, selected_exp,  speed, interval):
               [Input('auto-stepper', 'n_intervals'),
                Input('slider_frame', 'value'),                      
                Input('max_interval', 'data'),
-               Input('max_cut_interval', 'data') ],
-              [State('selected_exp', 'data')])
-def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp):
+               Input('max_cut_interval', 'data'),
+               Input('selected_exp', 'data') ],
+              [
+               State('speed_selector', 'value')])
+def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp, speed):
   if selected_exp is None:
     return 0, 0 ,0, 0
- 
-  #selected_percentage = ((replay_speed * n_intervals * step - limits[0]) % d + d) % d + limits[0]
-
-  idx=n_intervals%max_cut_interval
+  idx=n_intervals%int(max_cut_interval)
   selected_percentage = (idx/max_interval*100) + limits[0]
-
-
   selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
   selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
   selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
   selected_tps_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("tps") - 1))
-
+ 
   return selected_frame, selected_emg_frame, selected_opt_frame, selected_tps_frame
 
 
@@ -248,12 +243,11 @@ def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp)
 def update_rgb_image_src(selected_frame, selected_exp):
     if selected_exp is None:
       return
+    if selected_frame > reader.get_nb_frames():
+      return
     image = reader.get_image("rgb", selected_frame)
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
-
-
-   
 
 
 # Callback for timeseries price,  this is for the EMG Graph
@@ -266,22 +260,15 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
  
     if selected_exp is None:
         return go.Figure()
-
-
     figure = go.Figure()
-   
     nb_measures=len(reader.data["emg"])
-
-    
     data_divider=int(nb_measures/500)
 
     if data_divider==0:
       data_divider=1
-    #data divider is the step between selected frame
     data_fraction=reader.data["emg"][0:-1:data_divider]
     
     emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) -2)]
-
 
     for i, emg in enumerate(emg_labels):
          figure.add_trace(go.Scatter(x=data_fraction["relative_time"],
@@ -290,8 +277,6 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
                                  opacity=0.7,
                                  name=emg,
                                  textposition='bottom center'))
-
-
          
     time = reader.data["emg"].iloc[selected_frame,1]
 
@@ -310,7 +295,6 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
                              line=dict(                             
                               width=5),
                              ))
-
 
     #this is for the selction rectangle
     x_start=reader.data["emg"].iloc[emg_start_index,1]
@@ -338,10 +322,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
           yaxis={'range': [y_min, y_max], 'nticks': 10},
           uirevision='true',
     )
-        
-
     return figure
-
 
 
 # Callback for opt price
@@ -353,8 +334,6 @@ def opt_graph(selected_frame, selected_exp):
     if selected_exp is None:
         return go.Figure()
     range_frame=75
-
-   
     opt_data = reader.data['optitrack'][selected_frame-range_frame:selected_frame+range_frame:(int(range_frame/5))]
    
     header=list(opt_data.columns)[2:]
@@ -370,9 +349,7 @@ def opt_graph(selected_frame, selected_exp):
     for i, opt in enumerate(opt_labels):
       multiplier0=str(100+i*50)
       multiplier1=str(118+i*30)
-      multiplier2=str(255-i*50)
-    
-
+      multiplier2=str(255-i*50) 
 
       #history frame  add 
       fig.add_trace(go.Scatter3d(
@@ -463,16 +440,13 @@ def opt_graph(selected_frame, selected_exp):
     return fig
 
 
-
-
-    # Callback for tps price
+# Callback for tps price
 @app.callback(Output('tps', 'figure'),
               [Input('selected_tps_frame', 'data')],
               [State('selected_exp', 'data')])
 def tps_graph(selected_frame, selected_exp):
     if selected_exp is None:
         return go.Figure()
-
 
     frame_df=reader.data['tps'].iloc[selected_frame,2:]
     header=list(reader.data['tps'].columns)[2:]   
@@ -510,9 +484,6 @@ def tps_graph(selected_frame, selected_exp):
         title={'text': 'TPS signals', 'font': {'color': 'white'}, 'x': 0.5},
         uirevision='true',
     )
-
-
-
     return fig
 
 

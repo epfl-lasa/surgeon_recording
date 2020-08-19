@@ -4,14 +4,13 @@ import time
 import sys
 from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
-# deifne the directory of the emgAcquireClient python_module 
-emgAcquire_dir = r"C:\Users\buschbapti\Documents\GitHub\surgeon_recording\source\emgAcquire\python_module"
-#emgAcquire_dir = "/home/buschbapti/Documents/Zeiss/surgeon_recording/source/emgAcquire/python_module"
-
-# append the path including the directory of the python_module
-sys.path.append(emgAcquire_dir)
-# import the module
-import emgAcquireClient
+if sys.platform == 'win32':
+    # deifne the directory of the emgAcquireClient python_module 
+    emgAcquire_dir = r"C:\Users\buschbapti\Documents\GitHub\surgeon_recording\source\emgAcquire\python_module"
+    # append the path including the directory of the python_module
+    sys.path.append(emgAcquire_dir)
+    # import the module
+    import emgAcquireClient
 
 class EMGHandler(SensorHandler):
     def __init__(self, parameters):
