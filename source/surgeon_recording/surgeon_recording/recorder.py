@@ -58,8 +58,8 @@ class Recorder(object):
 
     def init_data_buffer(self):
         self.data["emg"] = deque(maxlen=2000)
-        self.data["optitrack"] = deque(maxlen=100)
-        self.data["tps"] = deque(maxlen=100)
+        self.data["optitrack"] = deque(maxlen=500)
+        self.data["tps"] = deque(maxlen=500)
 
     def init_recording_folder(self, folder):
         self.exp_folder = join(self.data_folder, folder)
