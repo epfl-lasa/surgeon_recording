@@ -245,4 +245,4 @@ if __name__ == '__main__':
     if recorder is None:
         recorder = intialize_recorder()
 
-    app.run_server(debug=False, use_reloader=False)
+    app.run_server(debug=False, use_reloader=False, host=‘0.0.0.0’, port=8080)
