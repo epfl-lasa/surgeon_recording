@@ -47,7 +47,8 @@ app.layout = html.Div(
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Record', id='btn-record', n_clicks=0),
                                       html.Button('Stop', id='btn-stop', n_clicks=0),
-                                      html.Div(id='output_text', children='Not recording')]
+                                      html.Div(id='output_text', children='Not recording')],
+                                      style={'padding-bottom': 160}
                                   ),
                                  html.Div(className='graphs',
                                          children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)])
@@ -56,12 +57,12 @@ app.layout = html.Div(
                       html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
                                 html.Div(className='images',
-                                         children=[html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block'}),
-                                                   dcc.Graph(id='opt',config={'displayModeBar': True}, animate=False, style={'display': 'inline-block'})]
+                                         children=[html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px'}),
+                                                   dcc.Graph(id='opt',config={'displayModeBar': True}, animate=False, style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px'})]
                                 ),
                                 html.Div(className='graphs',
-                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False)])
-                               ])
+                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False, style={'margin-left': '10px'})])],
+                               )
                  ])
         ]
 )
@@ -117,7 +118,7 @@ def emg_graph(step):
               'layout': go.Layout(
                   colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
                   template='plotly_dark',
-                  paper_bgcolor='rgba(0, 0, 0, 0)',
+                  paper_bgcolor='rgba(0, 0, 10, 0.3)',
                   plot_bgcolor='rgba(0, 0, 0, 0)',
                   margin={'b': 15},
                   hovermode='x',
@@ -141,6 +142,9 @@ def opt_graph(step):
     for i in range(nb_frames):
       names.append(header[i*7].replace('_x', ''))
     opt_labels = names
+     #historic frame
+    range_frame=75
+    opt_data_hist = opt_data.tail(range_frame)[::(int(range_frame/5))] 
 
     fig = go.Figure()
       #5 frame centered on current frame
@@ -161,6 +165,18 @@ def opt_graph(step):
           marker=dict(
               size=15,
               opacity=0.8)
+          ))
+      #history frame  add 
+      fig.add_trace(go.Scatter3d(
+          x=opt_data_hist[names[i]+"_x"], y=opt_data_hist[names[i]+"_y"], z=opt_data_hist[names[i]+"_z"],
+          name='history '+opt,
+          mode='markers',
+          showlegend = True,
+          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
+             
+          marker=dict(
+              size=np.linspace(3,12,5), 
+              opacity=0.5)
           ))
 
     max_x = [0] * nb_frames
@@ -205,7 +221,7 @@ def opt_graph(step):
                           xaxis_title='X AXIS ',
                           yaxis_title='Y AXIS ',
                           zaxis_title='Z AXIS '),
-                        width=450,
+                        width=600,
                         margin=dict(r=20, b=100, l=10, t=50),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',

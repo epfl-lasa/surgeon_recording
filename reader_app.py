@@ -120,7 +120,6 @@ app.layout = html.Div(
                                          children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False,  style={'margin-left': '10px'})],                                        
                                          ),
                                ],
-                              style={'right-padding': '200px'}
                                )
                  ])
         ]
