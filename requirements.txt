@@ -5,3 +5,5 @@ zmq
 pandas
 opencv-python
 scikit-learn
+fastdtw
+dtw
