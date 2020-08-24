@@ -14,18 +14,21 @@ from surgeon_recording.data_analysis.analyser import Analyser
 if __name__ == '__main__':
 
 	coordinates = ['x','y','z']
-	data_files =   ['cut'+ str(i+1) for i in range(10) ]
+	data_files =   ['cut'+ str(i+1) for i in range(19) ]
 	data_files1 =  ['cut'+ str(i+21) for i in range(10) ]
 	data_files2 =  ['cut'+ str(i+31) for i in range(10) ]
 	data_folder = 'data'
 	dtw=True
-	plot_bool=False
+    
+	plot_bool = False
+	sigma = [4,3,2]
+
 
 	analyse = Analyser()
 
-	analyse.compute_cinematics(data_folder, coordinates, data_files, plot_bool)
+	#analyse.compute_cinematics(data_folder, coordinates, data_files, plot_bool, sigma )
 
-	analyse.plot_analysis(data_folder, coordinates, data_files, dtw)
+	analyse.plot_analysis(data_folder, coordinates, data_files, dtw, sigma)
 
 	#analyse.plot_analysis(data_folder, coordinates, data_files1, dtw)
 
