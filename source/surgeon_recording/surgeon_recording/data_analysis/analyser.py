@@ -24,6 +24,9 @@ import plotly.express as px
 
 from scipy.interpolate import interp1d
 
+from scipy import signal
+from sklearn import preprocessing
+
 
 class Analyser(object):
     def __init__(self):
@@ -114,36 +117,6 @@ class Analyser(object):
 
 
 
-        #aligne time using either dtw+ interpolation or just interpolation
-
-    def align_time_series(self, ref, other_serie, dtw_on, len_stretch, f_interpol, k ) :
-       
-        x = np.array(ref)
-        y = np.array(other_serie)
-       
-        if dtw_on : 
-            manhattan_distance = lambda x, y: np.abs(x - y)
-            d, cost_matrix, acc_cost_matrix, path = dtw(x, y, dist=manhattan_distance)
-            #distance, path = fastdtw(x, y, dist=euclidean)
-            stretch_array=y[np.array(path)[1]]
-            ref_array    =x[np.array(path)[0]]
-        
-        else :
-            stretch_array=other_serie
-            ref_array=ref
-
-        time_lin = np.linspace(0, len(stretch_array)-1, num=len(stretch_array), endpoint=True)
-        
-        len_stretch[k]=len(stretch_array)-1
-        f_interpol[k] = interp1d(time_lin, stretch_array, kind='nearest')
-        
-        time_lin = np.linspace(0, len(ref_array)-1, num=len(ref_array), endpoint=True)
-        
-        f_ref= interp1d(time_lin, ref_array, kind='nearest')
-        len_ref = len(ref_array)-1
-
-        return len_stretch, f_interpol, f_ref, len_ref
-
 
 
     # entry: chosen_axes    ex: [x,y,z]
@@ -151,32 +124,35 @@ class Analyser(object):
     #        dtw_on  boolean to activate dtw before interpolation
   
 
-    def plot_analysis(self, data_folder, coordinates, data_files, dtw_on, sigma):  
+    def plot_analysis(self, data_folder, graph_choice, data_files, dtw_on, sigma, nb_interpolation_pts):  
         #find longest vids for ref
         nb_data=len(data_files)
-        nb_rows=len(coordinates)
+        nb_rows=len(graph_choice)
 
-        array_graph =[0]*nb_data
-        f_interpol = [0]*nb_data
+        array_graph = [0] * nb_data
+        f_interpol = [0] * nb_data
         len_stretch = [0] * nb_data  
 
-        data_lenght=[]
-        data_index=[0]*nb_data
+        data_lenght = []
+        data_index = [0]*nb_data
 
         #find the longest vid
-        for k, name in enumerate(data_files):
-            opt_data = pd.read_csv(join(data_folder, 'data10_08_20/'+name+"/optitrack.csv")).set_index('index')
-            data_lenght.append( opt_data.iloc[-1,1] - opt_data.iloc[0,1])
-        index_max = max(range(len(data_lenght)), key=data_lenght.__getitem__)
-
+        index_max, data_lenght = self.get_index_max(data_folder, data_files)
+        
         #compute cinematics for entry dataset
-        results = self.compute_cinematics(data_folder, coordinates, data_files,0, sigma)
+
+        coordinates=graph_choice.copy()
+        if 'tps' in coordinates: 
+            coordinates.remove('tps')
+        if 'emg' in coordinates: 
+            coordinates.remove('emg')
+        if len(coordinates) > 0:   
+            results = self.compute_cinematics(data_folder, coordinates, data_files, 0, sigma)
         
         opt_data=pd.read_csv(join(data_folder, 'data10_08_20/'+data_files[index_max]+"/optitrack.csv")).set_index('index')
         time=np.array(opt_data['relative_time'])
-
-        fig = make_subplots(rows=nb_rows+2, cols=1, 
-                            subplot_titles=( "Plot X", "Plot Y", "Plot Z", "Plot Tps", "Plot Emg" ))
+        fig = make_subplots(rows=nb_rows, cols=1, 
+                            subplot_titles=( graph_choice ))
    
         for i, s in enumerate(data_files):
             data_index[i]=int(s[3:])
@@ -184,14 +160,19 @@ class Analyser(object):
         #to find the time when cutting start    
         time_cut=pd.read_csv(join(data_folder, 'data10_08_20/cut_start_time.csv')).set_index('index')    
         time_cut_sample=np.divide(np.array( time_cut.iloc[data_index,0]),data_lenght)*100
- 
+
+        print(graph_choice)
+
+        y_max_tps, y_max_emg, y_min_emg = 0, 0, 0
         #plot tps graph
-        y_max_tps=self.tps_plot( data_folder, index_max, data_files, fig, dtw_on )
+        if any("tps" in s for s in graph_choice):
+            y_max_tps=self.tps_plot( data_folder, index_max, data_files, fig, dtw_on, nb_interpolation_pts, graph_choice )
 
         #plot emg graph
-        y_max_emg, y_min_emg=self.emg_plot( data_folder, index_max, data_files, fig, dtw_on )
+        if any("emg" in s for s in graph_choice):
+            y_max_emg, y_min_emg=self.emg_plot( data_folder, index_max, data_files, fig, dtw_on, nb_interpolation_pts, graph_choice )
 
-        self.plot_cut_indicator(time_cut_sample, fig, data_files, data_folder, y_max_tps, y_max_emg, y_min_emg)
+        self.plot_cut_indicator(time_cut_sample, fig, data_files, data_folder, graph_choice, y_max_tps, y_max_emg, y_min_emg)
 
         for j, axes in enumerate(coordinates):
             #data file[index max]==cuts13 for example
@@ -203,14 +184,14 @@ class Analyser(object):
                 print('Axes '+axes+'  '+names)        
                 if k!= index_max:      
                     other_serie = results[names][axes+'_jerk']
-                    len_stretch, f_interpol, f_ref, len_ref = self.align_time_series(ref, other_serie, dtw_on, len_stretch, f_interpol, k ) 
+                    len_stretch, f_interpol, f_ref, len_ref = self.get_interpolation_function(ref, other_serie, dtw_on, len_stretch, f_interpol, k ) 
                                         
             f_interpol[index_max]  = f_ref
             len_stretch[index_max] = len_ref    
           
-            norm_time=np.linspace(0, 100, num=400, endpoint=True)
+            norm_time=np.linspace(0, 100, num=nb_interpolation_pts, endpoint=True)
             
-            array_graph=self.interpolated_data( f_interpol, len_stretch, data_files )
+            array_graph=self.interpolated_data( f_interpol, len_stretch, data_files, nb_interpolation_pts )
             #plot_each_jerk
             for k, names in enumerate(data_files):
                 fig.add_trace(go.Scatter(x=norm_time, y=array_graph[k] , showlegend=False, name='jerk '+names,
@@ -239,10 +220,12 @@ class Analyser(object):
         return 0
     
 
-
-    def emg_plot(self, data_folder, index_max, data_files, fig, dtw_on ):
+    def emg_plot(self, data_folder, index_max, data_files, fig, dtw_on, nb_interpolation_pts, graph_choice ):
 
         nb_data=len(data_files)
+
+        emg_rows=graph_choice.index('emg')+1
+
         
         cols = px.colors.qualitative.Dark24
         f_interpol = [0] * nb_data
@@ -268,13 +251,13 @@ class Analyser(object):
                     print('EMG'+name)
                     data_by_file = pd.read_csv(join(data_folder, 'data10_08_20/'+name+"/emg.csv")).set_index('index')                 
                     data_by_channel = data_by_file[channel]                  
-                    len_stretch, f_interpol, f_ref, len_ref=self.align_time_series(ref_data_by_finger, data_by_channel, 0, len_stretch, f_interpol, k ) 
+                    len_stretch, f_interpol, f_ref, len_ref=self.get_interpolation_function(ref_data_by_finger, data_by_channel, 0, len_stretch, f_interpol, k ) 
         
             #fill the missing value for k=index_max        
             f_interpol[index_max]  = f_ref
             len_stretch[index_max] = len_ref
 
-            array_graph=self.interpolated_data( f_interpol, len_stretch, data_files )
+            array_graph=self.interpolated_data( f_interpol, len_stretch, data_files, nb_interpolation_pts )
 
              #compute mean and std 
             mean = np.mean(array_graph, axis=0)
@@ -284,32 +267,31 @@ class Analyser(object):
             y_min[i]=np.min(mean-std)
 
             #plot mean and std fot each channel
-            norm_time=np.linspace(0, 100, num=400, endpoint=True)
+            norm_time=np.linspace(0, 100, num=nb_interpolation_pts, endpoint=True)
 
 
             fig.add_trace(go.Scatter(x=norm_time, y=mean, name=channel, legendgroup="group"+channel,  opacity=1,
                                                      line=dict(color=cols[i], width=4, )), 
-                                                     row=5, col=1
+                                                     row=emg_rows, col=1
                                                      )
             fig.add_trace(go.Scatter(x=norm_time, y=mean+std, name='std'+channel, showlegend=False, legendgroup="group"+channel,  opacity=0.7,
                                                      line=dict(color=cols[i], width=2, )), 
-                                                     row=5, col=1
+                                                     row=emg_rows, col=1
                                                      )
             fig.add_trace(go.Scatter(x=norm_time, y=mean-std, name='std'+channel, showlegend=False, legendgroup="group"+channel,  opacity=0.7,
                                                      line=dict(color=cols[i], width=2, )), 
-                                                     row=5, col=1
+                                                     row=emg_rows, col=1
                                                      ) 
             fig.update_yaxes(title_text="Emg magnitude",  row=5, col=1)  
 
         return max(y_max), min(y_min) 
 
 
-
-
-
-    def tps_plot(self, data_folder, index_max, data_files, fig, dtw_on ):
+    def tps_plot(self, data_folder, index_max, data_files, fig, dtw_on,  nb_interpolation_pts, graph_choice ):
 
         nb_data=len(data_files)
+        tps_rows=graph_choice.index('tps')+1
+
         
         cols = plotly.colors.DEFAULT_PLOTLY_COLORS
         f_interpol = [0]*nb_data
@@ -340,13 +322,13 @@ class Analyser(object):
                     data_by_file = pd.read_csv(join(data_folder, 'data10_08_20/'+name+"/tps.csv")).set_index('index')   
                     data_by_finger = data_by_file[finger]          
 
-                    len_stretch, f_interpol, f_ref, len_ref=self.align_time_series(ref_data_by_finger, data_by_finger, dtw_on, len_stretch, f_interpol, k ) 
+                    len_stretch, f_interpol, f_ref, len_ref=self.get_interpolation_function(ref_data_by_finger, data_by_finger, dtw_on, len_stretch, f_interpol, k ) 
    
             #fill the missing value for k=index_max        
             f_interpol[index_max]  = f_ref
             len_stretch[index_max] = len_ref
 
-            array_graph=self.interpolated_data( f_interpol, len_stretch, data_files )       
+            array_graph=self.interpolated_data( f_interpol, len_stretch, data_files, nb_interpolation_pts )       
 
              #compute mean and std 
             mean = np.mean(array_graph, axis=0)
@@ -354,19 +336,19 @@ class Analyser(object):
             
             y_max[i]=np.max(std+mean)
             #plot mean and std fot each finger
-            norm_time=np.linspace(0, 100, num=400, endpoint=True)
+            norm_time=np.linspace(0, 100, num=nb_interpolation_pts, endpoint=True)
             
             fig.add_trace(go.Scatter(x=norm_time, y=mean, name='tps '+finger, legendgroup="group"+finger, opacity=1,
                                                      line=dict( width=4, color=cols[i] )), 
-                                                     row=4, col=1
+                                                     row=tps_rows, col=1
                                                      )
             fig.add_trace(go.Scatter(x=norm_time, y=mean+std, name='std'+finger, showlegend=False,legendgroup="group"+finger, opacity=0.7,
                                                      line=dict( width=2, color=cols[i] )), 
-                                                     row=4, col=1
+                                                     row=tps_rows, col=1
                                                      )
             fig.add_trace(go.Scatter(x=norm_time, y=mean-std, name='std'+finger, showlegend=False, legendgroup="group"+finger, opacity=0.7,
                                                      line=dict( width=2, color=cols[i] )), 
-                                                     row=4, col=1
+                                                     row=tps_rows, col=1
                                                      ) 
             fig.update_yaxes(title_text="Tps magnitude",  row=4, col=1)  
 
@@ -374,93 +356,254 @@ class Analyser(object):
 
 
 
-
-        
-    def interpolated_data(self, f_interpol, len_stretch, data_files ):
-        array_graph =[0]*len(data_files)
-        
-        for k, names in enumerate(data_files):
-            x_new = np.linspace(0, len_stretch[k], num=400, endpoint=True)
-            array_graph[k] = f_interpol[k](x_new)
-            
-        return array_graph
+    def plot_cut_indicator(self, time_cut_sample, fig, data_files, data_folder, graph_choice,  y_max_tps, y_max_emg, y_min_emg) :
 
 
+        y_range_max =  {
+                          "x": 8,
+                          "y": 8,
+                          "z": 8,
+                          "tps": y_max_tps,
+                          "emg": y_max_emg,   
+                        }
 
+        y_range_min =  {
+                          "x": -4,
+                          "y": -4,
+                          "z": -4,
+                          "tps": 0,
+                          "emg": y_min_emg,   
+                        }
 
-    def plot_cut_indicator(self, time_cut_sample, fig, data_files, data_folder, y_max_tps, y_max_emg, y_min_emg) :
-    #plot cut_start_time
-        for i in range(3):
+        #plot cut_start_time
+        for i, graph_name in enumerate(graph_choice):
+
             fig.add_trace(go.Bar(x=time_cut_sample,
-                                 y=[8]*len(time_cut_sample),
-                                 base=[-4]*len(time_cut_sample),
+                                 y=[y_range_max[graph_name]]*len(time_cut_sample),
+                                 base=[y_range_min[graph_name]]*len(time_cut_sample),
                                  opacity=0.7,
                                  showlegend=False,
                                  #name="cut start",
                                  hovertext=  data_files ,
                                  width=[0.1]*len(time_cut_sample),
-                                 marker_color='rgb(26, 118, 160)'
+                                 marker_color='rgb(26, 50, 70)'
                                     ),
-                         row=i+1, col=1)
-
+                                row=i+1, col=1)
             fig.add_trace(go.Bar(x=[np.mean(time_cut_sample)],
-                                 y=[8],
-                                 base=[-4],
+                                 y=[y_range_max[graph_name]],
+                                 base=[y_range_min[graph_name]],
                                  opacity=0.7,
                                  showlegend=False,
                                  #name="cut start",
-                                 hovertext=  'mean' ,
-                                 width=[0.5],
-                                 marker_color='rgb(26, 118, 160)'
+                                 hovertext=  data_files ,
+                                 width=[0.4]*len(time_cut_sample),
+                                 marker_color='rgb(26, 50, 70)'
                                     ),
-                         row=i+1, col=1)
+                                row=i+1, col=1)
 
-        fig.add_trace(go.Bar(x=time_cut_sample,
-                             y=[y_max_tps]*len(time_cut_sample),
-                             base=[-4]*len(time_cut_sample),
-                             opacity=0.7,
-                             showlegend=False,
-                             #name="cut start",
-                             hovertext=  data_files ,
-                             width=[0.1]*len(time_cut_sample),
-                             marker_color='rgb(26, 118, 160)'
-                                ),
-                     row=4, col=1)
-
-        fig.add_trace(go.Bar(x=[np.mean(time_cut_sample)],
-                             y=[y_max_tps],
-                             base=[-4],
-                             opacity=0.7,
-                             showlegend=False,
-                             #name="cut start",
-                             hovertext=  'mean' ,
-                             width=[0.5],
-                             marker_color='rgb(26, 118, 160)'
-                                ),
-                     row=4, col=1)
-
-        fig.add_trace(go.Bar(x=time_cut_sample,
-                             y=[y_max_emg-y_min_emg]*len(time_cut_sample),
-                             base=[y_min_emg]*len(time_cut_sample),
-                             opacity=0.7,
-                             showlegend=False,
-                             #name="cut start",
-                             hovertext=  data_files ,
-                             width=[0.1]*len(time_cut_sample),
-                             marker_color='rgb(26, 118, 160)'
-                                ),
-                     row=5, col=1)
-   
-        fig.add_trace(go.Bar(x=[np.mean(time_cut_sample)],
-                             y=[y_max_emg-y_min_emg],
-                             base=[y_min_emg],
-                             opacity=0.7,
-                             showlegend=False,
-                             #name="cut start",
-                             hovertext=  'mean' ,
-                             marker_color='rgb(26, 118, 160, 1)',
-                             width=[0.5],
-                                ),
-                     row=5, col=1)
-          
         return 0
+
+
+
+    def emg_plot_only(self, data_folder, data_files, dtw_on, nb_interpolation_pts ):
+
+        nb_data = len(data_files)
+        
+        cols = px.colors.qualitative.Dark24
+        f_interpol = [0] * nb_data
+        len_stretch = [0] * nb_data 
+        data_index = [0]*nb_data 
+
+        index_max, data_lenght = self.get_index_max(data_folder, data_files)
+        fig = go.Figure()
+
+        for i, s in enumerate(data_files):
+            data_index[i] = int(s[3:])
+
+        emg_data = pd.read_csv(join(data_folder, 'data10_08_20/'+data_files[index_max]+"/emg.csv")).set_index('index')
+
+        header = list(emg_data.columns)[2:]
+
+        y_max = [0]*len(header)
+        y_min = [0]*len(header)
+
+        for i, channel in enumerate(header):
+            #data for each channel
+            ref_data_by_file = pd.read_csv(join(data_folder, 'data10_08_20/'+data_files[index_max]+"/emg.csv")).set_index('index')
+            ref_data_by_finger = ref_data_by_file[channel]
+
+            #gaussian filter
+            ref_data_by_finger =  self.emg_filter(ref_data_by_finger)
+          
+            for k, name in enumerate(data_files):              
+                if k!= index_max:
+                    print('EMG'+name)
+                    data_by_file = pd.read_csv(join(data_folder, 'data10_08_20/'+name+"/emg.csv")).set_index('index')                 
+                    data_by_channel = data_by_file[channel]
+
+                    #gaussian filter
+                    data_by_channel = self.emg_filter(data_by_channel)
+                   
+
+                    #send back function of interpolation and lenght of streched funcction 
+                    len_stretch, f_interpol, f_ref, len_ref=self.get_interpolation_function(ref_data_by_finger, data_by_channel, 0, len_stretch, f_interpol, k ) 
+        
+            #fill the missing value for k=index_max        
+            f_interpol[index_max]  = f_ref
+            len_stretch[index_max] = len_ref
+
+            array_graph = self.interpolated_data( f_interpol, len_stretch, data_files, nb_interpolation_pts )
+
+             #compute mean and std 
+            mean = np.mean(array_graph, axis=0)
+            std = np.std(array_graph, axis=0)
+            
+            y_max[i] = np.max(std+mean)
+            y_min[i] = np.min(mean-std)
+
+            #plot mean and std fot each channel
+            norm_time = np.linspace(0, 100, num=nb_interpolation_pts, endpoint=True)
+
+
+            fig.add_trace(go.Scatter(x=norm_time, y=mean, name=channel, legendgroup="group"+channel,  opacity=1,
+                                                     line=dict(color=cols[i], width=4, )), 
+                                                   
+                                                     )
+            fig.add_trace(go.Scatter(x=norm_time, y=mean+std, name='std'+channel, showlegend=False, legendgroup="group"+channel,  opacity=0.7,
+                                                     line=dict(color=cols[i], width=2, )), 
+                                                    
+                                                     )
+            fig.add_trace(go.Scatter(x=norm_time, y=mean-std, name='std'+channel, showlegend=False, legendgroup="group"+channel,  opacity=0.7,
+                                                     line=dict(color=cols[i], width=2, )), 
+                                                     
+                                                     ) 
+            fig.update_yaxes(title_text="Emg magnitude",  ) 
+
+        y_max_emg, y_min_emg = max(y_max), min(y_min)
+
+        time_cut = pd.read_csv(join(data_folder, 'data10_08_20/cut_start_time.csv')).set_index('index')    
+        time_cut_sample = np.divide(np.array( time_cut.iloc[data_index,0]),data_lenght)*100 
+
+        fig.add_trace(go.Bar(x=time_cut_sample,
+                         y=[y_max_emg-y_min_emg]*len(time_cut_sample),
+                         base=[y_min_emg]*len(time_cut_sample),
+                         opacity=0.7,
+                         showlegend=False,
+                         #name="cut start",
+                         hovertext=  data_files ,
+                         width=[0.1]*len(time_cut_sample),
+                         marker_color='rgb(26, 50, 100)'
+                            ))
+
+        fig.add_trace(go.Bar(x=[np.mean(time_cut_sample)],
+                         y=[y_max_emg-y_min_emg],
+                         base=[y_min_emg],
+                         opacity=0.7,
+                         showlegend=False,
+                         #name="cut start",
+                         hovertext=  'mean' ,
+                         marker_color='rgb(26, 50, 100, 1)',
+                         width=[0.5],
+                            ))
+        fig.show() 
+        return 0
+
+
+    #use optitracks file
+    def get_index_max(self, data_folder,  data_files):
+        data_lenght=[]
+
+        for k, name in enumerate(data_files):
+            opt_data = pd.read_csv(join(data_folder, 'data10_08_20/'+name+"/optitrack.csv")).set_index('index')
+            data_lenght.append( opt_data.iloc[-1,1] - opt_data.iloc[0,1])
+        
+        index_max = max(range(len(data_files)), key=data_lenght.__getitem__)
+        
+        return index_max, data_lenght
+
+
+    def interpolated_data(self, f_interpol, len_stretch, data_files, nb_interpolation_pts ):
+        array_graph =[0]*len(data_files)
+        
+        for k, names in enumerate(data_files):
+            x_new = np.linspace(0, len_stretch[k], num=nb_interpolation_pts, endpoint=True)
+            array_graph[k] = f_interpol[k](x_new)
+            
+        return array_graph
+
+
+        #aligne time using either dtw+ interpolation or just interpolation
+    def get_interpolation_function(self, ref, other_serie, dtw_on, len_stretch, f_interpol, k ) :
+       
+        x = np.array(ref)
+        y = np.array(other_serie)
+       
+        if dtw_on : 
+            manhattan_distance = lambda x, y: np.abs(x - y)
+            d, cost_matrix, acc_cost_matrix, path = dtw(x, y, dist=manhattan_distance)
+            #distance, path = fastdtw(x, y, dist=euclidean)
+            stretch_array = y[np.array(path)[1]]
+            ref_array    = x[np.array(path)[0]]
+        
+        else :
+            stretch_array=other_serie
+            ref_array=ref
+
+        time_lin = np.linspace(0, len(stretch_array)-1, num=len(stretch_array), endpoint=True)
+        
+        len_stretch[k]=len(stretch_array)-1
+        f_interpol[k] = interp1d(time_lin, stretch_array, kind='cubic')
+        
+        time_lin = np.linspace(0, len(ref_array)-1, num=len(ref_array), endpoint=True)
+        
+        f_ref= interp1d(time_lin, ref_array, kind='nearest')
+        len_ref = len(ref_array)-1
+        return len_stretch, f_interpol, f_ref, len_ref
+
+
+    def emg_test_filter( self, data_folder, data_files, index ):
+        emg_data=pd.read_csv(join(data_folder, 'data10_08_20/'+data_files[0]+"/emg.csv")).set_index('index')
+        fig=go.Figure()
+        header=list(emg_data.columns)[2:]
+
+        for k, name in enumerate(data_files):
+            for i, channel in enumerate(header)  : 
+
+                emg_data=pd.read_csv(join(data_folder, 'data10_08_20/'+name+"/emg.csv")).set_index('index')
+                filtred_data=self.emg_filter(emg_data[channel])
+                norm_time=np.linspace(0, 100, num=len(filtred_data), endpoint=True)
+                fig.add_trace(go.Scatter(x=norm_time, y=filtred_data, name=name+channel,  opacity=1,
+                                                             line=dict( width=4, )))
+        fig.show()
+        return 0
+
+
+    def emg_filter( self, entry_signal ):
+        #remove mean 
+        mean=np.mean(entry_signal)
+        entry_signal=entry_signal-mean
+
+        #rectify signal 
+        entry_signal1=abs(entry_signal)
+
+        print('entry',min(entry_signal1))
+        
+        #lowpass filter
+        sos = signal.butter(4, 50, 'lowpass', fs=1000, output='sos')
+        filtred_signal = signal.sosfilt(sos, entry_signal1)
+
+        print('after_highpass', min(filtred_signal))
+
+        #highpass filter
+        sos = signal.butter(5, 0.5, 'highpass', fs=1000, output='sos')
+        #filtred_signal = signal.sosfilt(sos, filtred_signal)
+        print('lowpass')
+        print(min(filtred_signal))
+
+        #normalisation
+        #filtred_signal=preprocessing.normalize([filtred_signal])
+
+        #gaussian filter
+        #filtred_signal=gaussian_filter(filtred_signal,sigma=15)
+
+        return filtred_signal
