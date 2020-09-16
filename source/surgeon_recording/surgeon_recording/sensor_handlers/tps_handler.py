@@ -49,7 +49,7 @@ class TPSHandler(SensorHandler):
             lines = file.readlines()
             # only read the lines counting as selected fingers
             for i in selected_fingers:
-                line = lines[i].split('\t')[:-1]
+                line = lines[i+1].split('\t')[:-1]
                 # if there is calibration data
                 if len(line) > 1:
                     calibration_factors.append(TPSHandler.compute_calibration_factor(line))
@@ -93,10 +93,10 @@ class TPSHandler(SensorHandler):
         else:
             tmp = self.generate_fake_data(12)
         for i, f in enumerate(self.selected_fingers):
-            raw_value = tmp[f]
+            raw_value = tmp[f] if f < 6 else tmp[f+3]
             if raw_value < 1e-2:
                 return []
-            calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if self.calibrations else raw_value
+            calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if i < len(self.calibrations) else raw_value
             data.append(calibrated_value)
             data.append(raw_value)
         self.index = data[0]
