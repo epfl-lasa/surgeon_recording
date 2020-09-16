@@ -39,12 +39,15 @@ class TPSHandler(SensorHandler):
 
     @staticmethod
     def read_calibration_file(calibration_file):
+        # get the parameters to know which are the sensors to read
+        parameters = TPSHandler.get_parameters()
+        selected_fingers = [f["streaming_id"] for f in parameters["fingers"]]
         calibration_factors = []
         if os.path.exists(calibration_file):
             file = open(calibration_file, 'r')
             lines = file.readlines()
-            # first 8 lines are trash
-            for i in range(7, len(lines)):
+            # only read the lines counting as selected fingers
+            for i in selected_fingers:
                 line = lines[i].split('\t')[:-1]
                 # if there is calibration data
                 if len(line) > 1:
