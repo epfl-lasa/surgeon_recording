@@ -237,7 +237,7 @@ def opt_graph(step):
               [Input('emg-stepper', 'n_intervals')])
 def tps_graph(step):
     tps_data = recorder.get_buffered_data("tps")
-    tps_data_buff=tps_data.iloc[:,2:].copy()
+    tps_data_buff = tps_data.iloc[:,2:2:].copy()
 
     #find the min of df tail
     min_buff=tps_data_buff.min()
@@ -246,7 +246,7 @@ def tps_graph(step):
     #axis range
     y_max=norm_data.max().max()
 
-    header=list(tps_data.columns)[2:]
+    header=list(tps_data.columns)[2:2:]
     fig = go.Figure( [go.Bar(x=header,
                              y=norm_data.iloc[-1],
                              marker_color='rgb(50,50,100)',

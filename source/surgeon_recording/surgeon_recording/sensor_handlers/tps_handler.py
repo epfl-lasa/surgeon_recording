@@ -4,6 +4,7 @@ import numpy as np
 import os
 from os.path import join
 from shutil import copyfile
+import itertools
 from sklearn.linear_model import LinearRegression
 from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
@@ -68,18 +69,18 @@ class TPSHandler(SensorHandler):
     def get_parameters():
         parameters = SensorHandler.read_config_file()
         param = parameters['tps']
-        param.update({ 'header': [f["label"], f["label"] + "_raw"  for f in param["fingers"]] })
+        param.update({ 'header': list(itertools.chain.from_iterable((f["label"] + "_calibrated", f["label"] + "_raw") for f in param["fingers"])) })
         return param
 
     def setup_recording(self, recording_folder, start_time):
-        super.setup_recording(recording_folder, start_time)
+        super().setup_recording(recording_folder, start_time)
         # copy the calibration files
         filepath = os.path.abspath(os.path.dirname(__file__))
         config_folder = join(filepath, '..', '..', 'config')
         for i in range(1, 3):
             filename = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
             calibration_file = join(config_folder, filename)
-            if os.path.exists(calibrations_file1):
+            if os.path.exists(calibration_file):
                 copyfile(calibration_file, join(recording_folder, filename))
 
 
