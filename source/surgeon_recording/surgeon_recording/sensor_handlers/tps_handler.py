@@ -3,6 +3,7 @@ import time
 import numpy as np
 import os
 from os.path import join
+from shutil import copyfile
 from sklearn.linear_model import LinearRegression
 from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 
@@ -64,8 +65,20 @@ class TPSHandler(SensorHandler):
     def get_parameters():
         parameters = SensorHandler.read_config_file()
         param = parameters['tps']
-        param.update({ 'header': [f["label"] for f in param["fingers"]] })
+        param.update({ 'header': [f["label"], f["label"] + "_raw"  for f in param["fingers"]] })
         return param
+
+    def setup_recording(self, recording_folder, start_time):
+        super.setup_recording(recording_folder, start_time)
+        # copy the calibration files
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        config_folder = join(filepath, '..', '..', 'config')
+        for i in range(1, 3):
+            filename = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
+            calibration_file = join(config_folder, filename)
+            if os.path.exists(calibrations_file1):
+                copyfile(calibration_file, join(recording_folder, filename))
+
 
     def acquire_data(self):
         absolute_time = time.time()
@@ -81,6 +94,7 @@ class TPSHandler(SensorHandler):
                 return []
             calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if self.calibrations else raw_value
             data.append(calibrated_value)
+            data.append(raw_value)
         self.index = data[0]
         return data
 
