@@ -65,7 +65,7 @@ class TPSHandler(SensorHandler):
     def get_parameters():
         parameters = SensorHandler.read_config_file()
         param = parameters['tps']
-        param.update({ 'header': [f["label"] for f in param["fingers"]] })
+        param.update({ 'header': [f["label"], f["label"] + "_raw"  for f in param["fingers"]] })
         return param
 
     def setup_recording(self, recording_folder, start_time):
@@ -94,6 +94,7 @@ class TPSHandler(SensorHandler):
                 return []
             calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if self.calibrations else raw_value
             data.append(calibrated_value)
+            data.append(raw_value)
         self.index = data[0]
         return data
 
