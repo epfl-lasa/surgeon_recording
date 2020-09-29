@@ -126,10 +126,10 @@ class Reader(object):
         max_time = min([self.data[s]['relative_time'].iloc[-1] for s in self.sensor_list])
 
         for s in self.sensor_list:
-            self.data[s] = self.data[s][self.data[s]['relative_time'] - min_time > 1e-3] - min_time
-            self.data[s] = self.data[s][self.data[s]['relative_time'] - max_time < 1e-3]
+            self.data[s] = self.data[s][np.logical_and(self.data[s]['relative_time'] - min_time > 1e-3, self.data[s]['relative_time'] - max_time < 1e-3)]
+            self.data[s]['relative_time'] -= min_time
 
-        start_camera_index = self.data['camera'].index[0] - 1
+        start_camera_index = self.data['camera'].index[0]-1
         stop_camera_index = self.data['camera'].index[-1]
         self.offset = start_camera_index
         for image in ['rgb', 'depth']:
@@ -139,7 +139,7 @@ class Reader(object):
         self.exp_folder = exp_folder
         indexes = {}
         for s in self.sensor_list:
-            self.data[s] = pd.read_csv(join(exp_folder, s + ".csv")).set_index('index')
+            self.data[s] = pd.read_csv(join(exp_folder, s + ".csv"))
         with self.mutex:
             self.init_image_list()
             self.align_relative_time()
