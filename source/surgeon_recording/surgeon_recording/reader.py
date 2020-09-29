@@ -156,7 +156,7 @@ class Reader(object):
         print("Camera data file exported")
         cut_data = self.get_window_data(indexes)
         for key, value in cut_data.items():
-            value.to_csv(join(export_folder, key + '.csv'))
+            value.to_csv(join(export_folder, key + '.csv'), index=False)
             print(key + " data file exported")
         self.export_video(export_folder, start_index, stop_index)
         print("Export complete")
