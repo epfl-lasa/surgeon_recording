@@ -267,7 +267,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
       data_divider=1
     data_fraction=reader.data["emg"][0:-1:data_divider]
     
-    emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) -2)]
+    emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) - 3)]
 
     for i, emg in enumerate(emg_labels):
          figure.add_trace(go.Scatter(x=data_fraction["relative_time"],
@@ -277,14 +277,14 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
                                  name=emg,
                                  textposition='bottom center'))
          
-    time = reader.data["emg"].iloc[selected_frame,1]
+    time = reader.data["emg"].iloc[selected_frame, 2]
 
     #  =>2 pour exclure les deux premiere colones
-    y_max=data_fraction.iloc[:,2:].max().max()
-    y_min=data_fraction.iloc[:,2:].min().min()
+    y_max=data_fraction.iloc[:,3:].max().max()
+    y_min=data_fraction.iloc[:,3:].min().min()
 
-    x_min=data_fraction.iloc[0,1]
-    x_max=data_fraction.iloc[-1,1]
+    x_min=data_fraction.iloc[0, 2]
+    x_max=data_fraction.iloc[-1, 2]
     figure.add_trace(go.Scatter(x=[time, time],
                              y=[y_min, y_max],
                              mode='lines',
@@ -296,8 +296,8 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
                              ))
 
     #this is for the selction rectangle
-    x_start=reader.data["emg"].iloc[emg_start_index,1]
-    x_end=reader.data["emg"].iloc[emg_stop_index,1]
+    x_start=reader.data["emg"].iloc[emg_start_index, 2]
+    x_end=reader.data["emg"].iloc[emg_stop_index, 2]
 
     figure.add_trace(go.Bar(x=[(x_end+x_start)/2.],
                             y=[y_max-y_min],
@@ -335,7 +335,7 @@ def opt_graph(selected_frame, selected_exp):
     range_frame=75
     opt_data = reader.data['optitrack'][selected_frame-range_frame:selected_frame+range_frame:(int(range_frame/5))]
    
-    header=list(opt_data.columns)[2:]
+    header=list(opt_data.columns)[3:]
     nb_frames=int(len(header)/7)
     names=[]
 
@@ -447,8 +447,8 @@ def tps_graph(selected_frame, selected_exp):
     if selected_exp is None:
         return go.Figure()
 
-    frame_df=reader.data['tps'].iloc[selected_frame,2:]
-    header=list(reader.data['tps'].columns)[2:]   
+    frame_df=reader.data['tps'].iloc[selected_frame,3:]
+    header=list(reader.data['tps'].columns)[3:]   
 
     fig = go.Figure( [go.Bar(x=header, 
                              y=frame_df,
