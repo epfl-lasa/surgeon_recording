@@ -8,6 +8,7 @@ from multiprocessing import Lock
 import os
 import asyncio
 import time
+from shutil import copyfile
 from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 
 
@@ -39,7 +40,7 @@ class Reader(object):
         max_index = self.get_nb_frames()
         camera_index = initial_guesses["camera"][idx]
         camera_frame = self.data["camera"].iloc[camera_index]
-        time = camera_frame[1]
+        time = camera_frame[2]
         # extract the other sensor data (exept camera)
         indexes = {}
         indexes["camera"] = camera_index
@@ -47,9 +48,9 @@ class Reader(object):
             index = initial_guesses[s][idx]
             frame = self.data[s].iloc[index]
             indexes[s] = index
-            prev_sign = np.sign(time - frame[1])
-            while abs(time - frame[1]) > 1e-3:
-                sign = np.sign(time - frame[1])
+            prev_sign = np.sign(time - frame[2])
+            while abs(time - frame[2]) > 1e-3:
+                sign = np.sign(time - frame[2])
                 if prev_sign - sign != 0:
                     break
                 index = int(index + sign * 1)
@@ -155,9 +156,16 @@ class Reader(object):
         cut_camera_data.to_csv(join(export_folder, 'camera.csv'))
         print("Camera data file exported")
         cut_data = self.get_window_data(indexes)
+        # export all csv
         for key, value in cut_data.items():
             value.to_csv(join(export_folder, key + '.csv'), index=False)
             print(key + " data file exported")
+        # copy calibration file if it exists
+        for i in range(1, 3):
+            calibration_file = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
+            if os.path.exists(join(self.exp_folder, calibration_file)):
+                print("calibration file " + calibration_file + " exported")
+                copyfile(join(self.exp_folder, calibration_file), join(export_folder, calibration_file))
         self.export_video(export_folder, start_index, stop_index)
         print("Export complete")
 
