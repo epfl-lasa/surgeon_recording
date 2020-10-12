@@ -17,7 +17,7 @@ class FTSensorHandler(SensorHandler):
             context = zmq.Context()
             self.data_socket = context.socket(zmq.SUB)
             self.data_socket.connect("tcp://%s:%s" % (ip, port))
-            self.data_socket.subscribe(b'tps_data')
+            self.data_socket.subscribe(b'ft_sensor_data')
             self.data_socket.setsockopt(zmq.SNDHWM, 5)
             self.data_socket.setsockopt(zmq.SNDBUF, 5*1024)
             print("socket initialized")
