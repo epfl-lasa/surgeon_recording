@@ -3,11 +3,13 @@ import time
 import numpy as np
 import os
 from os.path import join
+from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+
 
 class FTSensorHandler(SensorHandler):
-	def __init__(self, parameters):
-		SensorHandler.__init__(self, 'ft_sensor', parameters)
-		ip = parameters["sensor_ip"]
+    def __init__(self, parameters):
+        SensorHandler.__init__(self, 'ft_sensor', parameters)
+        ip = parameters["sensor_ip"]
         port = parameters["sensor_port"]
         self.simulate = parameters["simulate"]
 
@@ -47,10 +49,12 @@ class FTSensorHandler(SensorHandler):
         self.data_socket.close()
         print("ft_sensor closed cleanly")
 
-    def main(args=None):
+
+def main(args=None):
     parameters = FTSensorHandler.get_parameters()
     ft_sensor_handler = FTSensorHandler(parameters)
     ft_sensor_handler.run()
-    
+
+
 if __name__ == '__main__':
     main()
