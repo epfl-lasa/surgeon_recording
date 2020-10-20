@@ -64,6 +64,7 @@ class Recorder(object):
         self.data['emg'] = deque(maxlen=2000)
         self.data['optitrack'] = deque(maxlen=500)
         self.data['tps'] = deque(maxlen=500)
+        self.data['ft_sensor'] = deque(maxlen=500)
 
     def init_recording_folder(self, folder):
         self.exp_folder = join(self.data_folder, folder)
