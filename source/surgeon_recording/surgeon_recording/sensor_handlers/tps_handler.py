@@ -11,25 +11,26 @@ from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 class TPSHandler(SensorHandler):
     def __init__(self, parameters):
         SensorHandler.__init__(self, 'tps', parameters)
-        ip = parameters["sensor_ip"]
-        port = parameters["sensor_port"]
-        self.simulate = parameters["simulate"]
-        self.selected_fingers = [f["streaming_id"] for f in parameters["fingers"]]
 
-        # load the calibrations
-        calib1, calib2 = TPSHandler.load_calibrations()
-        self.calibrations = calib1 + calib2
+        if self.running:
+            ip = parameters['sensor_ip']
+            port = parameters['sensor_port']
+            self.selected_fingers = [f['streaming_id'] for f in parameters['fingers']]
 
-        if not self.simulate:
-            # socket for receiving sensor data
-            print("socket initializing")
-            context = zmq.Context()
-            self.data_socket = context.socket(zmq.SUB)
-            self.data_socket.connect("tcp://%s:%s" % (ip, port))
-            self.data_socket.subscribe(b'tps_data')
-            self.data_socket.setsockopt(zmq.SNDHWM, 5)
-            self.data_socket.setsockopt(zmq.SNDBUF, 5*1024)
-            print("socket initialized")
+            # load the calibrations
+            calib1, calib2 = TPSHandler.load_calibrations()
+            self.calibrations = calib1 + calib2
+
+            if not self.simulated:
+                # socket for receiving sensor data
+                print('socket initializing')
+                context = zmq.Context()
+                self.data_socket = context.socket(zmq.SUB)
+                self.data_socket.connect('tcp://%s:%s' % (ip, port))
+                self.data_socket.subscribe(b'tps_data')
+                self.data_socket.setsockopt(zmq.SNDHWM, 5)
+                self.data_socket.setsockopt(zmq.SNDBUF, 5*1024)
+                print('socket initialized')
 
     @staticmethod
     def compute_calibration_factor(data):
@@ -42,7 +43,7 @@ class TPSHandler(SensorHandler):
     def read_calibration_file(calibration_file):
         # get the parameters to know which are the sensors to read
         parameters = TPSHandler.get_parameters()
-        selected_fingers = [f["streaming_id"] for f in parameters["fingers"]]
+        selected_fingers = [f['streaming_id'] for f in parameters['fingers']]
         calibration_factors = []
         if os.path.exists(calibration_file):
             file = open(calibration_file, 'r')
@@ -67,10 +68,10 @@ class TPSHandler(SensorHandler):
 
     @staticmethod
     def get_parameters():
-        parameters = SensorHandler.read_config_file()
-        param = parameters['tps']
-        param.update({ 'header': list(itertools.chain.from_iterable((f["label"] + "_calibrated", f["label"] + "_raw") for f in param["fingers"])) })
-        return param
+        parameters = SensorHandler.read_config_file('tps')
+        if parameters['status'] != 'off':
+            parameters.update({ 'header': list(itertools.chain.from_iterable((f['label'] + '_calibrated', f['label'] + '_raw') for f in parameters['fingers'])) })
+        return parameters
 
     def setup_recording(self, recording_folder, start_time):
         super().setup_recording(recording_folder, start_time)
@@ -87,9 +88,9 @@ class TPSHandler(SensorHandler):
     def acquire_data(self):
         absolute_time = time.time()
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
-        if not self.simulate:
+        if not self.simulated:
             topic = self.data_socket.recv_string()
-            tmp = np.array([float(x) for x in self.data_socket.recv_string().split(",")])
+            tmp = np.array([float(x) for x in self.data_socket.recv_string().split(',')])
         else:
             tmp = self.generate_fake_data(12)
         for i, f in enumerate(self.selected_fingers):
@@ -104,8 +105,9 @@ class TPSHandler(SensorHandler):
 
     def shutdown(self):
         super().shutdown()
-        self.data_socket.close()
-        print("tps closed cleanly")
+        if not self.simulated:
+            self.data_socket.close()
+        print('tps closed cleanly')
 
 
 def main(args=None):

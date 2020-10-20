@@ -4,3 +4,9 @@ __pycache__/
 /notebooks/.ipynb_checkpoints
 /source/surgeon_recording/config/FingerTPS_EPFL1-cal.txt
 /source/surgeon_recording/config/FingerTPS_EPFL2-cal.txt
+/pictures/
+/raw_data/
+/Videos/
+/knots_data
+/data_old/*
+/surgeon_data/*

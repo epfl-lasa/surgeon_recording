@@ -11,27 +11,28 @@ from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 class CameraHandler(SensorHandler):
     def __init__(self, parameters):
         SensorHandler.__init__(self, 'camera', parameters)
-        self.simulate = parameters["simulate"]
-        self.color_image = []
-        self.depth_colormap = []
-        if not self.simulate:
-            self.pipeline = rs.pipeline()
-            self.config = rs.config()
-            self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-            self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-            try:
-                self.pipeline.start(self.config)
-            except:
-                print("Error initializing the camera")
-        self.colorwriter = None
-        self.depthwriter = None
+
+        if self.running:
+            self.color_image = []
+            self.depth_colormap = []
+            if not self.simulated:
+                self.pipeline = rs.pipeline()
+                self.config = rs.config()
+                self.config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+                self.config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+                try:
+                    self.pipeline.start(self.config)
+                except:
+                    print("Error initializing the camera")
+            self.colorwriter = None
+            self.depthwriter = None
 
     @staticmethod
     def get_parameters():
-        parameters = SensorHandler.read_config_file()
-        param = parameters['camera']
-        param.update({ 'header': [] })
-        return param
+        parameters = SensorHandler.read_config_file('camera')
+        if parameters['status'] != 'off':
+            parameters.update({ 'header': [] })
+        return parameters
 
     @staticmethod
     def create_blank_image(encode=False):
@@ -45,7 +46,7 @@ class CameraHandler(SensorHandler):
         return cv2.imencode('.jpg', image)[1]
 
     def acquire_data(self):
-        if not self.simulate:
+        if not self.simulated:
             # Wait for a coherent pair of frames: depth and color
             frames = self.pipeline.wait_for_frames()
             depth_frame = frames.get_depth_frame()
@@ -112,9 +113,9 @@ class CameraHandler(SensorHandler):
 
     def shutdown(self):
         super().shutdown()
-        if not self.simulate:
+        if not self.simulated:
             self.pipeline.stop()
-            print("camera closed cleanly")
+        print("camera closed cleanly")
 
 
 def main(args=None):

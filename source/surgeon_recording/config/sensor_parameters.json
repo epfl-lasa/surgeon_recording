@@ -3,18 +3,18 @@
 	         "sensor_ip": "localhost",
 	         "streaming_ip": "*",
 	         "streaming_port": 5556,
-	         "simulate": false },
+	         "status": "simulated" },
 
 	"optitrack": { "frames": [{ "label": "knife", "streaming_id": 1 },
 							  { "label": "elbow", "streaming_id": 2 }],
 				   "frame_timeout": 0.1,
 				   "streaming_ip": "*",
 				   "streaming_port": 5558,
-				   "simulate": false },
+				   "status": "simulated" },
 
 	"camera": { "streaming_ip": "*",
 	            "streaming_port": 5560,
-	            "simulate": false },
+	            "status": "simulated" },
 
 	"tps": { "nb_adapters": 1,
 			 "fingers": [{ "label": "left_middle", "streaming_id": 0 },
@@ -27,5 +27,5 @@
 			 "streaming_port": 5562,
 			 "sensor_ip": "127.0.0.1",
 			 "sensor_port": 4242,
-			 "simulate": false }
+			 "status": "simulated" }
 }

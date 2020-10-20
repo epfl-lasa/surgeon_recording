@@ -11,14 +11,14 @@ class OptitrackHandler(SensorHandler):
         SensorHandler.__init__(self, 'optitrack', parameters)
         
         if self.running:
-            self.timeout = parameters["frame_timeout"]
+            self.timeout = parameters['frame_timeout']
             self.data_received = False
             self.received_frames = {}
-            for frame in parameters["frames"]:
-                label = frame["label"]
-                self.received_frames[frame["streaming_id"]] = {"label": label, "position": [], "orientation": [], "timestamp": 0}
+            for frame in parameters['frames']:
+                label = frame['label']
+                self.received_frames[frame['streaming_id']] = {'label': label, 'position': [], 'orientation': [], 'timestamp': 0}
 
-            if self.status == 'on':
+            if not self.simulated:
                 self.opt_client = NatNetClient()
                 # Configure the streaming client to call our rigid body handler on the emulator to send data out.
                 self.opt_client.newFrameListener = self.receive_frame
@@ -29,22 +29,22 @@ class OptitrackHandler(SensorHandler):
 
     @staticmethod
     def get_parameters():
-        parameters = SensorHandler.read_config_file()
-        param = parameters['optitrack']
-        header = []
-        for frame in param["frames"]:
-            label = frame["label"]
-            header = header + [label + "_x", label + "_y", label + "_z", label + "_qx", label + "_qy", label + "_qz", label + "_qw"]
-        param.update({ 'header': header })
-        return param
+        parameters = SensorHandler.read_config_file('optitrack')
+        if parameters['status'] != 'off':
+            header = []
+            for frame in parameters['frames']:
+                label = frame['label']
+                header = header + [label + '_x', label + '_y', label + '_z', label + '_qx', label + '_qy', label + '_qz', label + '_qw']
+            parameters.update({ 'header': header })
+        return parameters
 
     # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
     def receive_rigid_body(self, id, position, rotation):
         with self.lock:
             if id in self.received_frames.keys():
-                self.received_frames[id]["timestamp"] = time.time()
-                self.received_frames[id]["position"] = position
-                self.received_frames[id]["orientation"] = rotation
+                self.received_frames[id]['timestamp'] = time.time()
+                self.received_frames[id]['position'] = position
+                self.received_frames[id]['orientation'] = rotation
                 self.data_received = True
 
     # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
@@ -52,38 +52,35 @@ class OptitrackHandler(SensorHandler):
                       labeledMarkerCount, timecode, timecodeSub, timestamp, isRecording, trackedModelsChanged ):
         return
 
-    def generate_simulated_data(self):
-        absolute_time = time.time()
-        data = [self.index + 1, absolute_time, absolute_time - self.start_time]
-        tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
-        for v in tmp:
-            data.append(v)
-        self.index = data[0]
-        return data
-
     def acquire_data(self):
         data = []
         if self.data_received:
             absolute_time = time.time()
             data = [self.index + 1, absolute_time, absolute_time - self.start_time]
             for key, f in self.received_frames.items():
-                if absolute_time - f["timestamp"] < self.timeout:
-                    for pos in f["position"]:
+                if absolute_time - f['timestamp'] < self.timeout:
+                    for pos in f['position']:
                         data.append(pos)
-                    for rot in f["orientation"]:
+                    for rot in f['orientation']:
                         data.append(rot)
                 else:
-                    print("Frame " + f["label"] + " not visible")
-                    if not self.simulate:
-                        return []
+                    print('Frame ' + f['label'] + ' not visible')
+                    return []
+            self.index = data[0]
+        elif not self.simulated:
+            absolute_time = time.time()
+            data = [self.index + 1, absolute_time, absolute_time - self.start_time]
+            tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
+            for v in tmp:
+                data.append(v)
             self.index = data[0]
         return data 
 
     def shutdown(self):
         super().shutdown()
-        if not self.simulate:
+        if not self.simulated:
             self.opt_client.shutdown()
-            print("optitrack closed cleanly")
+        print('optitrack closed cleanly')
 
 
 def main(args=None):

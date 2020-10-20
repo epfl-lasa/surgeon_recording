@@ -6,34 +6,34 @@ import os
 from os.path import join
 import time
 import json
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class SensorHandler(ABC):
     def __init__(self, sensor_name, parameters):
         self.sensor_name = sensor_name
-        self.status = parameters["status"]
-        self.running = (self.status == "on" or self.status == "simulated")
+        self.running = (parameters['status'] == 'on' or parameters['status'] == 'simulated')
+        self.simulated = parameters['status'] == 'simulated'
 
-        self.header = parameters["header"]
-        ip = parameters["streaming_ip"]
-        port = parameters["streaming_port"]
+        if self.running:
+            self.header = parameters['header']
+            ip = parameters['streaming_ip']
+            port = parameters['streaming_port']
 
-        self.recording = False
-        self.index = 0
-        self.start_time = time.time()
-        self.timestep = 0.001 # security to not overfload the network
-        
-        if self running:
+            self.recording = False
+            self.index = 0
+            self.start_time = time.time()
+            self.timestep = 0.001 # security to not overfload the network
+            
             # socket for publisher
             context = zmq.Context()
             self.socket = context.socket(zmq.PUB)
             self.socket.setsockopt(zmq.SNDHWM, 10)
             self.socket.setsockopt(zmq.SNDBUF, 10*1024)
-            self.socket.bind("tcp://%s:%s" % (ip, port))
+            self.socket.bind('tcp://%s:%s' % (ip, port))
             # socker for recorder server
             self.recorder_socket = context.socket(zmq.REP)
-            self.recorder_socket.bind("tcp://%s:%s" % (ip, port + 1))
+            self.recorder_socket.bind('tcp://%s:%s' % (ip, port + 1))
             self.recorder_socket.setsockopt(zmq.LINGER, 0)
 
             self.stop_event = Event()
@@ -42,20 +42,19 @@ class SensorHandler(ABC):
             self.lock = Lock()
 
     @staticmethod
-    def read_config_file():
+    def read_config_file(sensor_name):
         filepath = os.path.abspath(os.path.dirname(__file__))
         with open(join(filepath, '..', '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
-            return json.load(paramfile)
+            config = json.load(paramfile)
+        if not sensor_name in config.keys():
+            config[sensor_name] = {}
+            config[sensor_name]['status'] = 'off'
+        return config[sensor_name]
 
     def generate_fake_data(self, dim, mean=0., var=1.):
         return np.random.normal(size=dim, loc=mean, scale=var)
 
-
-    @abstactmethod
-    def generate_simulated_data(self):
-        pass
-
-    @abstactmethod
+    @abstractmethod
     def acquire_data(self):
         pass
 
@@ -76,14 +75,14 @@ class SensorHandler(ABC):
             message = self.recorder_socket.recv_json()
             if message['recording'] and not self.recording:
                 self.setup_recording(message['folder'], message['start_time'])
-                self.recorder_socket.send_string("recording started")
+                self.recorder_socket.send_string('recording started')
                 print('Recording started')
             elif not message['recording'] and self.recording:
                 self.stop_recording()
-                self.recorder_socket.send_string("recording stopped")
+                self.recorder_socket.send_string('recording stopped')
                 print('Recording stopped')
             else:
-                self.recorder_socket.send_string("recording" if self.recording else "not recording")
+                self.recorder_socket.send_string('recording' if self.recording else 'not recording')
 
     def setup_recording(self, recording_folder, start_time):
         with self.lock:
@@ -91,8 +90,8 @@ class SensorHandler(ABC):
                 os.makedirs(recording_folder)
 
             f = open(join(recording_folder, self.sensor_name + '.csv'), 'w', newline='')
-            self.writer = {"file": f, "writer": csv.writer(f)}
-            self.writer["writer"].writerow(["index", "absolute_time", "relative_time"] + self.header)
+            self.writer = {'file': f, 'writer': csv.writer(f)}
+            self.writer['writer'].writerow(['index', 'absolute_time', 'relative_time'] + self.header)
 
             self.index = 0
             self.start_time = start_time
@@ -110,9 +109,9 @@ class SensorHandler(ABC):
             if data:
                 if isinstance(data[0], list):
                     for d in data:
-                        self.writer["writer"].writerow(d)
+                        self.writer['writer'].writerow(d)
                 else:
-                    self.writer["writer"].writerow(data)
+                    self.writer['writer'].writerow(data)
 
     def shutdown(self):
         self.stop_event.set()
@@ -126,10 +125,7 @@ class SensorHandler(ABC):
                 try:
                     start = time.time()
                     with self.lock:
-                        if self.status == 'simulated':
-                            data = self.generate_simulated_data()
-                        else:
-                            data = self.acquire_data()
+                        data = self.acquire_data()
                         self.record(data)
                         self.send_data(self.sensor_name, data)
                     effective_time = time.time() - start

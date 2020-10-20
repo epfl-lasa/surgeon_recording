@@ -15,29 +15,30 @@ if sys.platform == 'win32':
 class EMGHandler(SensorHandler):
     def __init__(self, parameters):
         SensorHandler.__init__(self, 'emg', parameters)
-        # define number of channels to acquire
-        self.nb_channels = parameters["nb_channels"]
-        self.simulate = parameters["simulate"]
 
-        if not self.simulate:
-            # create an emgClient object for acquiring the data
-            self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["sensor_ip"], nb_channels=self.nb_channels)
-            # initialize the node
-            init_value = self.emgClient.initialize()
-            self.emg_init = init_value == 0
-            self.emgClient.start()
-        self.emg_data = []
+        if self.running:
+            # define number of channels to acquire
+            self.nb_channels = parameters["nb_channels"]
+
+            if not self.simulated:
+                # create an emgClient object for acquiring the data
+                self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["sensor_ip"], nb_channels=self.nb_channels)
+                # initialize the node
+                init_value = self.emgClient.initialize()
+                self.emg_init = init_value == 0
+                self.emgClient.start()
+            self.emg_data = []
 
     @staticmethod
     def get_parameters():
-        parameters = SensorHandler.read_config_file()
-        param = parameters['emg']
-        param.update({ 'header': ['emg' + str(i) for i in range(parameters['emg']['nb_channels'])]})
-        return param
+        parameters = SensorHandler.read_config_file('emg')
+        if parameters['status'] != 'off':
+            parameters.update({ 'header': ['emg' + str(i) for i in range(parameters['nb_channels'])]})
+        return parameters
 
     def acquire_data(self):
         # acquire the signals from the buffer
-        if not self.simulate:
+        if not self.simulated:
             emg_array = self.emgClient.getSignals()
         else:
             emg_array = self.generate_fake_data([self.nb_channels, 50])
@@ -76,7 +77,7 @@ class EMGHandler(SensorHandler):
 
     def shutdown(self):
         super().shutdown()
-        if not self.simulate and self.emg_init:
+        if not self.simulated and self.emg_init:
             self.emgClient.shutdown()
             print("emg closed cleanly")
 
