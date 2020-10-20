@@ -13,13 +13,13 @@ from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 from surgeon_recording.sensor_handlers.emg_handler import EMGHandler
 from surgeon_recording.sensor_handlers.optitrack_handler import OptitrackHandler
 from surgeon_recording.sensor_handlers.tps_handler import TPSHandler
-from surgeon_recording.sensor_handlers.tps_handler import FTSensorHandler
+from surgeon_recording.sensor_handlers.ft_sensor_handler import FTSensorHandler
 
 class Recorder(object):
     def __init__(self, data_folder):
         self.recording = False
         self.data_folder = data_folder
-        self.exp_folder = ""
+        self.exp_folder = ''
 
         # init data storage
         self.data = {}
@@ -27,23 +27,23 @@ class Recorder(object):
         self.init_data_buffer()
 
         # init all sensors
-        self.sensor_list = ["camera", "optitrack", "emg", "tps", "ft_sensor"]
+        self.sensor_list = ['camera', 'optitrack', 'emg', 'tps', 'ft_sensor']
         self.sensor_sockets = {}
         self.recorder_sockets = {}
 
         self.topics = {}
-        self.topics["camera"] = ["rgb", "depth"]
-        self.topics["optitrack"] = ["optitrack"]
-        self.topics["emg"] = ["emg"]
-        self.topics["tps"] = ["tps"]
-        self.topics["ft_sensor"] = ["ft_sensor"]
+        self.topics['camera'] = ['rgb', 'depth']
+        self.topics['optitrack'] = ['optitrack']
+        self.topics['emg'] = ['emg']
+        self.topics['tps'] = ['tps']
+        self.topics['ft_sensor'] = ['ft_sensor']
 
         self.parameters = {}
-        self.parameters["camera"] = CameraHandler.get_parameters()
-        self.parameters["optitrack"] = OptitrackHandler.get_parameters()
-        self.parameters["emg"] = EMGHandler.get_parameters()
-        self.parameters["tps"] = TPSHandler.get_parameters()
-        self.parameters["ft_sensor"] = FTSensorHandler.get_parameters()
+        self.parameters['camera'] = CameraHandler.get_parameters()
+        self.parameters['optitrack'] = OptitrackHandler.get_parameters()
+        self.parameters['emg'] = EMGHandler.get_parameters()
+        self.parameters['tps'] = TPSHandler.get_parameters()
+        self.parameters['ft_sensor'] = FTSensorHandler.get_parameters()
 
         for s in self.sensor_list:
             self.init_sensor(s)
@@ -61,9 +61,9 @@ class Recorder(object):
             t.start()
 
     def init_data_buffer(self):
-        self.data["emg"] = deque(maxlen=2000)
-        self.data["optitrack"] = deque(maxlen=500)
-        self.data["tps"] = deque(maxlen=500)
+        self.data['emg'] = deque(maxlen=2000)
+        self.data['optitrack'] = deque(maxlen=500)
+        self.data['tps'] = deque(maxlen=500)
 
     def init_recording_folder(self, folder):
         self.exp_folder = join(self.data_folder, folder)
@@ -71,50 +71,56 @@ class Recorder(object):
             os.makedirs(self.exp_folder)    
 
     def init_sensor(self, sensor_name):
-        ip = self.parameters[sensor_name]["streaming_ip"] if self.parameters[sensor_name]["streaming_ip"] != "*" else "127.0.0.1"
-        port = self.parameters[sensor_name]["streaming_port"]
+        if self.parameters[sensor_name]['status'] == 'on' or self.parameters[sensor_name]['status'] == 'simulated':
+            ip = self.parameters[sensor_name]['streaming_ip'] if self.parameters[sensor_name]['streaming_ip'] != '*' else '127.0.0.1'
+            port = self.parameters[sensor_name]['streaming_port']
 
-        context = zmq.Context()
-        self.sensor_sockets[sensor_name] = context.socket(zmq.SUB)
-        for t in self.topics[sensor_name]:
-            self.sensor_sockets[sensor_name].subscribe(str.encode(t))
-        self.sensor_sockets[sensor_name].setsockopt(zmq.SNDHWM, 10)
-        self.sensor_sockets[sensor_name].setsockopt(zmq.SNDBUF, 10*1024)
-        self.sensor_sockets[sensor_name].connect("tcp://%s:%s" % (ip, port))
+            context = zmq.Context()
+            self.sensor_sockets[sensor_name] = context.socket(zmq.SUB)
+            for t in self.topics[sensor_name]:
+                self.sensor_sockets[sensor_name].subscribe(str.encode(t))
+            self.sensor_sockets[sensor_name].setsockopt(zmq.SNDHWM, 10)
+            self.sensor_sockets[sensor_name].setsockopt(zmq.SNDBUF, 10*1024)
+            self.sensor_sockets[sensor_name].connect('tcp://%s:%s' % (ip, port))
 
-        context = zmq.Context()
-        socket_recorder = context.socket(zmq.REQ)
-        socket_recorder.connect("tcp://%s:%s" % (ip, port + 1))
-        self.recorder_sockets[sensor_name] = socket_recorder
+            context = zmq.Context()
+            socket_recorder = context.socket(zmq.REQ)
+            socket_recorder.connect('tcp://%s:%s' % (ip, port + 1))
+            self.recorder_sockets[sensor_name] = socket_recorder
 
     def get_camera_data(self):
-        while not self.stop_event.is_set():
-            data = CameraHandler.receive_data(self.sensor_sockets["camera"])
-            self.buffered_images.update(data)
+        if 'camera' in self.sensor_sockets.keys():
+            while not self.stop_event.is_set():
+                data = CameraHandler.receive_data(self.sensor_sockets['camera'])
+                self.buffered_images.update(data)
 
     def get_emg_data(self):
-        while not self.stop_event.is_set():
-            signal = EMGHandler.receive_data(self.sensor_sockets["emg"])
-            for s in signal[self.topics["emg"][0]]:
-                self.data["emg"].append(s)
+        if 'emg' in self.sensor_sockets.keys():
+            while not self.stop_event.is_set():
+                signal = EMGHandler.receive_data(self.sensor_sockets['emg'])
+                for s in signal[self.topics['emg'][0]]:
+                    self.data['emg'].append(s)
 
     def get_optitrack_data(self):
-        while not self.stop_event.is_set():
-            data = OptitrackHandler.receive_data(self.sensor_sockets["optitrack"])
-            self.data["optitrack"].append(data[self.topics["optitrack"][0]])
+        if 'optitrack' in self.sensor_sockets.keys():
+            while not self.stop_event.is_set():
+                data = OptitrackHandler.receive_data(self.sensor_sockets['optitrack'])
+                self.data['optitrack'].append(data[self.topics['optitrack'][0]])
 
     def get_tps_data(self):
-        while not self.stop_event.is_set():
-            data = TPSHandler.receive_data(self.sensor_sockets["tps"])
-            self.data["tps"].append(data[self.topics["tps"][0]])
+        if 'tps' in self.sensor_sockets.keys():
+            while not self.stop_event.is_set():
+                data = TPSHandler.receive_data(self.sensor_sockets['tps'])
+                self.data['tps'].append(data[self.topics['tps'][0]])
 
     def get_ft_sensor_data(self):
-        while not self.stop_event.is_set():
-            data = FTSensorHandler.receive_data(self.sensor_sockets["ft_sensor"])
-            self.data["ft_sensor"].append(data[self.topics["ft_sensor"][0]])
+        if 'ft_sensor' in self.sensor_sockets.keys():
+            while not self.stop_event.is_set():
+                data = FTSensorHandler.receive_data(self.sensor_sockets['ft_sensor'])
+                self.data['ft_sensor'].append(data[self.topics['ft_sensor'][0]])
 
     def get_buffered_data(self, sensor_name):
-        header = ["index", "absolute_time", "relative_time"] + self.parameters[sensor_name]["header"]
+        header = ['index', 'absolute_time', 'relative_time'] + self.parameters[sensor_name]['header']
         data = self.data[sensor_name]
         if data:
             return pd.DataFrame(data=np.array(data)[:,1:], index=np.array(data)[:,0], columns=header[1:])
@@ -145,5 +151,7 @@ class Recorder(object):
     def shutdown(self):
         self.stop_event.set()
         for s in self.sensor_list:
-            self.sensor_sockets[s].close()
-            self.recorder_sockets[s].close()
+            if s in self.sensor_sockets.keys():
+                self.sensor_sockets[s].close()
+            if s in self.recorder_sockets.keys():
+                self.recorder_sockets[s].close()
