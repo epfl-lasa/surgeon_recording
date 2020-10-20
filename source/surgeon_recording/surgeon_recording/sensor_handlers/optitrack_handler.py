@@ -34,7 +34,7 @@ class OptitrackHandler(SensorHandler):
         header = []
         for frame in param["frames"]:
             label = frame["label"]
-            header = header + [label + "_x", label + "_y", label + "_z", label + "_qw", label + "_qx", label + "_qy", label + "_qz"]
+            header = header + [label + "_x", label + "_y", label + "_z", label + "_qx", label + "_qy", label + "_qz", label + "_qw"]
         param.update({ 'header': header })
         return param
 

@@ -4,7 +4,7 @@ import time
 
 if __name__ == '__main__':
     script_folder = join('source', 'surgeon_recording', 'surgeon_recording', 'sensor_handlers')
-    sensors = ['camera', 'emg', 'tps', 'optitrack']
+    sensors = ['camera', 'emg', 'tps', 'optitrack', 'ft_sensor_handler']
     processes = []
     for s in sensors:
         processes.append(subprocess.Popen(['python', join(script_folder, s + '_handler.py')]))

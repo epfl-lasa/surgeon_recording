@@ -13,6 +13,7 @@ from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 from surgeon_recording.sensor_handlers.emg_handler import EMGHandler
 from surgeon_recording.sensor_handlers.optitrack_handler import OptitrackHandler
 from surgeon_recording.sensor_handlers.tps_handler import TPSHandler
+from surgeon_recording.sensor_handlers.tps_handler import FTSensorHandler
 
 class Recorder(object):
     def __init__(self, data_folder):
@@ -26,7 +27,7 @@ class Recorder(object):
         self.init_data_buffer()
 
         # init all sensors
-        self.sensor_list = ["camera", "optitrack", "emg", "tps"]
+        self.sensor_list = ["camera", "optitrack", "emg", "tps", "ft_sensor"]
         self.sensor_sockets = {}
         self.recorder_sockets = {}
 
@@ -35,12 +36,14 @@ class Recorder(object):
         self.topics["optitrack"] = ["optitrack"]
         self.topics["emg"] = ["emg"]
         self.topics["tps"] = ["tps"]
+        self.topics["ft_sensor"] = ["ft_sensor"]
 
         self.parameters = {}
         self.parameters["camera"] = CameraHandler.get_parameters()
         self.parameters["optitrack"] = OptitrackHandler.get_parameters()
         self.parameters["emg"] = EMGHandler.get_parameters()
         self.parameters["tps"] = TPSHandler.get_parameters()
+        self.parameters["ft_sensor"] = FTSensorHandler.get_parameters()
 
         for s in self.sensor_list:
             self.init_sensor(s)
@@ -52,6 +55,7 @@ class Recorder(object):
         self.recording_threads.append(Thread(target=self.get_emg_data))
         self.recording_threads.append(Thread(target=self.get_optitrack_data))
         self.recording_threads.append(Thread(target=self.get_tps_data))
+        self.recording_threads.append(Thread(target=self.get_ft_sensor_data))
 
         for t in self.recording_threads:
             t.start()
@@ -103,6 +107,11 @@ class Recorder(object):
         while not self.stop_event.is_set():
             data = TPSHandler.receive_data(self.sensor_sockets["tps"])
             self.data["tps"].append(data[self.topics["tps"][0]])
+
+    def get_ft_sensor_data(self):
+        while not self.stop_event.is_set():
+            data = FTSensorHandler.receive_data(self.sensor_sockets["ft_sensor"])
+            self.data["ft_sensor"].append(data[self.topics["ft_sensor"][0]])
 
     def get_buffered_data(self, sensor_name):
         header = ["index", "absolute_time", "relative_time"] + self.parameters[sensor_name]["header"]
