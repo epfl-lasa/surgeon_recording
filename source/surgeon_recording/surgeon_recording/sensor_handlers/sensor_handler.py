@@ -6,10 +6,15 @@ import os
 from os.path import join
 import time
 import json
+from abc import ABC
 
-class SensorHandler(object):
+
+class SensorHandler(ABC):
     def __init__(self, sensor_name, parameters):
         self.sensor_name = sensor_name
+        self.status = parameters["status"]
+        self.running = (self.status == "on" or self.status == "simulated")
+
         self.header = parameters["header"]
         ip = parameters["streaming_ip"]
         port = parameters["streaming_port"]
@@ -19,21 +24,22 @@ class SensorHandler(object):
         self.start_time = time.time()
         self.timestep = 0.001 # security to not overfload the network
         
-        # socket for publisher
-        context = zmq.Context()
-        self.socket = context.socket(zmq.PUB)
-        self.socket.setsockopt(zmq.SNDHWM, 10)
-        self.socket.setsockopt(zmq.SNDBUF, 10*1024)
-        self.socket.bind("tcp://%s:%s" % (ip, port))
-        # socker for recorder server
-        self.recorder_socket = context.socket(zmq.REP)
-        self.recorder_socket.bind("tcp://%s:%s" % (ip, port + 1))
-        self.recorder_socket.setsockopt(zmq.LINGER, 0)
+        if self running:
+            # socket for publisher
+            context = zmq.Context()
+            self.socket = context.socket(zmq.PUB)
+            self.socket.setsockopt(zmq.SNDHWM, 10)
+            self.socket.setsockopt(zmq.SNDBUF, 10*1024)
+            self.socket.bind("tcp://%s:%s" % (ip, port))
+            # socker for recorder server
+            self.recorder_socket = context.socket(zmq.REP)
+            self.recorder_socket.bind("tcp://%s:%s" % (ip, port + 1))
+            self.recorder_socket.setsockopt(zmq.LINGER, 0)
 
-        self.stop_event = Event()
-        self.recording_thread = Thread(target=self.recording_request_handler)
-        self.recording_thread.start()
-        self.lock = Lock()
+            self.stop_event = Event()
+            self.recording_thread = Thread(target=self.recording_request_handler)
+            self.recording_thread.start()
+            self.lock = Lock()
 
     @staticmethod
     def read_config_file():
@@ -44,8 +50,14 @@ class SensorHandler(object):
     def generate_fake_data(self, dim, mean=0., var=1.):
         return np.random.normal(size=dim, loc=mean, scale=var)
 
+
+    @abstactmethod
+    def generate_simulated_data(self):
+        pass
+
+    @abstactmethod
     def acquire_data(self):
-        return []
+        pass
 
     def send_data(self, topic, data):
         if len(data) > 0:
@@ -109,18 +121,22 @@ class SensorHandler(object):
         self.recording_thread.join()
 
     def run(self):
-        while True:
-            try:
-                start = time.time()
-                with self.lock:
-                    data = self.acquire_data()
-                    self.record(data)
-                    self.send_data(self.sensor_name, data)
-                effective_time = time.time() - start
-                wait_period = self.timestep - effective_time
-                if wait_period > 0:
-                    time.sleep(wait_period)
-            except KeyboardInterrupt:
-                print('Interruption, shutting down')
-                break
-        self.shutdown()
+        if self.running:
+            while True:
+                try:
+                    start = time.time()
+                    with self.lock:
+                        if self.status == 'simulated':
+                            data = self.generate_simulated_data()
+                        else:
+                            data = self.acquire_data()
+                        self.record(data)
+                        self.send_data(self.sensor_name, data)
+                    effective_time = time.time() - start
+                    wait_period = self.timestep - effective_time
+                    if wait_period > 0:
+                        time.sleep(wait_period)
+                except KeyboardInterrupt:
+                    print('Interruption, shutting down')
+                    break
+            self.shutdown()

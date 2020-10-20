@@ -9,23 +9,23 @@ from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
 class OptitrackHandler(SensorHandler):
     def __init__(self, parameters):
         SensorHandler.__init__(self, 'optitrack', parameters)
-        self.simulate = parameters["simulate"]
-        self.timeout = parameters["frame_timeout"]
-        self.data_received = False
-        self.received_frames = {}
-        for frame in parameters["frames"]:
-            label = frame["label"]
-            self.received_frames[frame["streaming_id"]] = {"label": label, "position": [], "orientation": [], "timestamp": 0}
-            
         
-        if not self.simulate:
-            self.opt_client = NatNetClient()
-            # Configure the streaming client to call our rigid body handler on the emulator to send data out.
-            self.opt_client.newFrameListener = self.receive_frame
-            self.opt_client.rigidBodyListener = self.receive_rigid_body
-            # Start up the streaming client now that the callbacks are set up.
-            # This will run perpetually, and operate on a separate thread.
-            self.opt_client.run()
+        if self.running:
+            self.timeout = parameters["frame_timeout"]
+            self.data_received = False
+            self.received_frames = {}
+            for frame in parameters["frames"]:
+                label = frame["label"]
+                self.received_frames[frame["streaming_id"]] = {"label": label, "position": [], "orientation": [], "timestamp": 0}
+
+            if self.status == 'on':
+                self.opt_client = NatNetClient()
+                # Configure the streaming client to call our rigid body handler on the emulator to send data out.
+                self.opt_client.newFrameListener = self.receive_frame
+                self.opt_client.rigidBodyListener = self.receive_rigid_body
+                # Start up the streaming client now that the callbacks are set up.
+                # This will run perpetually, and operate on a separate thread.
+                self.opt_client.run()
 
     @staticmethod
     def get_parameters():
@@ -52,6 +52,15 @@ class OptitrackHandler(SensorHandler):
                       labeledMarkerCount, timecode, timecodeSub, timestamp, isRecording, trackedModelsChanged ):
         return
 
+    def generate_simulated_data(self):
+        absolute_time = time.time()
+        data = [self.index + 1, absolute_time, absolute_time - self.start_time]
+        tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
+        for v in tmp:
+            data.append(v)
+        self.index = data[0]
+        return data
+
     def acquire_data(self):
         data = []
         if self.data_received:
@@ -67,14 +76,6 @@ class OptitrackHandler(SensorHandler):
                     print("Frame " + f["label"] + " not visible")
                     if not self.simulate:
                         return []
-            self.index = data[0]
-            self.data_received = False
-        elif self.simulate:
-            absolute_time = time.time()
-            data = [self.index + 1, absolute_time, absolute_time - self.start_time]
-            tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
-            for v in tmp:
-                data.append(v)
             self.index = data[0]
         return data 
 
