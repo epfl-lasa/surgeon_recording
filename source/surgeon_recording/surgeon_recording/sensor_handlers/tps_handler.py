@@ -25,10 +25,9 @@ class TPSHandler(SensorHandler):
             print("socket initializing")
             context = zmq.Context()
             self.data_socket = context.socket(zmq.SUB)
+            self.data_socket.setsockopt(zmq.CONFLATE, 1)
             self.data_socket.connect("tcp://%s:%s" % (ip, port))
-            self.data_socket.subscribe(b'tps_data')
-            self.data_socket.setsockopt(zmq.SNDHWM, 5)
-            self.data_socket.setsockopt(zmq.SNDBUF, 5*1024)
+            self.data_socket.setsockopt( zmq.SUBSCRIBE, b"" )
             print("socket initialized")
 
     @staticmethod
@@ -88,7 +87,6 @@ class TPSHandler(SensorHandler):
         absolute_time = time.time()
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
         if not self.simulate:
-            topic = self.data_socket.recv_string()
             tmp = np.array([float(x) for x in self.data_socket.recv_string().split(",")])
         else:
             tmp = self.generate_fake_data(12)

@@ -11,6 +11,8 @@ def main(args=None):
     socket = context.socket(zmq.SUB)
     socket.connect("tcp://%s:%s" % (ip, port))
     socket.setsockopt(zmq.SUBSCRIBE, b'ft_sensor')
+    socket.setsockopt(zmq.RCVHWM, 10)
+    socket.setsockopt(zmq.RCVBUF, 10*1024)
 
     context = zmq.Context()
     socket_recorder = context.socket(zmq.REQ)
