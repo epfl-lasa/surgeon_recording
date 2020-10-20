@@ -14,7 +14,7 @@ from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 
 class Reader(object):
     def __init__(self):
-        self.sensor_list = ["camera", "emg", "optitrack", "tps"]
+        self.sensor_list = ['camera', 'emg', 'optitrack', 'tps']
         self.data = {}
         self.images = {}
         for s in self.sensor_list:
@@ -38,12 +38,12 @@ class Reader(object):
 
     def get_indexes(self, initial_guesses, idx):
         max_index = self.get_nb_frames()
-        camera_index = initial_guesses["camera"][idx]
-        camera_frame = self.data["camera"].iloc[camera_index]
+        camera_index = initial_guesses['camera'][idx]
+        camera_frame = self.data['camera'].iloc[camera_index]
         time = camera_frame[2]
         # extract the other sensor data (exept camera)
         indexes = {}
-        indexes["camera"] = camera_index
+        indexes['camera'] = camera_index
         for s in self.sensor_list[1:]:
             index = initial_guesses[s][idx]
             frame = self.data[s].iloc[index]
@@ -62,14 +62,14 @@ class Reader(object):
         return indexes
 
     def get_window_data(self, indexes):
-        start_frame = indexes["camera"][0]
-        stop_frame = indexes["camera"][1]
+        start_frame = indexes['camera'][0]
+        stop_frame = indexes['camera'][1]
         max_index = self.get_nb_frames()
         if start_frame < 0 or start_frame > max_index:
-            print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(start_frame))
+            print('Incorrect index, expected number between 0 and ' + str(max_index) + ' got ' + str(start_frame))
             return -1
         if stop_frame < 0 or stop_frame > max_index:
-            print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(stop_frame))
+            print('Incorrect index, expected number between 0 and ' + str(max_index) + ' got ' + str(stop_frame))
             return -1
         start_indexes = self.get_indexes(indexes, 0)
         stop_indexes = self.get_indexes(indexes, 1)
@@ -79,15 +79,15 @@ class Reader(object):
         return window_data
 
     def get_nb_frames(self):
-        return len(self.data["camera"])
+        return len(self.data['camera'])
 
     def get_nb_sensor_frames(self, sensor):
         return self.data[sensor].count()[0]
 
     def init_image_list(self):
-        for t in ["rgb", "depth"]:
+        for t in ['rgb', 'depth']:
             self.images[t] = []
-            for i in range(len(self.data["camera"])):
+            for i in range(len(self.data['camera'])):
                 self.images[t].append(self.blank_image)
 
     def extract_images(self):
@@ -99,16 +99,16 @@ class Reader(object):
         while True:
             if self.data_changed:
                 self.data_changed = False
-                rgb_video = cv2.VideoCapture(join(self.exp_folder, "rgb.avi"))
-                depth_video = cv2.VideoCapture(join(self.exp_folder, "depth.avi"))
+                rgb_video = cv2.VideoCapture(join(self.exp_folder, 'rgb.avi'))
+                depth_video = cv2.VideoCapture(join(self.exp_folder, 'depth.avi'))
                 for i in range(self.get_nb_frames()):
                     rgb_image = extract_image(rgb_video)
                     depth_image = extract_image(depth_video)
                     with self.mutex:
                         if self.data_changed:
                             break
-                        self.images["rgb"][i] = rgb_image
-                        self.images["depth"][i] = depth_image
+                        self.images['rgb'][i] = rgb_image
+                        self.images['depth'][i] = depth_image
                 rgb_video.release()
                 depth_video.release()
             time.sleep(0.01)
@@ -116,7 +116,7 @@ class Reader(object):
     def get_image(self, video_type, frame_index):
         max_index = self.get_nb_frames()
         if frame_index < 0 or frame_index > max_index:
-            print("Incorrect index, expected number between 0 and " + str(max_index) + " got " + str(frame_index))
+            print('Incorrect index, expected number between 0 and ' + str(max_index) + ' got ' + str(frame_index))
             return -1
         with self.mutex:
             image = self.images[video_type][frame_index]
@@ -140,7 +140,7 @@ class Reader(object):
         self.exp_folder = exp_folder
         indexes = {}
         for s in self.sensor_list:
-            self.data[s] = pd.read_csv(join(exp_folder, s + ".csv"))
+            self.data[s] = pd.read_csv(join(exp_folder, s + '.csv'))
         with self.mutex:
             self.init_image_list()
             self.align_relative_time()
@@ -150,27 +150,27 @@ class Reader(object):
         export_folder = join(self.exp_folder, folder)
         if not os.path.exists(export_folder):
             os.makedirs(export_folder)
-        start_index = indexes["camera"][0]
-        stop_index = indexes["camera"][1]
-        cut_camera_data = self.data["camera"].iloc[start_index:stop_index+1]
+        start_index = indexes['camera'][0]
+        stop_index = indexes['camera'][1]
+        cut_camera_data = self.data['camera'].iloc[start_index:stop_index+1]
         cut_camera_data.to_csv(join(export_folder, 'camera.csv'))
-        print("Camera data file exported")
+        print('Camera data file exported')
         cut_data = self.get_window_data(indexes)
         # export all csv
         for key, value in cut_data.items():
             value.to_csv(join(export_folder, key + '.csv'), index=False)
-            print(key + " data file exported")
+            print(key + ' data file exported')
         # copy calibration file if it exists
         for i in range(1, 3):
             calibration_file = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
             if os.path.exists(join(self.exp_folder, calibration_file)):
-                print("calibration file " + calibration_file + " exported")
+                print('calibration file ' + calibration_file + ' exported')
                 copyfile(join(self.exp_folder, calibration_file), join(export_folder, calibration_file))
         self.export_video(export_folder, start_index, stop_index)
-        print("Export complete")
+        print('Export complete')
 
     def export_video(self, folder, start_index, stop_index):
-        for t in ["rgb", "depth"]:
+        for t in ['rgb', 'depth']:
             original_video = cv2.VideoCapture(join(self.exp_folder, t + '.avi'))
             cut_video = cv2.VideoWriter(join(folder, t + '.avi'), cv2.VideoWriter_fourcc(*'XVID'), 30, (640,480), 1)
             for i in range(self.offset + stop_index + 1):
@@ -178,6 +178,6 @@ class Reader(object):
                 if i < self.offset + start_index:
                     continue
                 cut_video.write(frame)
-            print(t + " video file exported")
+            print(t + ' video file exported')
             original_video.release()
             cut_video.release()
