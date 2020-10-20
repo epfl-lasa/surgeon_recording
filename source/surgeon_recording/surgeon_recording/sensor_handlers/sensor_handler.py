@@ -71,16 +71,17 @@ class SensorHandler(ABC):
 
     def recording_request_handler(self):
         while not self.stop_event.wait(0.01):
-            print('Waiting for commands')
+            if not self.recording:
+                print(self.sensor_name + ': waiting for commands')
             message = self.recorder_socket.recv_json()
             if message['recording'] and not self.recording:
                 self.setup_recording(message['folder'], message['start_time'])
                 self.recorder_socket.send_string('recording started')
-                print('Recording started')
+                print(self.sensor_name + ': recording started')
             elif not message['recording'] and self.recording:
                 self.stop_recording()
                 self.recorder_socket.send_string('recording stopped')
-                print('Recording stopped')
+                print(self.sensor_name + ': recording stopped')
             else:
                 self.recorder_socket.send_string('recording' if self.recording else 'not recording')
 
