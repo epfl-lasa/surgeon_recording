@@ -10,15 +10,17 @@ import asyncio
 import time
 from shutil import copyfile
 from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
+from os.path import exists
 
 
 class Reader(object):
     def __init__(self):
-        self.sensor_list = ['camera', 'emg', 'optitrack', 'tps']
+        self.available_sensors = ['camera', 'emg', 'optitrack', 'tps']
+        self.needed_sensors = ['camera', 'emg']
+
         self.data = {}
         self.images = {}
-        for s in self.sensor_list:
-            self.data[s] = []
+
         self.mutex = Lock()
         self.blank_image = CameraHandler.create_blank_image(encode=True)
         self.data_changed = False
@@ -29,9 +31,10 @@ class Reader(object):
 
     def get_experiment_list(self, data_folder):
         res = {}
-        needed_files = [s + '.csv' for s in self.sensor_list] + ['rgb.avi', 'depth.avi']
+        needed_files = [s + '.csv' for s in self.needed_sensors] + ['rgb.avi', 'depth.avi']
         exp_list = []
         exp_list = [x[0] for x in os.walk(data_folder) if all(item in x[2] for item in needed_files)]
+        exp_list.sort()
         for exp in exp_list:
             res[exp] = exp
         return res
@@ -87,7 +90,7 @@ class Reader(object):
     def init_image_list(self):
         for t in ['rgb', 'depth']:
             self.images[t] = []
-            for i in range(len(self.data['camera'])):
+            for i in range(self.get_nb_frames()):
                 self.images[t].append(self.blank_image)
 
     def extract_images(self):
@@ -138,10 +141,14 @@ class Reader(object):
 
     def play(self, exp_folder):
         self.exp_folder = exp_folder
-        indexes = {}
-        for s in self.sensor_list:
-            self.data[s] = pd.read_csv(join(exp_folder, s + '.csv'))
         with self.mutex:
+            indexes = {}
+            self.sensor_list = []
+            for s in self.available_sensors:
+                sensor_datafile = join(exp_folder, s + '.csv')
+                if exists(sensor_datafile):
+                    self.sensor_list.append(s)
+                    self.data[s] = pd.read_csv(sensor_datafile)
             self.init_image_list()
             self.align_relative_time()
             self.data_changed = True
