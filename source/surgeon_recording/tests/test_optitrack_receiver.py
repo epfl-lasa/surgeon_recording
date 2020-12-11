@@ -4,8 +4,8 @@ import time
 
 def main(args=None):
     parameters = OptitrackHandler.get_parameters()
-    ip = parameters["streaming_ip"]
-    port = parameters["port"]
+    ip = parameters["streaming_ip"] if parameters["streaming_ip"] != "*" else "127.0.0.1"
+    port = parameters["streaming_port"]
 
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
