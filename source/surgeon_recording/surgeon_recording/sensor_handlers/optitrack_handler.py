@@ -67,7 +67,7 @@ class OptitrackHandler(SensorHandler):
                     print('Frame ' + f['label'] + ' not visible')
                     return []
             self.index = data[0]
-        elif not self.simulated:
+        elif self.simulated:
             absolute_time = time.time()
             data = [self.index + 1, absolute_time, absolute_time - self.start_time]
             tmp = self.generate_fake_data(len(self.received_frames.keys()) * 7)
