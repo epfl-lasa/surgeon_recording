@@ -11,3 +11,5 @@ __pycache__/
 /knots_data
 /data_old/*
 /surgeon_data/*
+/source/surgeon_recording/build/
+/source/surgeon_recording/dist/
