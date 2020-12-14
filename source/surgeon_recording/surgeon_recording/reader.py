@@ -15,7 +15,7 @@ from os.path import exists
 
 class Reader(object):
     def __init__(self):
-        self.available_sensors = ['camera', 'emg', 'optitrack', 'tps']
+        self.available_sensors = ['camera', 'emg', 'optitrack', 'tps', 'ft_sensor']
         self.needed_sensors = ['camera', 'emg']
 
         self.data = {}
