@@ -72,7 +72,7 @@ class Recorder(object):
             os.makedirs(self.exp_folder)    
 
     def init_sensor(self, sensor_name):
-        if self.parameters[sensor_name]['status'] == 'on' or self.parameters[sensor_name]['status'] == 'simulated':
+        if self.parameters[sensor_name]['status'] == 'on' or self.parameters[sensor_name]['status'] == 'simulated' or self.parameters[sensor_name]['status'] == 'remote':
             ip = self.parameters[sensor_name]['streaming_ip'] if self.parameters[sensor_name]['streaming_ip'] != '*' else '127.0.0.1'
             port = self.parameters[sensor_name]['streaming_port']
 
@@ -137,7 +137,7 @@ class Recorder(object):
         self.recording = True
         self.init_recording_folder(folder)
         self.init_data_buffer()
-        message = {'recording': True, 'folder': os.path.abspath(self.exp_folder), 'start_time': time.time()}
+        message = {'recording': True, 'folder': self.exp_folder, 'start_time': time.time()}
         for key, s in self.recorder_sockets.items():
             s.send_json(message)
             s.recv_string()

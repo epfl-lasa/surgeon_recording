@@ -89,7 +89,6 @@ class SensorHandler(ABC):
         with self.lock:
             if not os.path.exists(recording_folder):
                 os.makedirs(recording_folder)
-
             f = open(join(recording_folder, self.sensor_name + '.csv'), 'w', newline='')
             self.writer = {'file': f, 'writer': csv.writer(f)}
             self.writer['writer'].writerow(['index', 'absolute_time', 'relative_time'] + self.header)

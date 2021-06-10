@@ -30,7 +30,7 @@ class OptitrackHandler(SensorHandler):
     @staticmethod
     def get_parameters():
         parameters = SensorHandler.read_config_file('optitrack')
-        if parameters['status'] != 'off':
+        if parameters['status'] != 'off' and parameters['status'] != 'remote':
             header = []
             for frame in parameters['frames']:
                 label = frame['label']
