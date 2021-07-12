@@ -22,7 +22,7 @@ The following sensors and items are required:
 
 #### RealSense
 
-Plug the RealSense to the computer (preferrably directly to the computer instead of going through the hub), start the
+Plug the RealSense to the computer (preferably directly to the computer instead of going through the hub), start the
 Windows Camera app and check the image is correctly displayed. For the stereo or the motion module, check with *Intel
 RealSense Viewer*. Close the apps after checking.
 
@@ -30,8 +30,8 @@ RealSense Viewer*. Close the apps after checking.
 
 Connect the OptiTrack Trio to the USB Hub. Then, start *Motive*, set the ground plane in the *Calibration System Tools*
 panel under `Calibration` &rarr; `Set Ground Plane` on the right of the main window and test the OptiTrack setup with
-the desired markers. Existing markers are listed in the *Asset Pane* window accessible in the tool bar. New marker
-frames can be created by selecting the markers in the main window, rigth click and then `Rigid Body`
+the desired markers. Existing markers are listed in the *Asset Pane* window accessible in the toolbar. New marker frames
+can be created by selecting the markers in the main window, right click and then `Rigid Body`
 &rarr; `Create From Selected Markers`. The marker label and ID can also be seen and changed in the *Asset Pane* window.
 Make sure to test the setup will all the desired markers and check if the OptiTrack system can distinguish and localize
 them well. **Let *Motive* run in the background.**
@@ -39,8 +39,8 @@ them well. **Let *Motive* run in the background.**
 #### TPS Calibration
 
 Once the TPS Transmitter is turned on and the USB Receiver is plugged into the computer directly, run *Chameleon TVR* as
-administrator and let it connect to the sensors. Select the profile (1 or 2) depending on the transmitter that is used (
-they should be labeled). Additionaly, connect the Calibration Base to the USB Hub. Then, in the tool bar, go
+administrator and let it connect to the sensors. Select the profile (1 or 2) depending on the transmitter that is used
+(they should be labeled). Additionally, connect the Calibration Base to the USB Hub. Then, in the toolbar, go
 on `Calibration` &rarr; `Calibrate FingerTPS System`. Specify in the GUI where the sensors are placed and begin the
 calibration process by clicking on `begin` and by following the instructions. To ensure that the calibration was
 successful, go to `C:` &rarr; `Program Files` &rarr; `Pressure Profile Systems` &rarr; `Chameleon TVR` &rarr; `setup`
@@ -56,14 +56,15 @@ the USB Hub.
 **NOTE**: `CTRL+C` might not be working on Windows. Use `CTRL+FN+B` instead. If you find yourself in debug mode in the
 terminal, you can exit that by typing `exit`.
 
-1. Start the *Anaconda Navigator*. Multiple PowerShell Prompts will have to be launched from there.
+1. Start the *Anaconda Navigator*. Three PowerShell Prompts will have to be launched from there.
 
 2. In the first terminal (T1), run
    ```
    cd .\path\to\recordings\surgeon_recording\
    python .\copy_tps_calibration.py
    ```
-   to copy the calibration file to the correct directory. If this is unsuccessful, the calibration didn't work.
+   to copy the calibration file to the correct directory. If this is unsuccessful, the calibration didn't work or the
+   most recent calibration file is too old (copying the calibration does only work within the next 10 minutes).
 
 3. Still in T1, run
    ```
@@ -90,7 +91,10 @@ terminal, you can exit that by typing `exit`.
    python start_all_sensors.py
    ```
 
-Check the output in T2 to see if the recording is successfully started.
+Check the output in T2 to see if the recording is successfully started. The EMG periodically prompts the frequency at
+which it receives data. If you see a recurring message *received at 17Hz* then it works properly. Sometimes, the EMG
+crashes (happens most of the time at startup) and this needs to be restarted. You can check whether the periodic message
+is still printing and if you are not seeing any error message. This is a good sign that the EMG is still working.
 
 7. Open a third terminal (T3), run
    ```
@@ -101,6 +105,6 @@ Check the output in T2 to see if the recording is successfully started.
    You can now access the web app and start recording data from there. Just type `http://127.0.0.1:8080` in your browser
    and use the web app to save the data.
 
-9. To change from one surgeon to another, stop the process in T2, close the TPS prompt, recalibrate and copy the
-   calibration file and execute step 5 and 6 again.
+9. To change from one surgeon to another, stop the process in T2, close the TPS prompt by pressing any key, recalibrate
+   and copy the calibration file and execute step 5 and 6 again.
    

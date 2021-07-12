@@ -55,7 +55,7 @@ path\to\unzipped\folders
 5. Launch Anaconda and open a PowerShell Prompt from the available options. Then.
    ```bash
    cd path\to\recordings\surgeon_recording
-   conda create -name surgeon_recording
+   conda create -name surgeon_recording python=3.8
    # confirm with yes
    conda activate surgeon_recording
    pip install -r .\requirements.txt
@@ -109,7 +109,7 @@ files *camera.csv, depth.avi, emg.csv, optitrack.csv, rgb.avi, tps.csv*.
 
 ### RealSense Camera
 
-9. Connect the camera to the computer. Make sure to use a fast USB cable and port because the camera data is
+9. Connect the camera to the computer. Make sure to use a fast USB3 cable and port because the camera data is
    particularly heavy.
 
 10. Open the Intel RealSense Viewer and check if any firmware update are required and install them. Then, change to `2D`
@@ -150,14 +150,19 @@ and optitrack. In the data folder, the *optitrack.csv, rgb.avi, depth,avi* files
     Run Chameleon as admin and choose configuration *EPFL-S2*, check that the connection is established successfully and
     that you see the sensor data when squeezing the finger. Close Chameleon afterwards.
 
-18. From the additional installation files, unzip *SAHR_data_recording* and put the folder to `path\to\recordings`.
+18. To run Chameleon as admin per default, go to *Start* - *Chameleon TVR 2017* - *right click* and then instead of
+    choosing *Run as administrator*, choose *Open file location*. Then right click on the executable file in the
+    explorer, choose *Properties* and then in the window, go to *Shortcut* - *Advanced...* and check the box beside *Run
+    as administrator*. Confirm, apply the changes and then close the window.
+
+19. From the additional installation files, unzip *SAHR_data_recording* and put the folder to `path\to\recordings`.
     Then, open `path\to\recordings\SAHR_data_recording\WatchmakingDataLog.sln` with Visual Studio. Click on the *Local
     Windows Debugger* without changing anything. The build should fail.
 
-19. Open GitHub Desktop and clone the repository from the URL `https://github.com/Microsoft/vcpkg.git` and change the
+20. Open GitHub Desktop and clone the repository from the URL `https://github.com/Microsoft/vcpkg.git` and change the
     path to `path\to\recordings\vcpkg`.
 
-20. In a PowerShell Prompt, do
+21. In a PowerShell Prompt, do
 
       ```bash
       cd path\to\recordings\vcpkg
@@ -166,7 +171,7 @@ and optitrack. In the data folder, the *optitrack.csv, rgb.avi, depth,avi* files
       .\vcpkg.exe intstall cppzmq:x64-windows
       ```
 
-21. Go back to Visual Studio and run the *Local Windows Debugger* again. This time, the build should be successful and
+22. Go back to Visual Studio and run the *Local Windows Debugger* again. This time, the build should be successful and
     open a terminal that is displaying several lines of information. At the end, it should say *FingerTPS CONNECTED
     SUCCESSFULLY*. If this is not the case, close the terminal, make sure step 17 is okay and then try again.
 
