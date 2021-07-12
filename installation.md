@@ -15,26 +15,44 @@ subsequent steps):
 - [Motive](https://optitrack.com/support/downloads/motive.html) (including the `.NET` framework)
 - [Visual Studio Code](https://code.visualstudio.com/download) (optionally, suggested editor)
 
+## Get Additional Installation Files
+
+Additional installation and setup files are required to complete the installation steps below. The files can be
+requested from [dominic.reber@epfl.ch](mailto:dominic.reber@epfl.ch) and come as zipped folders.
+
+Unzip *SDK Package.zip*, *Noraxon.Acquire.zip*, and *Chameleon Installer-EPFL1 & 2.zip* somewhere on your computer and
+make sure that the folder structure is as follows:
+
+```bash
+path\to\unzipped\folders
+└──SDK Package
+└──Noraxon.Acquire
+└──Chameleon Installer-EPFL1 & 2
+```
+
 ## Acquisition Software Setup Steps
 
 ### EMG
 
 1. Get the credit card shaped USB stick from the EMG box and install *Noraxon MR3.10* from the stick.
 
-2. Download zip files ??? and put
+2. With the explorer, go to `path\to\unzipped\folders\SDK Package` and run `Noraxon.Acquire.1.7.65.0.exe`. Continue with
+   the installation even if Windows complains and leave the default values as is.
 
-3.
-
-4. Turn on the Noraxon Desktop Receiver and plug it to the computer. Go to
+3. Turn on the Noraxon Desktop Receiver and plug it to the computer. With the explorer, go
+   to `path\to\unzipped\folders\Noraxon.Acquire\src\easy2\acquirecom` and run `test.exe`. A window should open up that
+   shows three devices, one of which should bee the Noraxon Desktop Receiver. Drag and drop this one to the left, and
+   the other two to the right. A configuration window for the Desktop Receiver will pop up, choose *Detect
+   Configuration* and accept. Confirm and close the windows.
 
 ### `surgeon_recording` Library
 
-5. Open GitHub Desktop (you can skip the login steps if you want) and choose the option *Clone a repository from URL*,
+4. Open GitHub Desktop (you can skip the login steps if you want) and choose the option *Clone a repository from URL*,
    put [https://github.com/epfl-lasa/surgeon_recording.git](https://github.com/epfl-lasa/surgeon_recording.git) and
    choose a desired path (for example `C:\Users\USER\Documents\Recordings`), that will here be referred to
    as `path\to\recordings\`. Therefore, the GitHub repository will have the path `path\to\recordings\surgeon_recording`.
 
-6. Launch Anaconda and open a Powershell Prompt from the available options. Then.
+5. Launch Anaconda and open a PowerShell Prompt from the available options. Then.
    ```bash
    cd path\to\recordings\surgeon_recording
    conda create -name surgeon_recording
@@ -46,26 +64,26 @@ subsequent steps):
    ```
    This will install the library in the conda environment.
 
-7. With an editor of your choice (Visual Studio Code is a good option), open
+6. With an editor of your choice (Visual Studio Code is a good option), open
    the [emgAcquireClient.py](source/emgAcquireClient.py) file and edit the absolute path on line 7 such that
    `C:\Users\USER\path\to\recordings\surgeon_recording\source\emgAcquire\lib\win32\x64\emgAcquireClient.dll` is correct.
 
-8. Then, open the [emg_handler.py](source/surgeon_recording/surgeon_recording/sensor_handlers/emg_handler.py) file and
+7. Then, open the [emg_handler.py](source/surgeon_recording/surgeon_recording/sensor_handlers/emg_handler.py) file and
    edit the absolute path on line 9 such
    that `r"C:\Users\USER\path\to\recordings\surgeon_recording\source\emgAcquire\python_module` is correct.
 
-9. Then, open the [emgAcquireClient.py](source/emgAcquire/python_module/emgAcquireClient.py) file and edit the absolute
+8. Then, open the [emgAcquireClient.py](source/emgAcquire/python_module/emgAcquireClient.py) file and edit the absolute
    path on line 10 such
    that `lib = ctypes.cdll.LoadLibrary(r'C:\Users\USER\path\to\recordings\surgeon_recording\source\emgAcquire\lib\win32\x64\emgAcquireClient.dll`
    is correct.
 
 ### First Test
 
-After completing steps 1 to 9 it would be best to the test the setup that you have so far. For that, edit
+After completing steps 1 to 8 it would be best to the test the setup that you have so far. For that, edit
 the [sensor parameters file](source/surgeon_recording/config/sensor_parameters.json) such that the status of all sensors
 is set to `simulated` (except the ft_sensor which should stay `off`).
 
-Then, in a first terminal (always choose Powershell Prompts from Anaconda):
+Then, in a first terminal (always choose PowerShell Prompts from Anaconda):
 
 ```bash
 cd path\to\recordings\surgeon_recording
@@ -91,27 +109,27 @@ files *camera.csv, depth.avi, emg.csv, optitrack.csv, rgb.avi, tps.csv*.
 
 ### RealSense Camera
 
-10. Connect the camera to the computer. Make sure to use a fast USB cable and port because the camera data is
-    particularly heavy.
+9. Connect the camera to the computer. Make sure to use a fast USB cable and port because the camera data is
+   particularly heavy.
 
-11. Open the Intel RealSense Viewer and check if any firmware update are required and install them. Then, change to `2D`
+10. Open the Intel RealSense Viewer and check if any firmware update are required and install them. Then, change to `2D`
     view and turn on the stereo module to check that you are getting the RGB data. Close the viewer afterwards.
 
-12. Open the *Camera* app of Windows and check that you get the RGB image of the camera.
+11. Open the *Camera* app of Windows and check that you get the RGB image of the camera.
 
 ### Motive
 
-13. Power up the portable OptiTrack camera system, connect it to the computer and launch Motive. Be aware that without
+12. Power up the portable OptiTrack camera system, connect it to the computer and launch Motive. Be aware that without
     the OptiTrack plugged in, it is not possible to use Motive due to the lack of a license.
 
-14. Find the *Streaming Pane* in the toolbar (the icon looks like a signal / antenna) and activate the first option
+13. Find the *Streaming Pane* in the toolbar (the icon looks like a signal / antenna) and activate the first option
     called *Broadcast Frame Data*.
 
-15. Define the desired rigid bodies by selecting markers and creating a rigid body from them. Then, go to the *Assets
+14. Define the desired rigid bodies by selecting markers and creating a rigid body from them. Then, go to the *Assets
     Pane* and edit the rigid bodies. Give them a name, a streaming ID, and put something around 30 for the smoothing
     value.
 
-16. In the [sensor parameters file](source/surgeon_recording/config/sensor_parameters.json), put the rigid bodies into
+15. In the [sensor parameters file](source/surgeon_recording/config/sensor_parameters.json), put the rigid bodies into
     the list `frames` under `optitrack` with the corresponding labels and streaming IDs.
 
 ### Second Test
@@ -120,20 +138,26 @@ After step 16, let's do another test. Follow the instructions from [the first te
 folder name, e.g. `test_cameras`), except that in the sensor parameters file you put `on` in the status of the camera
 and optitrack. In the data folder, the *optitrack.csv, rgb.avi, depth,avi* files should now contain real data.
 
-*IMPORTANT*: Motive has to be running in the background for this to work.
+**IMPORTANT**: Motive has to be running in the background for this to work.
 
 ### TPS
 
-17. unzip chameleon and install
+16. With the explorer, go to `path\to\unzipped\folders\Chameleon Installer-EPFL1 & 2` and
+    run `Install_Chameleon_TVR.exe`. Continue with the installation even if Windows complains and leave the default
+    values as is.
 
-18. plug receiver and tes
+17. Plug in the red USB receiver with number 184A57, turn on the transmitter box with number two, and connect a finger.
+    Run Chameleon as admin and choose configuration *EPFL-S2*, check that the connection is established successfully and
+    that you see the sensor data when squeezing the finger. Close Chameleon afterwards.
 
-19. Unzip sahr and local windows debugger, fail
+18. From the additional installation files, unzip *SAHR_data_recording* and put the folder to `path\to\recordings`.
+    Then, open `path\to\recordings\SAHR_data_recording\WatchmakingDataLog.sln` with Visual Studio. Click on the *Local
+    Windows Debugger* without changing anything. The build should fail.
 
-20. Open GitHub Desktop and clone the repository from the URL `https://github.com/Microsoft/vcpkg.git` and change the
+19. Open GitHub Desktop and clone the repository from the URL `https://github.com/Microsoft/vcpkg.git` and change the
     path to `path\to\recordings\vcpkg`.
 
-21. In a Powershell Prompt, do
+20. In a PowerShell Prompt, do
 
       ```bash
       cd path\to\recordings\vcpkg
@@ -142,9 +166,9 @@ and optitrack. In the data folder, the *optitrack.csv, rgb.avi, depth,avi* files
       .\vcpkg.exe intstall cppzmq:x64-windows
       ```
 
-22. Go back to Visual Studio and run the *Local Windows Debugger* again. This time, the build should be successful and
+21. Go back to Visual Studio and run the *Local Windows Debugger* again. This time, the build should be successful and
     open a terminal that is displaying several lines of information. At the end, it should say *FingerTPS CONNECTED
-    SUCCESSFULLY*. If this is not the case, close the terminal, make sure step 7 is okay and then try again.
+    SUCCESSFULLY*. If this is not the case, close the terminal, make sure step 17 is okay and then try again.
 
 ## Final Test
 
