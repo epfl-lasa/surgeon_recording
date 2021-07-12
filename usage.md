@@ -53,6 +53,9 @@ the USB Hub.
 
 ## Recording
 
+**NOTE**: `CTRL+C` might not be working on Windows. Use `CTRL+FN+B` instead. If you find yourself in debug mode in the
+terminal, you can exit that by typing `exit`.
+
 1. Start the *Anaconda Navigator*. Multiple PowerShell Prompts will have to be launched from there.
 
 2. In the first terminal (T1), run
