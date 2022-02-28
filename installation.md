@@ -55,7 +55,7 @@ path\to\unzipped\folders
 5. Launch Anaconda and open a PowerShell Prompt from the available options. Then.
    ```bash
    cd path\to\recordings\surgeon_recording
-   conda create -name surgeon_recording python=3.8
+   conda create --name surgeon_recording python=3.8
    # confirm with yes
    conda activate surgeon_recording
    pip install -r .\requirements.txt
