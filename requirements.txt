@@ -7,3 +7,4 @@ opencv-python
 scikit-learn
 fastdtw
 dtw
+jupyterlab
