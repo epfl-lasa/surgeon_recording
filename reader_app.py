@@ -62,21 +62,21 @@ app.layout = html.Div(
                                         dcc.Store(id='window_size', data=2000)
                                      ],
                                      style={'color': '#1E1E1E'}),
-                                 '''html.P('Time sequence selection'),
-                                 dcc.RangeSlider(
-                                  id="slider_frame",
-                                  min=0,
-                                  max=100,
-                                  step=0.1,
-                                  value=[0.,100.],
-                                  marks={
-                                      0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                      25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
-                                      50: {'label': '50', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                      75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
-                                      100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
-                                  },
-                                  ),'''
+                                 #html.P('Time sequence selection'),
+                                 #dcc.RangeSlider(
+                                  #id="slider_frame",
+                                  #min=0,
+                                  #max=100,
+                                  #step=0.1,
+                                  #value=[0.,100.],
+                                  #marks={
+                                      #0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      #25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
+                                      #50: {'label': '50', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      #75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
+                                      #100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
+                                  #},
+                                  #),
                                  html.P('Playback speed selection'),
                                  dcc.Slider(
                                     id="speed_selector",
