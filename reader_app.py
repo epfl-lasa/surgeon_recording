@@ -77,21 +77,21 @@ app.layout = html.Div(
                                       100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
                                   },
                                   ),
-                                 html.P('Playback speed selection'),
-                                 dcc.Slider(
-                                    id="speed_selector",
-                                    min=0,
-                                    max=2,
-                                    step=0.1,
-                                    value=1,
-                                    marks={
-                                        0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                        0.5: {'label': '0.5', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                        1: {'label': '1','style': {'color': 'rgb(200, 200, 255)'}},
-                                        1.5: {'label': '1.5', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                        2: {'label': '2','style': {'color': 'rgb(200, 200, 255)'}}
-                                    },
-                                  ),
+                                 #html.P('Playback speed selection'),
+                                 #dcc.Slider(
+                                   # id="speed_selector",
+                                   # min=0,
+                                   # max=2,
+                                   # step=0.1,
+                                    #value=1,
+                                   # marks={
+                                   #     0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                    #    0.5: {'label': '0.5', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                    #    1: {'label': '1','style': {'color': 'rgb(200, 200, 255)'}},
+                                    #    1.5: {'label': '1.5', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                     #   2: {'label': '2','style': {'color': 'rgb(200, 200, 255)'}}
+                                    #},
+                                  #),
                                  html.Div(
                                      className="buttons-bar",
                                      children=[
@@ -111,6 +111,21 @@ app.layout = html.Div(
                             ),
                     html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
+                                html.P('Time sequence selection'),
+                                 dcc.RangeSlider(
+                                  id="slider_frame",
+                                  min=0,
+                                  max=100,
+                                  step=0.1,
+                                  value=[0.,100.],
+                                  marks={
+                                      0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
+                                      50: {'label': '50', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
+                                      100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
+                                  },
+                                  ),
                                 html.Div(className='images',
                                          children=[ html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px' }),
                                                     dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False, style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px'})],
@@ -325,165 +340,165 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
 
 
 # Callback for opt price
-@app.callback(Output('opt', 'figure'),
-              [Input('selected_opt_frame', 'data')],
-              [State('selected_exp', 'data')])
-def opt_graph(selected_frame, selected_exp):
+#@app.callback(Output('opt', 'figure'),
+#              [Input('selected_opt_frame', 'data')],
+#              [State('selected_exp', 'data')])
+#def opt_graph(selected_frame, selected_exp):
 
-    if selected_exp is None:
-        return go.Figure()
-    range_frame=75
-    opt_data = reader.data['optitrack'][selected_frame-range_frame:selected_frame+range_frame:(int(range_frame/5))]
+ #   if selected_exp is None:
+#        return go.Figure()
+#    range_frame=75
+#    opt_data = reader.data['optitrack'][selected_frame-range_frame:selected_frame+range_frame:(int(range_frame/5))]
    
-    header=list(opt_data.columns)[3:]
-    nb_frames=int(len(header)/7)
-    names=[]
+#   header=list(opt_data.columns)[3:]
+ #   nb_frames=int(len(header)/7)
+ #   names=[]
 
-    for i in range(nb_frames):
-      names.append(header[i*7].replace('_x', ''))
-    
-    opt_labels = ["channel " + str(i) for i in range (0, nb_frames)]
+ #   for i in range(nb_frames):
+ #     names.append(header[i*7].replace('_x', ''))
+#    
+#    opt_labels = ["channel " + str(i) for i in range (0, nb_frames)]
 
-    fig = go.Figure()
-    for i, opt in enumerate(opt_labels):
-      multiplier0=str(100+i*50)
-      multiplier1=str(118+i*30)
-      multiplier2=str(255-i*50) 
+#    fig = go.Figure()
+#    for i, opt in enumerate(opt_labels):
+ #     multiplier0=str(100+i*50)
+#      multiplier1=str(118+i*30)
+#      multiplier2=str(255-i*50) 
 
       #history frame  add 
-      fig.add_trace(go.Scatter3d(
-          x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
-          name='history '+opt,
-          mode='markers',
-          showlegend = True,
-          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
-             
-          marker=dict(
-              size=np.linspace(3,12,10), 
-              opacity=0.5)
-          ))
+#      fig.add_trace(go.Scatter3d(
+#          x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
+#          name='history '+opt,
+#          mode='markers',
+#          showlegend = True,
+ #         marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
+ #            
+ #         marker=dict(
+#              size=np.linspace(3,12,10), 
+#              opacity=0.5)
+#         ))
 
       #current frame
-      fig.add_trace(go.Scatter3d(
-          x=[reader.data['optitrack'][names[i]+"_x"].iloc[selected_frame]],
-          y=[reader.data['optitrack'][names[i]+"_y"].iloc[selected_frame]],
-          z=[reader.data['optitrack'][names[i]+"_z"].iloc[selected_frame]],
-          name="current "+opt,
-          mode='markers',
-          showlegend = True,
-          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
+ #     fig.add_trace(go.Scatter3d(
+ #         x=[reader.data['optitrack'][names[i]+"_x"].iloc[selected_frame]],
+ #         y=[reader.data['optitrack'][names[i]+"_y"].iloc[selected_frame]],
+ #         z=[reader.data['optitrack'][names[i]+"_z"].iloc[selected_frame]],
+ #         name="current "+opt,
+ #         mode='markers',
+ #         showlegend = True,
+#          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
          
-          marker=dict(
-              size=13,
-              opacity=0.9)
-          ))
+#          marker=dict(
+#              size=13,
+#              opacity=0.9)
+#          ))
 
-    max_x = [0] * nb_frames
-    max_y = [0] * nb_frames
-    max_z = [0] * nb_frames
-    min_x = [0] * nb_frames
-    min_y = [0] * nb_frames
-    min_z = [0] * nb_frames
+#    max_x = [0] * nb_frames
+ #   max_y = [0] * nb_frames
+#    max_z = [0] * nb_frames
+#    min_x = [0] * nb_frames
+#    min_y = [0] * nb_frames
+#    min_z = [0] * nb_frames
 
-    for i in range (0,nb_frames):
-      max_x[i] = max(reader.data['optitrack'][names[i]+"_x"])
-      max_y[i] = max(reader.data['optitrack'][names[i]+"_y"])
-      max_z[i] = max(reader.data['optitrack'][names[i]+"_z"])
+ #   for i in range (0,nb_frames):
+  #    max_x[i] = max(reader.data['optitrack'][names[i]+"_x"])
+  #    max_y[i] = max(reader.data['optitrack'][names[i]+"_y"])
+ #     max_z[i] = max(reader.data['optitrack'][names[i]+"_z"])
 
-      min_x[i] = min(reader.data['optitrack'][names[i]+"_x"])
-      min_y[i] = min(reader.data['optitrack'][names[i]+"_y"])
-      min_z[i] = min(reader.data['optitrack'][names[i]+"_z"])
+ #     min_x[i] = min(reader.data['optitrack'][names[i]+"_x"])
+ #     min_y[i] = min(reader.data['optitrack'][names[i]+"_y"])
+ #     min_z[i] = min(reader.data['optitrack'][names[i]+"_z"])
 
-    fig.update_layout(
-                        scene = dict(
-                          xaxis = dict(
+ #   fig.update_layout(
+ #                       scene = dict(
+ #                         xaxis = dict(
 
-                               backgroundcolor="rgb(200, 200, 230)",
-                               gridcolor="white",
-                               showbackground=True,
-                               zerolinecolor="white",
-                               nticks=10,
-                               range=[min(min_x)-abs(0.1*min(min_x)),max(max_x)+0.1*max(max_x)]),
-                          yaxis = dict(
+#                               backgroundcolor="rgb(200, 200, 230)",
+#                               gridcolor="white",
+ #                              showbackground=True,
+#                               zerolinecolor="white",
+#                               nticks=10,
+#                               range=[min(min_x)-abs(0.1*min(min_x)),max(max_x)+0.1*max(max_x)]),
+#                          yaxis = dict(
                               
-                              backgroundcolor="rgb(230, 200,230)",
-                              gridcolor="white",
-                              showbackground=True,
-                              zerolinecolor="white",
-                              nticks=10,
-                              range=[min(min_y)-abs(0.1*min(min_y)),max(max_y)+0.1*max(max_y)]),
-                          zaxis = dict(
+ #                             backgroundcolor="rgb(230, 200,230)",
+ #                             gridcolor="white",
+ #                             showbackground=True,
+  #                            zerolinecolor="white",
+   #                           nticks=10,
+ #                             range=[min(min_y)-abs(0.1*min(min_y)),max(max_y)+0.1*max(max_y)]),
+ #                         zaxis = dict(
                              
-                              backgroundcolor="rgb(230, 230,200)",
-                              gridcolor="white",
-                              showbackground=True,
-                              zerolinecolor="white",
-                              nticks=10,
-                              range=[min(min_z)-abs(0.1*min(min_z)),max(max_z)+0.1*max(max_z)]),
+ #                             backgroundcolor="rgb(230, 230,200)",
+#                              gridcolor="white",
+ #                             showbackground=True,
+ #                             zerolinecolor="white",
+#                              nticks=10,
+#                              range=[min(min_z)-abs(0.1*min(min_z)),max(max_z)+0.1*max(max_z)]),
                          
-                          xaxis_title='X AXIS ',
-                          yaxis_title='Y AXIS ',
-                          zaxis_title='Z AXIS '),
+#                          xaxis_title='X AXIS ',
+#                          yaxis_title='Y AXIS ',
+#                          zaxis_title='Z AXIS '),
                         #autosize=True,
-                        width=600,
+#                        width=600,
 
-                        margin=dict(r=0, b=10, l=0, t=80),
-                        title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
-                        hovermode='x',
-                        paper_bgcolor='rgba(0, 0, 10, 0)',
-                        template='plotly_dark',
-                        scene_aspectmode='cube',
-                        uirevision='true',
+ #                       margin=dict(r=0, b=10, l=0, t=80),
+ #                       title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
+ #                       hovermode='x',
+#                        paper_bgcolor='rgba(0, 0, 10, 0)',
+#                        template='plotly_dark',
+#                        scene_aspectmode='cube',
+#                        uirevision='true',
                         
-                      )
-    return fig
+#                      )
+#    return fig
 
 
 # Callback for tps price
-@app.callback(Output('tps', 'figure'),
-              [Input('selected_tps_frame', 'data')],
-              [State('selected_exp', 'data')])
-def tps_graph(selected_frame, selected_exp):
-    if selected_exp is None:
-        return go.Figure()
+#@app.callback(Output('tps', 'figure'),
+#              [Input('selected_tps_frame', 'data')],
+#              [State('selected_exp', 'data')])
+#def tps_graph(selected_frame, selected_exp):
+#    if selected_exp is None:
+#        return go.Figure()
 
-    frame_df=reader.data['tps'].iloc[selected_frame,3:]
-    header=list(reader.data['tps'].columns)[3:]   
+#    frame_df=reader.data['tps'].iloc[selected_frame,3:]
+#    header=list(reader.data['tps'].columns)[3:]   
 
-    fig = go.Figure( [go.Bar(x=header, 
-                             y=frame_df,
-                             marker_color='rgb(100, 118, 255)',
-                             opacity=0.3,
-                             textposition='auto',   )])
+#    fig = go.Figure( [go.Bar(x=header, 
+#                             y=frame_df,
+#                             marker_color='rgb(100, 118, 255)',
+#                             opacity=0.3,
+#                             textposition='auto',   )])
 
-    y_max=reader.data['tps'].iloc[:,2:].max().max()
+#    y_max=reader.data['tps'].iloc[:,2:].max().max()
 
-    fig.update_layout(
+ #   fig.update_layout(
        
-        xaxis_tickfont_size=14,
-        yaxis=dict(
-            title='Y axis',
-            titlefont_size=16,
-            tickfont_size=14,
-            range=[0,y_max],
-        ),
-        legend=dict(
-            x=0,
-            y=1.0,
-            bgcolor='rgba(255, 255, 255, 0)',
-            bordercolor='rgba(255, 255, 255, 0)'
-        ),
+ #       xaxis_tickfont_size=14,
+ #       yaxis=dict(
+ #           title='Y axis',
+ #           titlefont_size=16,
+ #           tickfont_size=14,
+#            range=[0,y_max],
+ #       ),
+  #      legend=dict(
+ #           x=0,
+ #           y=1.0,
+ #           bgcolor='rgba(255, 255, 255, 0)',
+   #         bordercolor='rgba(255, 255, 255, 0)'
+  #      ),
        
-        bargap=0.15, # gap between bars of adjacent location coordinates.
-        template='plotly_dark',
-        paper_bgcolor='rgba(150, 150 , 200, 0.1)',
-        plot_bgcolor='rgba(0, 0, 0, 0)',
-        hovermode='x',
-        autosize=True,
-        title={'text': 'TPS signals', 'font': {'color': 'white'}, 'x': 0.5},
-        uirevision='true',
-    )
-    return fig
+ #       bargap=0.15, # gap between bars of adjacent location coordinates.
+ #       template='plotly_dark',
+ #       paper_bgcolor='rgba(150, 150 , 200, 0.1)',
+ #       plot_bgcolor='rgba(0, 0, 0, 0)',
+ #       hovermode='x',
+ #       autosize=True,
+ #       title={'text': 'TPS signals', 'font': {'color': 'white'}, 'x': 0.5},
+  #      uirevision='true',
+ #   )
+ #   return fig
 
 
 if __name__ == '__main__':
