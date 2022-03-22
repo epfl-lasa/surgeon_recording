@@ -62,7 +62,7 @@ app.layout = html.Div(
                                         dcc.Store(id='window_size', data=2000)
                                      ],
                                      style={'color': '#1E1E1E'}),
-                                 html.P('Time sequence selection'),
+                                 '''html.P('Time sequence selection'),
                                  dcc.RangeSlider(
                                   id="slider_frame",
                                   min=0,
@@ -76,22 +76,22 @@ app.layout = html.Div(
                                       75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
                                       100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
                                   },
+                                  ),'''
+                                 html.P('Playback speed selection'),
+                                 dcc.Slider(
+                                    id="speed_selector",
+                                    min=0,
+                                    max=2,
+                                    step=0.1,
+                                    value=1,
+                                    marks={
+                                        0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                        0.5: {'label': '0.5', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                        1: {'label': '1','style': {'color': 'rgb(200, 200, 255)'}},
+                                        1.5: {'label': '1.5', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                        2: {'label': '2','style': {'color': 'rgb(200, 200, 255)'}}
+                                    },
                                   ),
-                                 #html.P('Playback speed selection'),
-                                 #dcc.Slider(
-                                   # id="speed_selector",
-                                   # min=0,
-                                   # max=2,
-                                   # step=0.1,
-                                    #value=1,
-                                   # marks={
-                                   #     0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                    #    0.5: {'label': '0.5', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                    #    1: {'label': '1','style': {'color': 'rgb(200, 200, 255)'}},
-                                    #    1.5: {'label': '1.5', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                     #   2: {'label': '2','style': {'color': 'rgb(200, 200, 255)'}}
-                                    #},
-                                  #),
                                  html.Div(
                                      className="buttons-bar",
                                      children=[
