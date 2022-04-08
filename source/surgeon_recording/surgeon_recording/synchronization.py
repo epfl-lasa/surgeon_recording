@@ -62,6 +62,48 @@ class Synchro(object):
             return [pos, after]
         else:
             return [pos, before]   
+        
+    
+    def bag_to_png(path_to_data, data_folder, camera):
+       
+        bag_file = [x[2] for x in os.walk(join(data_folder, camera, 'BAG'))]
+        print(bag_file[0][0])
+
+        path_bag_file = join(path_to_data, recording_session , subject, camera, 'BAG', bag_file[0][0])
+        print('bag file: ' + path_bag_file)
+        path_png=  join(path_to_data, recording_session , subject,  camera, 'PNG', 'png')
+        print('png folder: ' + path_png)
+        os.system('rs-convert -i ' + path_bag_file + ' -p ' + path_png)
+        
+    def png_to_MP4(fps, data_folder, camera): 
+        
+        image_folder=join(data_folder, camera, 'PNG')
+        print('image folder: ' + image_folder)
+                   
+        image_files = [os.path.join(image_folder,img) for img in os.listdir(image_folder) if img.endswith(".png")]
+        clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(natsorted(image_files), fps=fps)
+        path_mp4 = join(data_folder, camera, 'MP4', 'rs_converted.mp4')
+        print('mp4 file: ' + path_mp4)
+        clip.write_videofile(path_mp4)
+    
+    def concatenate_videos(fps, data_folder, camera):
+        L =[]
+
+        for root, dirs, files in os.walk(join(data_folder, camera, 'segments')):
+
+            files = natsorted(files)
+            print(files)
+            for file in files:
+                if os.path.splitext(file)[1] == '.MP4' or os.path.splitext(file)[1] == '.mp4': 
+                    filePath = os.path.join(root, file)
+                    video = VideoFileClip(filePath)
+                    L.append(video)
+    
+        final_clip = concatenate_videoclips(L)
+        tmp = 'output' + camera + '.mp4'
+        output_path = join(data_folder, camera, 'complete', tmp)
+        final_clip.to_videofile(output_path, fps=fps, remove_temp=False)
+    
             
     """        
     def get_experiment_list(self, data_folder):
