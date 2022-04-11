@@ -84,6 +84,11 @@ app.layout = html.Div(
                                       dcc.Input(id="export_folder", type="text", placeholder=""),
                                       html.Button('Export', id='btn-export', n_clicks=0),
                                       html.Div(id='output_text'),
+                                      html.Button('Backward', id='btn-backward', n_clicks=0, 
+                                                  style={ 'margin-left': '10px', 'padding': '10 20'}),
+                                      html.Button('Forward', id='btn-forward', n_clicks=0, 
+                                                  style={ 'margin-left': '10px', 'padding': '10 20'}),
+                                      html.Div(id='container-button')
                                       ],
                                       style={'padding-bottom': 35}
                                   ),
@@ -114,7 +119,7 @@ app.layout = html.Div(
                                                   min=0,
                                                   max=100,
                                                   step=0.01,
-                                                  value=[0.,100.], allowCross=False,
+                                                  value=[0.,100.], 
                                                   marks={
                                                       0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
                                                       25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
@@ -260,17 +265,55 @@ def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp,
     return selected_frame, selected_emg_frame, selected_opt_frame, selected_tps_frame
 
 
-@app.callback(Output('rgb_image', 'src'),
-              [Input('selected_frame', 'data')],
-              [State('selected_exp', 'data')])
-def update_rgb_image_src(selected_frame, selected_exp):
+
+#Additional buttons to be able to navigate across the frames: 
+
+
+@app.callback(
+    Output('container-button', 'children'),
+    [Input('btn-backward', 'n_clicks'),
+     Input('btn-forward', 'n_clicks'),
+     Input('selected_exp', 'data')])
+def navigate_button(n_clicks_backward, n_clicks_forward, selected_exp):
+    
     if selected_exp is None:
         return
-    if selected_frame > reader.get_nb_frames():
+     
+    return f'The forward button has been clicked {n_clicks_forward} times and the backward button has been clicked {n_clicks_backward} times '
+
+
+@app.callback([Output('rgb_image', 'src'),
+               Output('rgb_image_1', 'src')],
+              [Input('selected_frame', 'data'),
+               Input('stop_index', 'data')],
+              [State('selected_exp', 'data')])
+def update_rgb_image_src(selected_frame, stop_index, selected_exp):
+    if selected_exp is None:
+        return
+    if selected_frame > reader.get_nb_frames() or stop_index > reader.get_nb_frames() :
         return
     image = reader.get_image("rgb", selected_frame)
+    image_1 = reader.get_image("rgb", stop_index)
     encoded_image = base64.b64encode(image)
-    return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
+    encoded_image_1 = base64.b64encode(image_1)
+    return 'data:image/jpg;base64,{}'.format(encoded_image.decode()), 'data:image/jpg;base64,{}'.format(encoded_image_1.decode())
+
+
+
+
+#This callback function will be useful in order to display  the image at the end of the frame. 
+
+# @app.callback(,
+#               [],
+#               [State('selected_exp', 'data')])
+# def update_rgb_image_src(stop_index, selected_exp):
+#     if selected_exp is None:
+#         return
+#     if stop_index > reader.get_nb_frames():
+#         return
+#     image = reader.get_image("rgb", stop_index-1)
+#     encoded_image = base64.b64encode(image)
+#     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 
 # Callback for timeseries price,  this is for the EMG Graph
