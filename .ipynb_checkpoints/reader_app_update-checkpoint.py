@@ -34,7 +34,7 @@ app.layout = html.Div(
                                                      options=[{'label': key, 'value': path} for key, 
                                                               path in reader.get_experiment_list(data_folder).items()]),
                                         dcc.Interval(id='auto-stepper',
-                                                    interval=300, # 25 fps in milliseconds
+                                                    interval=300, # in milliseconds
                                                     n_intervals=0
                                         ),
                                         ### Those are the data that we save at the user's browser's session :

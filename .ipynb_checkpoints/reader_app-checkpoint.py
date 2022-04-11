@@ -28,17 +28,15 @@ app.layout = html.Div(
                                  html.H2('DATA VISUALISATION APP'),
                                  html.P('Experiment data selection'),
                                  html.Div(
+
                                      className='div-for-dropdown',
                                      children=[
                                         dcc.Dropdown(id='exp_folder',
-                                                     options=[{'label': key, 'value': path} for key, 
-                                                              path in reader.get_experiment_list(data_folder).items()]),
+                                                     options=[{'label': key, 'value': path} for key, path in reader.get_experiment_list(data_folder).items()]),
                                         dcc.Interval(id='auto-stepper',
                                                     interval=300, # 25 fps in milliseconds
                                                     n_intervals=0
                                         ),
-                                        ### Those are the data that we save at the user's browser's session :
-                                         
                                         dcc.Store(id='selected_exp'),
                                         dcc.Store(id='start_index'),
                                         dcc.Store(id='stop_index'),
@@ -59,16 +57,33 @@ app.layout = html.Div(
                                         dcc.Store(id='max_interval'),
                                         dcc.Store(id='max_cut_interval'),
 
+
+
                                         dcc.Store(id='window_size', data=2000)
                                      ],
                                      style={'color': '#1E1E1E'}),
+                                 html.P('Time sequence selection'),
+                                 dcc.RangeSlider(
+                                  id="slider_frame",
+                                  min=0,
+                                  max=100,
+                                  step=0.1,
+                                  value=[0.,100.],
+                                  marks={
+                                      0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
+                                      50: {'label': '50', 'style': {'color': 'rgb(200, 200, 255)'}},
+                                      75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
+                                      100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
+                                  },
+                                  ),
                                  html.P('Playback speed selection'),
                                  dcc.Slider(
                                     id="speed_selector",
                                     min=0,
                                     max=2,
                                     step=0.1,
-                                    value=0,
+                                    value=1,
                                     marks={
                                         0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
                                         0.5: {'label': '0.5', 'style': {'color': 'rgb(200, 200, 255)'}},
@@ -87,58 +102,22 @@ app.layout = html.Div(
                                       ],
                                       style={'padding-bottom': 35}
                                   ),
+                                
+                                 html.Div(className='graphs',
+                                         children=[dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, animate=False)],
+                                         style={'padding-top': 0}
+                                       )
                                 ],
                             ),
                     html.Div(className='nine columns div-for-charts bg-grey',
                                children=[
-                                html.H4('The camera visualisation of our data:'),
                                 html.Div(className='images',
-                                         children=[ 
-                                             html.Div([
-                                             html.P('Start: '),
-                                             html.Img(id='rgb_image', height="480", width="640")
-                                             ], style={'width': '48%', 'margin-left': '10px', 'display': 'inline-block', 'padding': '10 20'}),
-                                             html.Div([
-                                             html.P('End: '),
-                                             html.Img(id='rgb_image_1', height="480", width="640")
-                                             ], style={'width': '48%','margin-left': '10px', 'display': 'inline-block', 'padding': '10 20'}),    
-                                                 
-                                                ],),
-                                   
-                                html.Div(className= 'slider',
-                                         children = [
-                                             
-                                             html.P('Time sequence selection'),
-                                             dcc.RangeSlider(
-                                                  id="slider_frame",
-                                                  min=0,
-                                                  max=100,
-                                                  step=0.01,
-                                                  value=[0.,100.], allowCross=False,
-                                                  marks={
-                                                      0: {'label': '0', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                                      25: {'label': '25','style': {'color': 'rgb(200, 200, 255)'}},
-                                                      50: {'label': '50', 'style': {'color': 'rgb(200, 200, 255)'}},
-                                                      75: {'label': '75','style': {'color': 'rgb(200, 200, 255)'}},
-                                                      100: {'label': '100', 'style': {'color': 'rgb(200, 200, 255)'}}
-                                                  }),]),
+                                         children=[ html.Img(id='rgb_image', height="480", width="640", style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px' }),
+                                                    dcc.Graph(id='opt',config={'displayModeBar': True, 'autosizable': True}, animate=False, style={'display': 'inline-block', 'margin-left': '10px', 'margin-bottom':'20px'})],
+                                         style={'left-padding': 200}                                        
+                                         ),
                                 html.Div(className='graphs',
-                                         children=[
-                                             html.H4('Useful graph representations:'),
-                                             dcc.Graph(id='timeseries', config={'displayModeBar': False}, 
-                                                             animate=False,  style={'margin-left': '10px', 'margin-bottom':'10px'}),
-                                             html.Div([
-                                             dcc.Graph(id='opt',config={'displayModeBar': True, 
-                                                                       'autosizable': True},animate=False)
-                                             ], style={'width': '48%', 'margin-left': '10px', 'display': 'inline-block', 'padding': '10 20'}),
-                                             html.Div([
-                                             dcc.Graph(id='tps',config={'displayModeBar': False, 'autosizable': True}, 
-                                                     animate=False)
-                                             ], style={'width': '48%','margin-left': '10px', 'display': 'inline-block', 'padding': '10 20'}),
-                                             
-                                           
-                                         
-                                         ],                                        
+                                         children=[dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False,  style={'margin-left': '10px'})],                                        
                                          ),
                                ],
                                )
@@ -148,14 +127,11 @@ app.layout = html.Div(
 )
 
 
-
-## This callback function is very useful to export the specific segment in the folders :
-
 @app.callback(Output('selected_exp', 'data'),
               [Input('exp_folder', 'value')])
 def update_exp(path):
     if path is None:
-        return
+      return
     reader.play(path)
     return True
 
@@ -178,9 +154,9 @@ def export(n_clicks, value, start_index, stop_index,
            tps_start_index, tps_stop_index,
            selected_exp):
     if selected_exp is None:
-        return 'No data folder selected'
+      return 'No data folder selected'
     if value is None:
-        return 'Empty folder specified, please enter a valid name'
+      return 'Empty folder specified, please enter a valid name'
     sensor_indexes = {}
     sensor_indexes["camera"] = [start_index, stop_index]
     sensor_indexes["emg"] = [emg_start_index, emg_stop_index]
@@ -208,32 +184,32 @@ def export(n_clicks, value, start_index, stop_index,
                [State('auto-stepper', 'interval')]
                )
 def select_frame(selected_percentage, selected_exp,  speed, interval):
-    if selected_exp is None:
-        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, True
-    start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
-    stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
+  if selected_exp is None:
+    return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, True
+  start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
+  stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
 
-    emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
-    emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
-    opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
-    opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
-    tps_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
-    tps_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
+  emg_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
+  emg_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("emg") - 1))
+  opt_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
+  opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
+  tps_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
+  tps_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
 
-    total_time= reader.data["camera"].iloc[-1,1] - reader.data["camera"].iloc[0,1]
-    total_cut_time= reader.data["camera"].iloc[stop_index,1] - reader.data["camera"].iloc[start_index,1]
+  total_time= reader.data["camera"].iloc[-1,1] - reader.data["camera"].iloc[0,1]
+  total_cut_time= reader.data["camera"].iloc[stop_index,1] - reader.data["camera"].iloc[start_index,1]
 
 
-    if speed==0:
-        disabled=True
-        max_interval=1
-        max_cut_interval=1
-    else :
-        disabled=False
-        max_interval=total_time/(interval/1000)/speed
-        max_cut_interval=total_cut_time/(interval/1000)/speed
+  if speed==0:
+    disabled=True
+    max_interval=1
+    max_cut_interval=1
+  else :
+    disabled=False
+    max_interval=total_time/(interval/1000)/speed
+    max_cut_interval=total_cut_time/(interval/1000)/speed
 
-    return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval, disabled
+  return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval, disabled
 
 
 @app.callback([Output('selected_frame', 'data'),
@@ -248,16 +224,16 @@ def select_frame(selected_percentage, selected_exp,  speed, interval):
               [
                State('speed_selector', 'value')])
 def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp, speed):
-    if selected_exp is None:
-        return 0, 0 ,0, 0
-    idx=n_intervals%int(max_cut_interval)
-    selected_percentage = (idx/max_interval*100) + limits[0]
-    selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
-    selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
-    selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
-    selected_tps_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("tps") - 1))
+  if selected_exp is None:
+    return 0, 0 ,0, 0
+  idx=n_intervals%int(max_cut_interval)
+  selected_percentage = (idx/max_interval*100) + limits[0]
+  selected_frame = int(selected_percentage / 100 * (reader.get_nb_frames() - 1))
+  selected_emg_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("emg") - 1))
+  selected_opt_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
+  selected_tps_frame = int(selected_percentage / 100 * (reader.get_nb_sensor_frames("tps") - 1))
  
-    return selected_frame, selected_emg_frame, selected_opt_frame, selected_tps_frame
+  return selected_frame, selected_emg_frame, selected_opt_frame, selected_tps_frame
 
 
 @app.callback(Output('rgb_image', 'src'),
@@ -265,9 +241,9 @@ def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp,
               [State('selected_exp', 'data')])
 def update_rgb_image_src(selected_frame, selected_exp):
     if selected_exp is None:
-        return
+      return
     if selected_frame > reader.get_nb_frames():
-        return
+      return
     image = reader.get_image("rgb", selected_frame)
     encoded_image = base64.b64encode(image)
     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
@@ -288,7 +264,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
     data_divider=int(nb_measures/500)
 
     if data_divider==0:
-        data_divider=1
+      data_divider=1
     data_fraction=reader.data["emg"][0:-1:data_divider]
     
     emg_labels = ["channel " + str(i) for i in range(len(reader.data["emg"].columns) - 3)]
@@ -348,7 +324,7 @@ def emg_graph(selected_frame, emg_start_index, emg_stop_index, selected_exp):
     return figure
 
 
-#Callback for opt price
+# Callback for opt price
 @app.callback(Output('opt', 'figure'),
               [Input('selected_opt_frame', 'data')],
               [State('selected_exp', 'data')])
@@ -364,43 +340,43 @@ def opt_graph(selected_frame, selected_exp):
     names=[]
 
     for i in range(nb_frames):
-        names.append(header[i*7].replace('_x', ''))
+      names.append(header[i*7].replace('_x', ''))
     
     opt_labels = ["channel " + str(i) for i in range (0, nb_frames)]
 
     fig = go.Figure()
     for i, opt in enumerate(opt_labels):
-        multiplier0=str(100+i*50)
-        multiplier1=str(118+i*30)
-        multiplier2=str(255-i*50) 
+      multiplier0=str(100+i*50)
+      multiplier1=str(118+i*30)
+      multiplier2=str(255-i*50) 
 
-          #history frame  add 
-        fig.add_trace(go.Scatter3d(
-            x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
-            name='history '+opt,
-            mode='markers',
-            showlegend = True,
-            marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
+      #history frame  add 
+      fig.add_trace(go.Scatter3d(
+          x=opt_data[names[i]+"_x"], y=opt_data[names[i]+"_y"], z=opt_data[names[i]+"_z"],
+          name='history '+opt,
+          mode='markers',
+          showlegend = True,
+          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, .8)',
              
-            marker=dict(
-                size=np.linspace(3,12,10), 
-                opacity=0.5)
-         ))
+          marker=dict(
+              size=np.linspace(3,12,10), 
+              opacity=0.5)
+          ))
 
       #current frame
-        fig.add_trace(go.Scatter3d(
-            x=[reader.data['optitrack'][names[i]+"_x"].iloc[selected_frame]],
-            y=[reader.data['optitrack'][names[i]+"_y"].iloc[selected_frame]],
-            z=[reader.data['optitrack'][names[i]+"_z"].iloc[selected_frame]],
-            name="current "+opt,
-            mode='markers',
-            showlegend = True,
-            marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
-        
-            marker=dict(
-                size=13,
-                opacity=0.9)
-         ))
+      fig.add_trace(go.Scatter3d(
+          x=[reader.data['optitrack'][names[i]+"_x"].iloc[selected_frame]],
+          y=[reader.data['optitrack'][names[i]+"_y"].iloc[selected_frame]],
+          z=[reader.data['optitrack'][names[i]+"_z"].iloc[selected_frame]],
+          name="current "+opt,
+          mode='markers',
+          showlegend = True,
+          marker_color=f'rgba({multiplier0}, {multiplier1}, {multiplier2}, 1)',
+         
+          marker=dict(
+              size=13,
+              opacity=0.9)
+          ))
 
     max_x = [0] * nb_frames
     max_y = [0] * nb_frames
@@ -410,17 +386,17 @@ def opt_graph(selected_frame, selected_exp):
     min_z = [0] * nb_frames
 
     for i in range (0,nb_frames):
-        max_x[i] = max(reader.data['optitrack'][names[i]+"_x"])
-        max_y[i] = max(reader.data['optitrack'][names[i]+"_y"])
-        max_z[i] = max(reader.data['optitrack'][names[i]+"_z"])
+      max_x[i] = max(reader.data['optitrack'][names[i]+"_x"])
+      max_y[i] = max(reader.data['optitrack'][names[i]+"_y"])
+      max_z[i] = max(reader.data['optitrack'][names[i]+"_z"])
 
-        min_x[i] = min(reader.data['optitrack'][names[i]+"_x"])
-        min_y[i] = min(reader.data['optitrack'][names[i]+"_y"])
-        min_z[i] = min(reader.data['optitrack'][names[i]+"_z"])
+      min_x[i] = min(reader.data['optitrack'][names[i]+"_x"])
+      min_y[i] = min(reader.data['optitrack'][names[i]+"_y"])
+      min_z[i] = min(reader.data['optitrack'][names[i]+"_z"])
 
     fig.update_layout(
                         scene = dict(
-                         xaxis = dict(
+                          xaxis = dict(
 
                                backgroundcolor="rgb(200, 200, 230)",
                                gridcolor="white",
@@ -463,7 +439,7 @@ def opt_graph(selected_frame, selected_exp):
     return fig
 
 
-#Callback for tps price
+# Callback for tps price
 @app.callback(Output('tps', 'figure'),
               [Input('selected_tps_frame', 'data')],
               [State('selected_exp', 'data')])
