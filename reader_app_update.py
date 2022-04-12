@@ -26,7 +26,7 @@ app.layout = html.Div(
                     html.Div(className='three columns div-user-controls',
                              children=[
                                  html.H2('DATA VISUALISATION APP'),
-                                 html.P('Experiment data selection'),
+                                 html.P('Experiment data selection:'),
                                  html.Div(
                                      className='div-for-dropdown',
                                      children=[
@@ -40,6 +40,8 @@ app.layout = html.Div(
                                         ### Those are the data that we save at the user's browser's session :
                                          
                                         dcc.Store(id='selected_exp'),
+                                        #dcc.Store(id ='control_bl'),
+                                         
                                         dcc.Store(id='start_index'),
                                         dcc.Store(id='stop_index'),
                                         dcc.Store(id='selected_frame'),
@@ -86,12 +88,22 @@ app.layout = html.Div(
                                       html.Div(id='output_text'),
                                       html.Button('Backward', id='btn-backward', n_clicks=0, 
                                                   style={ 'margin-left': '10px', 'padding': '10 20'}),
+                                      html.Button('Play', id='btn-control', n_clicks=0, 
+                                                  style={ 'margin-left': '10px', 'padding': '20 20'}),
                                       html.Button('Forward', id='btn-forward', n_clicks=0, 
-                                                  style={ 'margin-left': '10px', 'padding': '10 20'}),
+                                                  style={ 'margin-left': '10px', 'padding': '20 20'}),
                                       html.Div(id='container-button')
                                       ],
-                                      style={'padding-bottom': 35}
+                                      style={'padding-bottom': 10}
                                   ),
+                                 
+                                 html.Div(
+                                     className="Information_bar",
+                                     children = [
+                                     html.P('Segmentation information:'),
+                                     html.Div(id='segmentation-info')
+                                 
+                                     ])
                                 ],
                             ),
                     html.Div(className='nine columns div-for-charts bg-grey',
@@ -129,7 +141,7 @@ app.layout = html.Div(
                                                   }),]),
                                 html.Div(className='graphs',
                                          children=[
-                                             html.H4('Useful graph representations:'),
+                                             html.H4('Graph representations:'),
                                              dcc.Graph(id='timeseries', config={'displayModeBar': False}, 
                                                              animate=False,  style={'margin-left': '10px', 'margin-bottom':'10px'}),
                                              html.Div([
@@ -195,6 +207,13 @@ def export(n_clicks, value, start_index, stop_index,
     return 'Sequence exported to {} folder'.format(value)
 
 
+
+
+
+
+
+#Modified to be able to match the use of play and record button  
+
 @app.callback([Output('start_index', 'data'),
                Output('stop_index', 'data'),
                Output('emg_start_index', 'data'),
@@ -206,15 +225,19 @@ def export(n_clicks, value, start_index, stop_index,
                Output('auto-stepper', 'n_intervals'),
                Output('max_interval', 'data'),
                Output('max_cut_interval', 'data'),
-               Output('auto-stepper', 'disabled'),],
+               Output('btn-control', 'children'),
+               Output('segmentation-info', 'children'),
+               Output('auto-stepper', 'disabled')
+               ],
               [Input('slider_frame', 'value'),
                Input('selected_exp', 'data'),
-               Input('speed_selector', 'value')],
+               Input('speed_selector', 'value'),
+               Input('btn-control', 'n_clicks')],
                [State('auto-stepper', 'interval')]
                )
-def select_frame(selected_percentage, selected_exp,  speed, interval):
+def select_frame(selected_percentage, selected_exp,  speed, n_clicks, interval):
     if selected_exp is None:
-        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, True
+        return 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Play', '' , True
     start_index = int(selected_percentage[0] / 100 * (reader.get_nb_frames() - 1))
     stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_frames() - 1))
 
@@ -224,21 +247,36 @@ def select_frame(selected_percentage, selected_exp,  speed, interval):
     opt_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("optitrack") - 1))
     tps_start_index = int(selected_percentage[0] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
     tps_stop_index = int(selected_percentage[1] / 100 * (reader.get_nb_sensor_frames("tps") - 1))
-
-    total_time= reader.data["camera"].iloc[-1,1] - reader.data["camera"].iloc[0,1]
-    total_cut_time= reader.data["camera"].iloc[stop_index,1] - reader.data["camera"].iloc[start_index,1]
-
-
-    if speed==0:
+    
+    base_data = reader.data["camera"] 
+    
+    total_time= base_data.iloc[-1,1] - base_data.iloc[0,1]
+    total_cut_time = base_data.iloc[stop_index,1] - base_data.iloc[start_index,1]
+    
+    # useful to  trace back the segmentation in the original data : 
+    
+    start_seg_time = base_data.iloc[start_index,2] + base_data.iloc[reader.offset,2]
+    end_seg_time =  base_data.iloc[stop_index,2] + base_data.iloc[reader.offset,2]
+    
+    
+    msg = f'The selected interval is [{start_seg_time:.2f}, {end_seg_time:.2f}]            \n \
+        The selected frame interval[{start_index+reader.offset}, {stop_index+reader.offset}]'
+        
+        
+    if speed==0 or (n_clicks % 2 == 0):
         disabled=True
         max_interval=1
         max_cut_interval=1
+        control_button = 'Play'
+        
+        
     else :
         disabled=False
         max_interval=total_time/(interval/1000)/speed
         max_cut_interval=total_cut_time/(interval/1000)/speed
-
-    return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval, disabled
+        control_button = 'Stop'
+      
+    return start_index, stop_index, emg_start_index, emg_stop_index, opt_start_index, opt_stop_index, tps_start_index, tps_stop_index, 0, max_interval, max_cut_interval, control_button, msg, disabled 
 
 
 @app.callback([Output('selected_frame', 'data'),
@@ -250,8 +288,7 @@ def select_frame(selected_percentage, selected_exp,  speed, interval):
                Input('max_interval', 'data'),
                Input('max_cut_interval', 'data'),
                Input('selected_exp', 'data') ],
-              [
-               State('speed_selector', 'value')])
+              [State('speed_selector', 'value')])
 def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp, speed):
     if selected_exp is None:
         return 0, 0 ,0, 0
@@ -267,20 +304,60 @@ def on_click(n_intervals, limits, max_interval, max_cut_interval,  selected_exp,
 
 
 #Additional buttons to be able to navigate across the frames: 
+            #The function will modify the slider frame values in order to advance or go back in the slider
 
 
 @app.callback(
-    Output('container-button', 'children'),
-    [Input('btn-backward', 'n_clicks'),
+    [Output('container-button', 'children'),
+    Output('slider_frame', 'value')],
+    [Input('slider_frame', 'value'),  
+     Input('btn-backward', 'n_clicks'),
      Input('btn-forward', 'n_clicks'),
      Input('selected_exp', 'data')])
-def navigate_button(n_clicks_backward, n_clicks_forward, selected_exp):
+def navigate_button(selected_percentage, n_clicks_backward, n_clicks_forward, selected_exp):
+    
     
     if selected_exp is None:
-        return
-     
-    return f'The forward button has been clicked {n_clicks_forward} times and the backward button has been clicked {n_clicks_backward} times '
+        return 
+    
+    updated_percentage = selected_percentage.copy()
+    
+    changed_id =  [p['prop_id'] for p in dash.callback_context.triggered][0] 
+    if 'btn-backward' in changed_id:
+        msg = 'Decrementing using the backward button'
+        # We navigate back with a step  of 0.1 % 
+        updated_percentage[1] = updated_percentage[1] - 0.1
+    elif 'btn-forward' in changed_id:
+        msg = 'Incrementing using the forward button'
+        # We will increment this step with 0.1 %
+        updated_percentage[1] = updated_percentage[1] + 0.1
+    else:
+        msg = 'No button was pressed'
+        
+    return msg, updated_percentage
 
+
+# Permit to press play and stop in order to  control the selected frame: 
+
+# @app.callback([Output('auto-stepper', 'disabled'),Output('btn-control', 'children')],
+#              [Input('btn-control', 'n_clicks')],
+#              State('selected_exp', 'data'))
+# def control_btn(n_clicks):
+#     if selected_exp is None:
+#         return
+#     if n_clicks % 2 == 0 :
+#         disabled = True
+#         button_msg = 'play'
+#         return disabled, button_msg
+#     elif n_clicks % 2 == 1 :
+#         disabled = False
+#         button_msg = 'stop'
+#         return disabled, button_msg
+
+
+
+
+# Useful callback to update the images in the dash user interface :
 
 @app.callback([Output('rgb_image', 'src'),
                Output('rgb_image_1', 'src')],
@@ -291,7 +368,7 @@ def update_rgb_image_src(selected_frame, stop_index, selected_exp):
     if selected_exp is None:
         return
     if selected_frame > reader.get_nb_frames() or stop_index > reader.get_nb_frames() :
-        return
+        return 
     image = reader.get_image("rgb", selected_frame)
     image_1 = reader.get_image("rgb", stop_index)
     encoded_image = base64.b64encode(image)
@@ -300,20 +377,6 @@ def update_rgb_image_src(selected_frame, stop_index, selected_exp):
 
 
 
-
-#This callback function will be useful in order to display  the image at the end of the frame. 
-
-# @app.callback(,
-#               [],
-#               [State('selected_exp', 'data')])
-# def update_rgb_image_src(stop_index, selected_exp):
-#     if selected_exp is None:
-#         return
-#     if stop_index > reader.get_nb_frames():
-#         return
-#     image = reader.get_image("rgb", stop_index-1)
-#     encoded_image = base64.b64encode(image)
-#     return 'data:image/jpg;base64,{}'.format(encoded_image.decode())
 
 
 # Callback for timeseries price,  this is for the EMG Graph
@@ -401,7 +464,6 @@ def opt_graph(selected_frame, selected_exp):
         return go.Figure()
     range_frame=75
     opt_data = reader.data['optitrack'][selected_frame-range_frame:selected_frame+range_frame:(int(range_frame/5))]
-   
     header=list(opt_data.columns)[3:]
     nb_frames=int(len(header)/7)
     names=[]
@@ -493,7 +555,6 @@ def opt_graph(selected_frame, selected_exp):
                           zaxis_title='Z AXIS '),
                         #autosize=True,
                         width=600,
-
                         margin=dict(r=0, b=10, l=0, t=80),
                         title={'text': 'Optitrack signals', 'font': {'color': 'white'}, 'x': 0.5},
                         hovermode='x',
@@ -506,7 +567,7 @@ def opt_graph(selected_frame, selected_exp):
     return fig
 
 
-#Callback for tps price
+#Callback for tps priceed frame interval[5, 1134]
 @app.callback(Output('tps', 'figure'),
               [Input('selected_tps_frame', 'data')],
               [State('selected_exp', 'data')])
