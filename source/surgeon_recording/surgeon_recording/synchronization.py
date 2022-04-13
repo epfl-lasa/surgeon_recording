@@ -13,6 +13,12 @@ from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
 from os.path import exists
 from bisect import bisect_left
 
+import csv
+from natsort import natsorted
+
+from moviepy.editor import *
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
 class Synchro(object):
     def __init__(self):
         self.available_cameras = ['GOPRO', 'MICROSCOPE', 'REALSENSE']
@@ -22,6 +28,25 @@ class Synchro(object):
         self.images = {}
 
         self.mutex = Lock()
+        
+        self.nb_frames = {}
+        self.sum_frame = {}
+        
+        self.abs_time_vector = {}
+        
+        self.csv_names = []
+        
+        self.index = {}
+        self.relative_time = {}
+        self.absolute_time = {}
+        
+        self.pos_start = {}
+        self.pos_stop = {}
+        self.rel_time_start = {}
+        self.rel_time_stop = {}
+        self.abs_time_start = {}
+        self.abs_time_stop = {}
+        
         #self.blank_image = CameraHandler.create_blank_image(encode=True)
         #self.data_changed = False
         #self.stop_event = Event()
@@ -45,7 +70,7 @@ class Synchro(object):
             #self.align_relative_time()
             #self.data_changed = True
             
-    def take_closest(a, myList, myNumber, min_frame):
+    def take_closest(self, myList, myNumber, min_frame):
     
     #Assumes myList is sorted. Returns closest value to myNumber.
     #If two numbers are equally close, return the smallest number.
@@ -64,7 +89,7 @@ class Synchro(object):
             return [pos, before]   
         
     
-    def bag_to_png(path_to_data, data_folder, camera):
+    def bag_to_png(self, path_to_data, data_folder, camera):
        
         bag_file = [x[2] for x in os.walk(join(data_folder, camera, 'BAG'))]
         print(bag_file[0][0])
@@ -75,7 +100,7 @@ class Synchro(object):
         print('png folder: ' + path_png)
         os.system('rs-convert -i ' + path_bag_file + ' -p ' + path_png)
         
-    def png_to_MP4(fps, data_folder, camera): 
+    def png_to_MP4(self,fps, data_folder, camera): 
         
         image_folder=join(data_folder, camera, 'PNG')
         print('image folder: ' + image_folder)
@@ -104,7 +129,231 @@ class Synchro(object):
         output_path = join(data_folder, camera, 'complete', tmp)
         final_clip.to_videofile(output_path, fps=fps, remove_temp=False)
     
+    def get_nb_frame(self, data_folder, cameras, folder):
+
+        for k in range(len(cameras)):    #for the different cameras
+            camera = cameras[k]
+            self.sum_frame[camera] = {}
+            for j in range(len(folder)):  #segments and complete
+                files = [x[2] for x in os.walk(join(data_folder, camera,folder[j]))]   #get the nam of the files of the video
+                tmp = 0
+                if camera == 'REALSENSE':
+                    image_folder=join(data_folder, camera, 'PNG')            # file directory to access the png files (Attention: also in the function to get video from png)
+                    image_files = [os.path.join(image_folder,img) for img in os.listdir(image_folder) if img.endswith(".png")]
+                    # get nb of frames of the rs camera
+                    rs_nb_frame = len(image_files)
+                    self.nb_frames[camera] = rs_nb_frame
+
+                else:
+                    if len(files) != 0:                                                    # exclude rs for now bc no files
+                        for i in range(len(files[0])):                                   
+                            file = files[0][i]                                             # prend la valeur des differents fichiers a la suite (les videos)
+                
+                            if os.path.splitext(file)[1] == '.MP4' or os.path.splitext(file)[1] == '.mp4':   #check si bien une video
+                            #print(join(data_folder, folder[j], file))
+                                cap = cv2.VideoCapture(join(data_folder, camera, folder[j], file))
+                                                 
+                
+                            if folder[j]== 'segments':                                # si on est dans le fichiers des segments on calcule la somme de tous les segments
+                                self.nb_frames[file] = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                                tmp = tmp + self.nb_frames[file]                            # store nb of frames with file name as key
+                                self.sum_frame[camera] = tmp
+                            else:
+                                self.nb_frames[camera] = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                     
+                            
+            if folder[j]=='segments':      #print(file, '  nb of frames:   ', nb_frames[file] )
+                print('Total nb of frames of segments for ', camera, self.sum_frame[camera])
+        
+    def get_abs_time_png_names(self, data_folder, camera, rs_frame):
+        # file directory to access the png files (Attention: also in the function to get video from png)
+        #camera = 'REALSENSE'
+        image_folder=join(data_folder, camera, 'PNG')
+        image_files = [os.path.join(image_folder,img) for img in os.listdir(image_folder) if img.endswith(".png")]
+
+        # get absolute time vector of rs from png files
+        
+        self.abs_time_vector[camera] = [name[-32:-4] for name in natsorted(image_files)]
+
+        self.rs_abs_time = float(self.abs_time_vector['REALSENSE'][rs_frame]) #abs time vector from png names
+        
+        
+    def write_csv_file_camera(self, data_folder, cameras, folder, frame, fps):
             
+        for camera in cameras:
+            for folder_name in folder:
+                files = [x[2] for x in os.walk(join(data_folder, camera ,folder_name))]
+                print(files)  
+        
+                if camera == 'REALSENSE':
+                    rs_csv = join(data_folder,camera, 'CSV', 'complete', 'REALSENSE_abs_time.csv')
+                    f = open(rs_csv, 'w') # open the file in the write mode                        #open last one
+    
+                    # create the csv writer
+                    writer = csv.writer(f)
+                    header = ['index','frequency','relative_time','abs_time']
+                    # write a row to the csv file
+                    writer.writerow(header)
+                    rel_time = 0
+                    #abs_time = rs_abs_time                                        #put the ref_abs time we got from RS as the first absolute time to write
+            
+                    for m in range(self.nb_frames[camera]):                            #pour toutes les frames
+                        abs_time = self.abs_time_vector['REALSENSE'][m]
+                        #if m >= frame[camera]:        # si on est dans les videos completes et que l-indice est plus grand que la frame avec le mvmt de ref
+                        row = [m,fps[camera],rel_time,float(abs_time)]               # alors on inscrit le abs time, et a partir de la on l'incremente de la fps (en ms)
+                            #abs_time = abs_time + 1/fps[camera]*1000
+                        #else:
+                            #row = [m, fps[camera], rel_time]                # sinon on est soit dans les segments (pas besoin absolute time), soit on est avant le mvmt de ref donc pas de abs time
+                    
+                        writer.writerow(row)
+                        rel_time = rel_time + 1/fps[camera]                       # on incremente le rel time par la fps corespondante 
+                            
+                    #print(float(abs_time)-1/fps[camera]*1000)
+                    f.close()        
+            
+                else:
+                    for i in range(len(files[0])):
+                        file = files[0][i] 
+                        if os.path.splitext(file)[1] == '.mp4' or os.path.splitext(file)[1] == '.MP4':
+            
+                            self.csv_names.append(join(data_folder,camera, 'CSV',folder_name, str(file)[0:15] + '_abs_time.csv'))  #create the csv references
+                            f = open(self.csv_names[-1], 'w') # open the file in the write mode                        #open last one
+    
+    
+                            # create the csv writer
+                            writer = csv.writer(f)
+                            header = ['index','frequency','relative_time','abs_time']
+    
+                            # write a row to the csv file
+                            writer.writerow(header)
+                            rel_time = 0
+                            abs_time = self.rs_abs_time                                        #put the ref_abs time we got from RS as the first absolute time to write
+                    
+                            if folder_name == 'complete':
+                                for m in range((self.nb_frames[camera])):                      #camera key pour les complete csv      
+                                    if m >= frame[camera]:        # si on est dans les videos completes et que l-indice est plus grand que la frame avec le mvmt de ref
+                                        row = [m,fps[camera],rel_time,abs_time]               # alors on inscrit le abs time, et a partir de la on l'incremente de la fps (en ms)
+                                        abs_time = abs_time + 1/fps[camera]*1000
+                                    else:
+                                        row = [m, fps[camera], rel_time]         # sinon on est soit dans les segments (pas besoin absolute time), soit on est avant le mvmt de ref donc pas de abs time
+                                    writer.writerow(row)
+                                    rel_time = rel_time + 1/fps[camera]    
+                            else:
+                                for m in range((self.nb_frames[file])):                        #file key pour les segmens csv
+                                    row = [m, fps[camera], rel_time]
+                                
+                                    writer.writerow(row)
+                                    rel_time = rel_time + 1/fps[camera]                       # on incremente le rel time par la fps corespondante 
+                            
+           
+                            f.close()
+            
+    def get_csv_data_camera(self, data_folder, cameras):
+        #reprend les donnes de csv , on peut en profiter pour les cut
+        for camera in cameras:
+            file = [x[2] for x in os.walk(join(data_folder, camera , 'CSV', 'complete'))]
+            print(file[0][0])  
+    
+            directory = join(data_folder, camera , 'CSV', 'complete', file[0][0])
+            print(directory)
+            self.play(directory, camera)
+            self.index[camera] = self.data[camera]['index']
+            self.relative_time[camera] = self.data[camera]['relative_time']
+            self.absolute_time[camera] = self.data[camera]['abs_time']
+            
+    
+    def get_micro_frame_from_csv(self, data_folder):
+    
+        #get ref fram of microscope directly from csv file
+        file = [x[2] for x in os.walk(join(data_folder, 'SEGMENTATION_CSV'))]
+        print(file[0][0])  
+    
+        directory = join(data_folder ,'SEGMENTATION_CSV', file[0][0])
+        #print(directory)
+        DATA = pd.read_csv(directory)
+        self.start_ref_frame_vector = DATA['Start_frame']
+        self.stop_ref_frame_vector = DATA['Stop_frame']
+        self.index_segment_vector = DATA['nb']
+        #print(start_ref_frame)
+    
+   
+    def export_synchro_videos(self,path_to_data_folder, data_folder, recording_session, subject, cameras, camera_ref, frame):
+        
+        for o in range(len(self.start_ref_frame_vector)):
+            start_ref_frame = self.start_ref_frame_vector[o]
+            stop_ref_frame = self.stop_ref_frame_vector[o]
+
+            #after reading the frame in the csv. we take the abs time coresponding to the frame (using index) to find it in the other cameras
+            start_ref_abs_time = self.absolute_time[camera_ref][start_ref_frame]
+            stop_ref_abs_time = self.absolute_time[camera_ref][stop_ref_frame]
+        
+            print("start reference abs time:  ", start_ref_abs_time)  
+            print("stop reference abs time:  ", stop_ref_abs_time) 
+            print("----------------------")
+            for camera in cameras:
+                self.pos_start[camera] = []
+                self.pos_stop[camera] = []
+                self.rel_time_start[camera] = {}
+                self.rel_time_stop[camera] = {}
+                self.abs_time_start[camera] = {}
+                self.abs_time_stop[camera] = {}
+                if not camera in camera_ref:
+                    #take closest position and absolute time in the absolute_time of the camera list to the absolute time reference, from the synchro frame (before NaN anyway)
+                    [self.pos_start[camera], self.abs_time_start[camera]]= self.take_closest(self.absolute_time[camera], start_ref_abs_time, frame[camera])
+                    [self.pos_stop[camera], self.abs_time_stop[camera]] = self.take_closest(self.absolute_time[camera], stop_ref_abs_time, frame[camera])
+                    print(camera, "start index:       ", self.pos_start[camera], "abs time:   ", self.abs_time_start[camera])
+                    print(camera, "stop index:        ", self.pos_stop[camera], "abs time:   ", self.abs_time_stop[camera])
+                    
+            
+                    #with the position we got from abs time, take the coresp. rel time to use for video export
+                    self.rel_time_start[camera] = self.relative_time[camera][self.pos_start[camera]]
+                    self.rel_time_stop[camera] = self.relative_time[camera][self.pos_stop[camera]]
+                    print(camera, "start index:       ", self.pos_start[camera], "rel time:   ", self.rel_time_start[camera])
+                    print(camera, "stop index:       ", self.pos_stop[camera], "rel time:   ", self.rel_time_stop[camera])
+                    print("----------------------")
+                else:
+                    #for micrsocope: we know the reference frames from the csv directly, so we just take the abs and rel time value coresponding
+                    self.rel_time_start[camera] = self.relative_time[camera][start_ref_frame]
+                    self.rel_time_stop[camera]  = self.relative_time[camera][stop_ref_frame]
+                    self.abs_time_start[camera] = self.absolute_time[camera][start_ref_frame]
+                    self.abs_time_stop[camera]  = self.absolute_time[camera][stop_ref_frame]
+                    
+                    print(camera, "start index   ", start_ref_frame, "rel time:   ", self.rel_time_start[camera])
+                    print(camera, "stop index   ", stop_ref_frame, "rel time:   ", self.rel_time_stop[camera])
+                    print("----------------------")
+                    self.pos_start[camera] = start_ref_frame
+                    self.pos_stop[camera] = stop_ref_frame
+            
+                #export video from t1 to t2 in seconds
+
+                t1 = self.rel_time_start[camera]
+                t2 = self.rel_time_stop[camera]
+    
+                #name with abs time ref
+                #r1 = self.abs_time_start[camera]
+                #r2 = self.abs_time_stop[camera]
+                #ref = str(r1)[1:7] + "_to_" + str(r2)[1:7] + ".mp4"
+    
+                #name with no of frame
+                r1 = self.pos_start[camera]
+                r2 = self.pos_stop[camera]
+                ref = str(r1) + "_to_" + str(r2) + ".mp4"
+
+                #name with rel time
+                #ref = str(t1)[1:7] + "_to_" + str(t2)[1:7] + ".mp4"
+
+                #name with rsegment nb
+                r1 = self.index_segment_vector[o]
+                ref = "segment_nb_" + str(r1) + ".mp4"
+
+                file = [x[2] for x in os.walk(join(data_folder, camera , 'complete'))]
+                print(file[0][0])  
+                target_name = join(path_to_data_folder, recording_session, subject, camera , 'SEGMENTATION', ref)
+                file_name = join(data_folder, camera, 'complete', file[0][0])
+                print(target_name)
+                ffmpeg_extract_subclip(file_name, t1, t2, targetname=target_name)
+    
+         
     """        
     def get_experiment_list(self, data_folder):
         res = {}
