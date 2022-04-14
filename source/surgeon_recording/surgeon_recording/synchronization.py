@@ -315,8 +315,11 @@ class Synchro(object):
                     #for micrsocope: we know the reference frames from the csv directly, so we just take the abs and rel time value coresponding
                     self.rel_time_start[camera] = self.relative_time[camera][start_ref_frame]
                     self.rel_time_stop[camera]  = self.relative_time[camera][stop_ref_frame]
-                    self.abs_time_start[camera] = self.absolute_time[camera][start_ref_frame]
-                    self.abs_time_stop[camera]  = self.absolute_time[camera][stop_ref_frame]
+                    #self.abs_time_start[camera] = self.absolute_time[camera][start_ref_frame]
+                    #self.abs_time_stop[camera]  = self.absolute_time[camera][stop_ref_frame]
+                    
+                    self.abs_time_start[camera] = start_ref_abs_time
+                    self.abs_time_stop[camera] = stop_ref_abs_time
                     
                     print(camera, "start index   ", start_ref_frame, "rel time:   ", self.rel_time_start[camera])
                     print(camera, "stop index   ", stop_ref_frame, "rel time:   ", self.rel_time_stop[camera])
