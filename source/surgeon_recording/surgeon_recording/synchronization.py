@@ -20,6 +20,12 @@ from moviepy.editor import *
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 class Synchro(object):
+    
+    """
+    A class used to define functions for synchronization of 3 videos (RS, GOPRO, MICROSCOPE) and sensor data
+    
+    """
+    
     def __init__(self):
         self.available_cameras = ['GOPRO', 'MICROSCOPE', 'REALSENSE']
         self.needed_sensors = ['camera', 'emg']
@@ -57,6 +63,7 @@ class Synchro(object):
                
         
     def play(self, directory, camera):
+        """ allows to store for each camera the data from the camera csv file in the data variable. Can access the different data using the column names. """
         self.files = directory
         with self.mutex:
             indexes = {}
@@ -71,6 +78,7 @@ class Synchro(object):
             #self.data_changed = True
             
     def take_closest(self, myList, myNumber, min_frame):
+        """ gives closest value to MyNumber (time reference) in MyList (time available for other cameras) and it position, starting looking in the list from min_frame  """
     
     #Assumes myList is sorted. Returns closest value to myNumber.
     #If two numbers are equally close, return the smallest number.
@@ -90,6 +98,7 @@ class Synchro(object):
         
     
     def bag_to_png(self, path_to_data, data_folder, camera):
+        """ extract all png from a bag file (here for RS camera, file stored in BAG folder for REALSENSE)"""
        
         bag_file = [x[2] for x in os.walk(join(data_folder, camera, 'BAG'))]
         print(bag_file[0][0])
@@ -101,6 +110,7 @@ class Synchro(object):
         os.system('rs-convert -i ' + path_bag_file + ' -p ' + path_png)
         
     def png_to_MP4(self,fps, data_folder, camera): 
+        """ Get all png into one mp4 video (here for RS camera). The images are sorted by names to have accurate stream in time. """
         
         image_folder=join(data_folder, camera, 'PNG')
         print('image folder: ' + image_folder)
@@ -112,6 +122,7 @@ class Synchro(object):
         clip.write_videofile(path_mp4)
     
     def concatenate_videos(fps, data_folder, camera):
+        """get the different segments created by the gopro and microscope cameras into 1 single video. The segments must be in the segments folder under camera folder. """
         L =[]
 
         for root, dirs, files in os.walk(join(data_folder, camera, 'segments')):
@@ -130,6 +141,7 @@ class Synchro(object):
         final_clip.to_videofile(output_path, fps=fps, remove_temp=False)
     
     def get_nb_frame(self, data_folder, cameras, folder):
+        """ get nb of frame from RS counting the nb of png files that were extracted, get nb of frames from the MP4 videos for gopro and microscope. Compute sum of frames of the segments for gotpo and microscope to compare. """
 
         for k in range(len(cameras)):    #for the different cameras
             camera = cameras[k]
@@ -145,7 +157,7 @@ class Synchro(object):
                     self.nb_frames[camera] = rs_nb_frame
 
                 else:
-                    if len(files) != 0:                                                    # exclude rs for now bc no files
+                    if len(files) != 0:                                                    
                         for i in range(len(files[0])):                                   
                             file = files[0][i]                                             # prend la valeur des differents fichiers a la suite (les videos)
                 
@@ -166,8 +178,9 @@ class Synchro(object):
                 print('Total nb of frames of segments for ', camera, self.sum_frame[camera])
         
     def get_abs_time_png_names(self, data_folder, camera, rs_frame):
+        """ get the vector of absolute time reference from the RS png names. Use the last 32 to 4 characters of the name (corresponds to the time digits, last 4 are .png) """
+        
         # file directory to access the png files (Attention: also in the function to get video from png)
-        #camera = 'REALSENSE'
         image_folder=join(data_folder, camera, 'PNG')
         image_files = [os.path.join(image_folder,img) for img in os.listdir(image_folder) if img.endswith(".png")]
 
@@ -355,6 +368,15 @@ class Synchro(object):
                 file_name = join(data_folder, camera, 'complete', file[0][0])
                 print(target_name)
                 ffmpeg_extract_subclip(file_name, t1, t2, targetname=target_name)
+                
+                
+    def color_clip(self, size, duration, output, fps=25, color=(0,0,0)):
+        ColorClip(size, color, duration=duration).write_videofile(output, fps=fps)
+        return ['ok']
+                
+    
+     #def color_clip(size, duration, output, fps=25, color=(0,0,0)):ColorClip(size, color, duration=duration).write_videofile(output, fps=fps)
+
     
          
     """        
