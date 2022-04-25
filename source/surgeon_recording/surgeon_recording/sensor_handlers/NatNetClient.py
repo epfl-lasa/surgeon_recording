@@ -19,13 +19,14 @@ import struct
 from threading import Thread
 import copy
 import time
-import DataDescriptions
+import DataDescription
 import MoCapData
+
 
 def trace( *args ):
     # uncomment the one you want to use
-    print( "".join(map(str,args)) )
-    #pass
+    #print( "".join(map(str,args)) )
+    pass
 
 #Used for Data Description functions
 def trace_dd( *args ):
@@ -1273,7 +1274,7 @@ class NatNetClient:
 
             offset_tmp, mocap_data = self.__unpack_mocap_data( data[offset:], packet_size, major, minor )
             offset += offset_tmp
-            print("MoCap Frame: %d\n"%(mocap_data.prefix_data.frame_number))
+            #print("MoCap Frame: %d\n"%(mocap_data.prefix_data.frame_number))
             # get a string version of the data for output
             mocap_data_str=mocap_data.get_as_string()
             if print_level >= 1:
