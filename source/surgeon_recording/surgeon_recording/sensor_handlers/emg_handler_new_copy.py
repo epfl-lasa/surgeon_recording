@@ -19,9 +19,9 @@ class EMGHandler_new(object):
         # create an emgClient object for acquiring the data
         self.emgClient = emgAcquireClient.emgAcquireClient(nb_channels = 8)
         # initialize the node
-        self.init_value = self.emgClient.initialize()
+        
         #self.emg_init = init_value == 0
-        self.emgClient.start()
+        
         self.emg_data = []
         self.emg_data2 = []
         
@@ -35,9 +35,15 @@ class EMGHandler_new(object):
 
     def acquire_data(self):
         print("hello")
+        self.init_value = self.emgClient.initialize()
+        self.emgClient.start()
         # acquire the signals from the buffer
         self.emg_data.append(self.emgClient.getSignals())
-        emg_array = self.emgClient.getSignals()
+        self.emgClient.stop()
+        self.emgClient.shutdown()
+
+        """emg_array = self.emgClient.getSignals()
+        print("b")
         returned_data = []
         print(len(emg_array[0]))
         for i in range(len(emg_array[0])):
@@ -47,7 +53,7 @@ class EMGHandler_new(object):
             returned_data.append(data)
         self.emg_data2 = returned_data
 
-        return returned_data
+        return returned_data"""
     
    
 
@@ -61,7 +67,7 @@ def main(args=None):
     is_looping = True
     #emg_handler.acquire_data()
 
-    freq = 50
+    freq = 2
     dt = 1/freq
     
     while is_looping:
@@ -69,17 +75,17 @@ def main(args=None):
         emg_handler.acquire_data()
         time.sleep(dt- ((time.time() - start_time) % dt))
         time_a = time.time()
-        if time_a - start_time > 10:
+        if time_a - start_time > 5:
             print("loop")
             is_looping = False
-            emg_handler.emgClient.stop()
+            
             print(len(emg_handler.emg_data))
-            emg_handler.emgClient.shutdown()
+           
             #emg_handler.f.close()
 
     print(len(emg_handler.emg_data))
-   # print(emg_handler.emg_data)
-   # print(emg_handler.emg_data2)
+    print(emg_handler.emg_data)
+    print(emg_handler.emg_data2)
     
 
 
