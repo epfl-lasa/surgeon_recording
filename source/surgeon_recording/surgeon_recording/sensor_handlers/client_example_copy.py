@@ -83,11 +83,12 @@ elapsed = time.perf_counter() - start"""
 csv_path = "/Users/LASA/Documents/Recordings/surgeon_recording/data/test_emg_new_recorder/test_1.csv"
 f = open(csv_path, 'w', newline='')
 writer = csv.writer(f)
-header = ['index', 'timestamp', 'channel 1']
+header = ['index', 'buffer', 'timestamp', 'channel 1', 'channel 2', 'channel 3', 'channel 4', 'channel 5', 'channel 6','channel 7','channel 8']
 writer.writerow(header)
 
-duration = 10
+duration = 100
 count = 0
+count_all =0
 time_vect1 = [0]
 freq_vect1 = []
 freq_vect2 = []
@@ -110,14 +111,20 @@ while is_looping:
         #freq_vect2.append(1/(time_vect2[-1]-time_vect2[-2]))
 
     all_Data = np.hstack((all_Data, emg_data))
-    count = count + 1
+    
+    index_data = list(range(len(emg_data[1])))
+
+
     dt = (time_vect1[-1]-time_vect1[-2])/50
     tmp_time_vector = np.linspace(time_vect1[-2], time_vect1[-2]+(dt*50),50,endpoint=False)
     
     for index in range(len(emg_data[1])):
-        row = [index, tmp_time_vector[index], emg_data[1][index]]
+        row = [len(emg_data[1])*count + index_data[index], index, tmp_time_vector[index]]
+        for c in range(nb_ch):
+            row.append(emg_data[c][index])
         writer.writerow(row)
-
+    count = count + 1
+   
 
     if time.perf_counter() - start_time > duration:
         print("stoping")
