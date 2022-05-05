@@ -1,18 +1,24 @@
+
 import zmq
 import time
 import numpy as np
 import os
 from os.path import join
 from shutil import copyfile
-import itertools
+import csv
 from sklearn.linear_model import LinearRegression
-from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+
+import matplotlib.pyplot as plt
 
 class TPSHandlerNew(object):
-    def __init__(self, parameters):
+    def __init__(self):
         ip = "127.0.0.1"
         port = 4242
         self.selected_fingers = [0]
+        self.data2 = []
+        self.time_vect3 = []
+        self.freq_vect3 = []
+        self.count3 = 0
 
         # load the calibrations
         calib1, calib2 = TPSHandlerNew.load_calibrations()
@@ -28,23 +34,32 @@ class TPSHandlerNew(object):
         self.data_socket.setsockopt( zmq.SUBSCRIBE, b"" )
         print("socket initialized")
 
+        self.csv_path = "/Users/LASA/Documents/Recordings/surgeon_recording/data/test_tps_new_recorder/test_1.csv"
+        self.f = open(self.csv_path, 'w', newline='')
+        self.writer = csv.writer(self.f)
+        header = ["index", "absolute time", "relative time","cal data", "raw data"]
+        self.writer.writerow(header)
+
     def load_calibrations():
         filepath = os.path.abspath(os.path.dirname(__file__))
-        config_folder = join(filepath, '..', '..', 'config')
+        config_folder = r"C:\Users\LASA\Documents\Recordings\surgeon_recording\source\surgeon_recording\config"
+        print(config_folder)
         calibration_file1 = join(config_folder, 'FingerTPS_EPFL1-cal.txt')
+        print(calibration_file1)
         calibration_file2 = join(config_folder, 'FingerTPS_EPFL2-cal.txt')
         calib1 = TPSHandlerNew.read_calibration_file(calibration_file1)
         calib2 = TPSHandlerNew.read_calibration_file(calibration_file2)
         return calib1, calib2
 
-    def read_calibration_file(self, calibration_file):
+    def read_calibration_file(calibration_file):
         # get the parameters to know which are the sensors to read
         calibration_factors = []
         if os.path.exists(calibration_file):
             file = open(calibration_file, 'r')
             lines = file.readlines()
             # only read the lines counting as selected fingers
-            for i in self.selected_fingers:
+            selected_fingers= [0]
+            for i in selected_fingers:
                 line = lines[i+1].split('\t')[:-1]
                 # if there is calibration data
                 if len(line) > 1:
@@ -58,44 +73,100 @@ class TPSHandlerNew(object):
         return LinearRegression().fit(x, y)
 
 
-    """def setup_recording(self, recording_folder, start_time):
-        super().setup_recording(recording_folder, start_time)
-        # copy the calibration files
-        filepath = os.path.abspath(os.path.dirname(__file__))
-        config_folder = join(filepath, '..', '..', 'config')
-        for i in range(1, 3):
-            filename = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
-            calibration_file = join(config_folder, filename)
-            if os.path.exists(calibration_file):
-                copyfile(calibration_file, join(recording_folder, filename))"""
-
-
     def acquire_data(self):
         absolute_time = time.time()
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
-        if not self.simulated:
-            tmp = np.array([float(x) for x in self.data_socket.recv_string().split(',')])
-        else:
-            tmp = self.generate_fake_data(12)
+        self.count3 = self.count3 +1
+        self.time_vect3.append(time.time())
+        if self.count3>1:
+            self.freq_vect3.append(1/(self.time_vect3[-1]-self.time_vect3[-2]))
+        
+        tmp = np.array([float(x) for x in self.data_socket.recv_string().split(',')])
+      
         for i, f in enumerate(self.selected_fingers):
             raw_value = tmp[f] if f < 6 else tmp[f+3]
             if raw_value < 1e-2:
-                return []
-            calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if i < len(self.calibrations) else raw_value
-            data.append(calibrated_value)
-            data.append(raw_value)
+                #return []
+                data.append(0)
+                data.append(0)
+            else:
+                calibrated_value = self.calibrations[i].predict([[raw_value]])[0] if i < len(self.calibrations) else raw_value
+                data.append(calibrated_value)
+                data.append(raw_value)
         self.index = data[0]
+        row = data
+        self.writer.writerow(row)
+        self.data2.append(data)
+
         return data
 
-    """def shutdown(self):
-        super().shutdown()
-        if not self.simulated:
-            self.data_socket.close()
-        print('tps closed cleanly')"""
 
+def main():
+    duration = 100
+    freq = 10
+    dt = 1/freq
 
-def main(args=None):
+    tps_handler = TPSHandlerNew()
     
-    print(a)
+    tps_handler.index = 0
+    is_looping = True
+    tps_handler.start_time = time.time()
+    count = 0
+    
+    
+    time_vect2 = [time.time()]
+    freq_vect1 = []
+
+    start = time.perf_counter() 
+    time_vect1 = [start]
+
+    while is_looping:
+        time_1 = time.time()
+        print("tick")
+        tps_handler.acquire_data()
+
+        time_vect1.append(time.perf_counter())
+        t = time.perf_counter()
+        time_vect2.append(time.time())
+        
+        #time.sleep(dt- ((time.time() - tps_handler.start_time) % dt))
+
+        """if time.time()-time_1 < dt:
+            time.sleep(dt- ((time.time() - tps_handler.start_time) % dt))
+            print("sleeping")"""
+
+        """if time.perf_counter() - start - time_vect1[-1] < dt :
+            time.sleep(dt- ((time.perf_counter() - start) % dt))
+            print("sleeping")"""
+
+        count = count +1 
+
+        while time.perf_counter() < start + count*dt:
+            pass
+
+        if count > 1:
+            freq_vect1.append(1/(time_vect1[-1]-time_vect1[-2]))
+        
+        if time.time() - tps_handler.start_time > duration:
+            print("closing")
+            is_looping = False
+            tps_handler.data_socket.close()
+            print(len(tps_handler.data2))
+            print(count)
+
+
+    fig, ax = plt.subplots()
+
+    ax.plot(freq_vect1[2:-1])
+    #ax.set_ylim([freq-10, freq+10])
+
+    fig, ax2 = plt.subplots()
+    ax2.plot(tps_handler.freq_vect3[2:-1])
+
+    
+
+
+    plt.show()
+
 if __name__ == '__main__':
     main()
