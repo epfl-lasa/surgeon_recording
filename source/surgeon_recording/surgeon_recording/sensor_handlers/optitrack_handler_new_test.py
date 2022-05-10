@@ -7,16 +7,17 @@ import csv
 class OptitrackHandlerNew(object):
     def __init__(self):
         self.data_dict = []
+        self.received_frames = {'3': {'label': 'tweezers', 'position': [], 'orientation': [], 'timestamp': [], 'timestamp2': [], 'is_recording':[], 'timecode':[], 'timecode_sub': [], 'frame_number': []}}
 
         self.opt_client = NatNetClient()
         self.opt_client.set_print_level(0)
 
-        self.csv_path_optitrack = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder/optitrack_1.csv"
-        self.opti = open(self.csv_path_optitrack, 'w', newline='')
-        self.writer_opti = csv.writer(self.opti)
-        #header_opti = ['index', 'timestamp', 'timestamp2', 'timecode','timecode_sub', 'Isrecording']
-        self.writer.writerow(self.header_optitrack)
-        self.row_optitrack = []
+        self.csv_path = "/Users/LASA/Documents/Recordings/surgeon_recording/data/test_optitrack_new_recorder/test_1.csv"
+        self.f = open(self.csv_path, 'w', newline='')
+        self.writer = csv.writer(self.f)
+        header = ['index', 'timestamp', 'timestamp2', 'timecode','timecode_sub', 'Isrecording']
+        self.writer.writerow(header)
+
 
 
         # Configure the streaming client to call our rigid body handler on the emulator to send data out.
@@ -30,35 +31,31 @@ class OptitrackHandlerNew(object):
     
 
 
-    # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
-    def receive_new_frame(self, id, data_dict):
+   # This is a callback function that gets connected to the NatNet client and called once per mocap frame.
+    def receive_new_frame(self, data_dict):
         # order_list = ["frame_number", "markerSetCount", "unlabeledMarkersCount", "rigidBodyCount", "skeletonCount",
         #               "labeledMarkerCount", "timecode", "timecodeSub", "timestamp", "is_recording", "trackedModelsChanged"]
-        id_frame = self.received_frames.keys()[0]
-        self.row_optitrack.append(data_dict["frame_number"]- self.received_frames[id_frame]['frame_number'][0])
-        #self.data_dict.append(data_dict) #should get the info for all the things of order list in data_dict donc timestamp
-        if id in self.received_frames.keys():
-            #self.received_frames[id]['timestamp2'].append(data_dict["timestamp"])
-            #self.received_frames[id]['frame_number'].append(data_dict["frame_number"])
-            self.row_optitrack.append(data_dict["timestamp"])
-            
-        self.writer_opti.writerow(self.row_optitrack)
+        self.data_dict.append(data_dict) #should get the info for all the things of order list in data_dict donc timestamp
+        
+        self.received_frames['3']['timestamp2'].append(data_dict["timestamp"])
+        self.received_frames['3']['timecode'].append(data_dict["timecode"])
+        self.received_frames['3']['timecode_sub'].append(data_dict["timecode_sub"])
+        self.received_frames['3']['is_recording'].append(data_dict["is_recording"])
+        self.received_frames['3']['frame_number'].append(data_dict["frame_number"])
+
+
+        row = [data_dict["frame_number"]- self.received_frames['3']['frame_number'][0], self.received_frames['3']['timestamp'][-1], data_dict["timestamp"], data_dict["timecode"],data_dict["timecode_sub"], data_dict["is_recording"]]
+        self.writer.writerow(row) 
 
 
 
     # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
     def receive_rigid_body_frame(self, id, position, rotation):
-        id_frame = self.received_frames.keys()[0]
-        self.received_frames[id_frame]['timestamp'].append(time.time())
-        self.row_optitrack.append(self.received_frames[id_frame]['timestamp'],)
-        
-        if id in self.received_frames.keys():
-            self.received_frames[id]['timestamp'].append(time.time())
-            self.received_frames[id]['position'].append(position)
-            self.received_frames[id]['orientation'].append(rotation)
-            self.row_optitrack.append(position, rotation)
+        id = '3'
+        self.received_frames[id]['timestamp'].append(time.time())
+        self.received_frames[id]['position'].append(position)
+        self.received_frames[id]['orientation'].append(rotation)
 
-        self.writer_opti.writerow(self.row_optitrack) 
         
 
 def main():

@@ -17,6 +17,7 @@ class TPSHandlerNew(object):
         self.selected_fingers = [0]
         self.data2 = []
         self.time_vect3 = []
+        self.time_vect4 = []
         self.freq_vect3 = []
         self.count3 = 0
 
@@ -78,8 +79,9 @@ class TPSHandlerNew(object):
         data = [self.index + 1, absolute_time, absolute_time - self.start_time]
         self.count3 = self.count3 +1
         self.time_vect3.append(time.time())
-        if self.count3>1:
-            self.freq_vect3.append(1/(self.time_vect3[-1]-self.time_vect3[-2]))
+        self.time_vect4.append(time.perf_counter())
+        #if self.count3>1:
+            #self.freq_vect3.append(1/(self.time_vect3[-1]-self.time_vect3[-2]))
         
         tmp = np.array([float(x) for x in self.data_socket.recv_string().split(',')])
       
@@ -98,13 +100,22 @@ class TPSHandlerNew(object):
         self.writer.writerow(row)
         self.data2.append(data)
 
+        if len(self.time_vect3) > 2 and self.time_vect3[-2] == self.time_vect3[-1]:
+            print(f"Last two times equal, previous data is {self.data2[-2]}, current data is {self.data2[-1]}")
+
         return data
 
 
 def main():
-    duration = 100
-    freq = 10
-    dt = 1/freq
+    csv_path2 = "/Users/LASA/Documents/Recordings/surgeon_recording/data/test_tps_new_recorder/test_1_time.csv"
+    f2 = open(csv_path2, 'w', newline='')
+    writer2 = csv.writer(f2)
+    header2 = ["time with perf counter", "time with time()", "time with time but in loop", "time with counter in loop"]
+    writer2.writerow(header2)
+    duration = 30
+    
+    #freq = 10
+    #dt = 1/freq
 
     tps_handler = TPSHandlerNew()
     
@@ -121,13 +132,16 @@ def main():
     time_vect1 = [start]
 
     while is_looping:
-        time_1 = time.time()
-        print("tick")
+        #time_1 = time.time()
+        #print("tick")
         tps_handler.acquire_data()
 
         time_vect1.append(time.perf_counter())
-        t = time.perf_counter()
+        #t = time.perf_counter()
         time_vect2.append(time.time())
+        row2 = [time_vect1[-1], time_vect2[-1],tps_handler.time_vect3[-1], tps_handler.time_vect4[-1]]
+        writer2.writerow(row2)
+
         
         #time.sleep(dt- ((time.time() - tps_handler.start_time) % dt))
 
@@ -141,8 +155,8 @@ def main():
 
         count = count +1 
 
-        while time.perf_counter() < start + count*dt:
-            pass
+        #while time.perf_counter() < start + count*dt:
+            #pass
 
         if count > 1:
             freq_vect1.append(1/(time_vect1[-1]-time_vect1[-2]))
@@ -153,6 +167,8 @@ def main():
             tps_handler.data_socket.close()
             print(len(tps_handler.data2))
             print(count)
+            tps_handler.f.close()
+            f2.close()
 
 
     fig, ax = plt.subplots()
