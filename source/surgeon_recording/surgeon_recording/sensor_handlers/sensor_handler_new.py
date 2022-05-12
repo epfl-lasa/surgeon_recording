@@ -75,7 +75,8 @@ class RecorderNew():
         start_time_loop = time.time()
         handler_opti = OptitrackHandlerNew(self.csv_path_optitrack)
 
-        while is_looping:
+        while is_looping is True:
+
             handler_opti.write_optitrack_data()
             if time.time() - start_time_loop > 10:
                 is_looping = False
