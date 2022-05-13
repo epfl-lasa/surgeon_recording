@@ -84,6 +84,7 @@ class OptitrackHandlerNew:
             self.received_frames[16]['frame_number'].append(data_dict["frame_number"])
             self.received_frames[16]['received_data1'] = True
             #print("new frame")
+            self.count = self.count + 1
 
             
 
@@ -101,9 +102,9 @@ class OptitrackHandlerNew:
         
     def write_optitrack_data(self):
         #print("write called")
-        """
+        
         tmp = False
-        print(self.received_frames[16]['received_data1'])
+        #print(self.received_frames[16]['received_data1'])
         if self.received_frames[16]['received_data1'] is True:
             #print("true1")
             self.index_optitrack.append(self.received_frames[16]["frame_number"][-1] - self.received_frames[16]["frame_number"][0])
@@ -131,19 +132,20 @@ class OptitrackHandlerNew:
             
             #if len(self.index_optitrack) > 1 and not self.index_optitrack[-1] == self.index_optitrack[-2]: 
             self.received_frames[16]['received_data1'] = False
-        else:
-            self.row_optitrack.append("0")
-        print(self.row_optitrack)
-        self.writer_opti.writerow(self.row_optitrack) 
-        """        
+            #else:
+            #self.row_optitrack.append("0")
+            #print(self.row_optitrack)
+            self.writer_opti.writerow(self.row_optitrack)
+            self.row_optitrack= []  
+                
         
-        self.rel_time.append(self.received_frames[16]["timestamp2"])
+        """self.rel_time.append(self.received_frames[16]["timestamp2"])
         self.row_optitrack.append(self.received_frames[16]["timestamp2"])
         self.row_optitrack.append(self.received_frames[16]["timestamp"])
         if len(self.received_frames[16]["frame_number"])> 1:
             self.row_optitrack.append(self.received_frames[16]["frame_number"][-1]-self.received_frames[16]["frame_number"][0])
 
-        """for id in self.received_frames.keys():
+        for id in self.received_frames.keys():
             #if self.received_frames[id]['received_data2'] is True:
                 #print("TRUE")
             for i in range(len(self.received_frames[id]['position'])):
@@ -151,12 +153,12 @@ class OptitrackHandlerNew:
             for j in range(len(self.received_frames[id]['orientation'])):
                 self.row_optitrack.append(self.received_frames[id]['orientation'][j])
             self.received_frames[id]['received_data2'] = False
-            tmp = True"""
+            tmp = True
     
         #if len(self.rel_time) > 1 and not self.rel_time[-1] == self.rel_time[-2]:
         self.writer_opti.writerow(self.row_optitrack) 
         self.row_optitrack= [] 
-        self.count = self.count + 1
+        self.count = self.count + 1"""
                
 
             
@@ -165,6 +167,10 @@ class OptitrackHandlerNew:
     def shutdown_optitrack(self):
         self.opt_client.shutdown()
         self.opti.close()
+        print(self.count)
+        print(len(self.received_frames[16]['frame_number']))
+        print(self.received_frames[16]['frame_number'][-1] - self.received_frames[16]['frame_number'][0])
+            
             
 
 def main():

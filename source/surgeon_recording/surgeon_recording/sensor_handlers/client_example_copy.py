@@ -103,9 +103,9 @@ while is_looping:
         #pass
     emg_data = emgClient.getSignals()
     time_vect1.append(time.perf_counter())
-    print(time_vect1[-1])
+    #print(time_vect1[-1])
     time_vect2.append(time.time())
-    print(time_vect2[-1])
+    #print(time_vect2[-1])
     if count > 0:
         freq_vect1.append(1/(time_vect1[-1]-time_vect1[-2]))
         #freq_vect2.append(1/(time_vect2[-1]-time_vect2[-2]))
@@ -132,7 +132,7 @@ while is_looping:
         is_looping = False
         f.close()
 
-print(emg_data)
+#print(emg_data)
 
 """
 while is_looping:

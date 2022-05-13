@@ -1,6 +1,11 @@
 import numpy as np
 import time
 import sys
+import os
+from os.path import join
+import csv
+import json
+
 
 
 
@@ -13,73 +18,110 @@ sys.path.append(emgAcquire_dir)
 # import the module
 import emgAcquireClient
 
-class EMGHandler_new(object):
-    def __init__(self):
-        
-        # create an emgClient object for acquiring the data
-        self.emgClient = emgAcquireClient.emgAcquireClient(nb_channels = 8)
-        # initialize the node
-        self.init_value = self.emgClient.initialize()
-        #self.emg_init = init_value == 0
-        self.emgClient.start()
-        self.emg_data = []
-        self.emg_data2 = []
-        
-        #self.emg_array = []
-        
-        #self.returned_data = []
+class EMGHandler_new:
+    def __init__(self, csv_path1):
 
-        #self.emgClient.run()
+        self.csv_path_emg1 = csv_path1
+        start_time = time.perf_counter()
 
+        self.time_vect1 = [start_time]
+        self.time_vect2 = [time.time()]
+
+        self.count = 0
+
+
+        self.parameters_emg=[]
+        self.get_parameters_emg()
+        self.running_emg = (self.parameters_emg['status'] == 'on')
+
+
+        if self.running_emg:
+            # define number of channels to acquire
+            self.nb_channels = self.parameters_emg["nb_channels"]
+        
+            # create an emgClient object for acquiring the data
+            self.emgClient = emgAcquireClient.emgAcquireClient(nb_channels = self.nb_channels)
+            # initialize the node
+            init_test = self.emgClient.initialize()
+            if init_test<0:
+                print("unable to initialize")
+                exit()
+            self.emgClient.start()
+
+            self.emg_data = []
+            self.emg_data2 = []
+        
+            #self.emg_array = []
+        
+            #self.returned_data = []
+
+            #self.emgClient.run()
+            
+            self.emg_file = open(self.csv_path_emg1, 'w', newline='')
+            self.writer_emg = csv.writer(self.emg_file)
+            header_emg = ["index global", "index buffer", "absolute time", "relative time"] + self.parameters_emg["header"]
+            self.writer_emg.writerow(header_emg)
+
+
+    def read_config_file(self, sensor_name):
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        with open(join(filepath, '..', '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
+            config = json.load(paramfile)
+        if not sensor_name in config.keys():
+            config[sensor_name] = {}
+            config[sensor_name]['status'] = 'off'
+        return config[sensor_name]
+     
+
+    def get_parameters_emg(self):
+        self.parameters_emg = self.read_config_file('emg')
+        if self.parameters_emg['status'] != 'off':
+           self.parameters_emg.update({ 'header': ['emg' + str(i) for i in range(self.parameters_emg['nb_channels'])]})
+        return self.parameters_emg
+
+
+    def acquire_data_emg(self):
+        #print("hello")
+        #while (time.perf_counter()-time_vect1[-1]) < 0.048:
+        #pass
+        emg_data = self.emgClient.getSignals()
+        self.time_vect1.append(time.perf_counter())
+        time_abs = (time.time())
+
+        if len(self.time_vect1) > 2:
+            self.time_vect1 = [self.time_vect1[-2], self.time_vect1[-1]]
+        
+          
+        #all_Data = np.hstack((all_Data, emg_data))
+        
+        index_data = list(range(len(emg_data[1])))
+
+        size_buffer = len(emg_data[1])
+
+        dt = (self.time_vect1[-1]-self.time_vect1[-2])/size_buffer
+        tmp_time_vector = np.linspace(self.time_vect1[-2], self.time_vect1[-2]+(dt*size_buffer),size_buffer,endpoint=False)
+        
+        for index in range(len(emg_data[1])):
+     
+            row = [len(emg_data[1])*self.count + index_data[index], index, tmp_time_vector[index] + time_abs, tmp_time_vector[index]]
+            for c in range(self.nb_channels):
+                row.append(emg_data[c][index])
+            self.writer_emg.writerow(row)
+        self.count = self.count + 1
     
+        
+    def shutdown_emg(self):
+        self.emgClient.shutdown()
+        self.emg_file.close()
+        print("emg closed cleanly")
+        #print(all_Data.shape)
+        #print(count)
 
-    def acquire_data(self):
-        print("hello")
-        # acquire the signals from the buffer
-        self.emg_data.append(self.emgClient.getSignals())
-        emg_array = self.emgClient.getSignals()
-        returned_data = []
-        print(len(emg_array[0]))
-        for i in range(len(emg_array[0])):
-            data = [0]
-            data.append(emg_array[:, i].tolist())
-            index = data[0]
-            returned_data.append(data)
-        self.emg_data2 = returned_data
-
-        return returned_data
     
    
-
-
-def main(args=None):
-    start_time = time.time()
-    emg_handler = EMGHandler_new()
-    #init_test = emg_handler.emgClient.initialize()
-    #print(init_test)
-
-    is_looping = True
-    #emg_handler.acquire_data()
-
-    freq = 50
-    dt = 1/freq
-    
-    while is_looping:
-        print("tick")
-        emg_handler.acquire_data()
-        time.sleep(dt- ((time.time() - start_time) % dt))
-        time_a = time.time()
-        if time_a - start_time > 10:
-            print("loop")
-            is_looping = False
-            emg_handler.emgClient.stop()
-            print(len(emg_handler.emg_data))
-            emg_handler.emgClient.shutdown()
-            #emg_handler.f.close()
-
-    print(len(emg_handler.emg_data))
-   # print(emg_handler.emg_data)
-   # print(emg_handler.emg_data2)
+def main():
+    return
+       
     
 
 

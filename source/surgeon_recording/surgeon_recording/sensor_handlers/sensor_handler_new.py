@@ -8,58 +8,23 @@ from os.path import join
 import time
 import json
 
-from surgeon_recording.sensor_handlers.optitrack_handler_new import OptitrackHandlerNew
+#from surgeon_recording.sensor_handlers.optitrack_handler_new import OptitrackHandlerNew
+from surgeon_recording.sensor_handlers.optitrack_handler_new2 import OptitrackHandlerNew2
+from surgeon_recording.sensor_handlers.emg_handler_new import EMGHandler_new
 
 
 class RecorderNew():
     def __init__(self):
-
+        self.duration = 100
+        
         self.lock = ()
-        self.csv_path_optitrack = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder/optitrack_1.csv"
+        self.folder = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder"
+        #self.csv_path_optitrack = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder/optitrack_1.csv"
+        self.csv_path_optitrack1 = join(self.folder, "optitrack2_stats.csv")
+        self.csv_path_optitrack2 = join(self.folder, "optitrack2_2.csv")
 
+        self.csv_path_emg1 = join(self.folder, "emg.csv")
 
-        """self.parameters_emg=[]
-    
-        self.get_parameters_emg()
-        
-        self.running_emg = (self.parameters_emg['status'] == 'on')
-        
-    
-
-        if self.running_emg:
-            self.header_emg = self.parameters_emg['header']
-            #ip_emg = self.parameters_emg['streaming_ip']
-            #port_emg = self.parameters_emg['streaming_port']
-            self.nb_channels = self.parameters_emg["nb_channels"]
-
-            # create an emgClient object for acquiring the data
-            self.emgClient = emgAcquireClient.emgAcquireClient(svrIP=parameters["sensor_ip"], nb_channels=self.nb_channels)
-            # initialize the node
-            init_value = self.emgClient.initialize()
-            self.emg_init = init_value == 0
-            self.emgClient.start()
-            
-            self.data_emg = []
-            
-            #self.stop_event = Event()
-            self.recording_thread_emg = Thread(target=self.emg_thread)
-            self.recording_thread_emg.start()"""
-
-
-    """def read_config_file(sensor_name):
-        filepath = os.path.abspath(os.path.dirname(__file__))
-        with open(join(filepath, '..', '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
-            config = json.load(paramfile)
-        if not sensor_name in config.keys():
-            config[sensor_name] = {}
-            config[sensor_name]['status'] = 'off'
-        return config[sensor_name]"""
-    
-    """def get_parameters_emg(self):
-        self.parameters_emg = self.read_config_file('emg')
-        if self.parameters_emg['status'] != 'off':
-            self.parameters_emg.update({ 'header': ['emg' + str(i) for i in range(self.parameters['nb_channels'])]})
-        return self.parameters_emg"""
     
 
     def start_threads(self):
@@ -69,27 +34,39 @@ class RecorderNew():
         recording_thread_opti.start()
         self.lock = Lock()
 
+        recording_thread_emg = Thread(target=self.emg_thread)
+        recording_thread_emg.start()
+
 
     def optitrack_thread(self):
         is_looping = True
         start_time_loop = time.time()
-        handler_opti = OptitrackHandlerNew(self.csv_path_optitrack)
+        #handler_opti = OptitrackHandlerNew(self.csv_path_optitrack)
+        handler_opti = OptitrackHandlerNew2(self.csv_path_optitrack1,self.csv_path_optitrack2 )
 
         while is_looping is True:
 
-            handler_opti.write_optitrack_data()
-            if time.time() - start_time_loop > 10:
+            #handler_opti.write_optitrack_data()
+            if time.time() - start_time_loop > self.duration:
                 is_looping = False
                 handler_opti.shutdown_optitrack()
 
     
-    """def emg_thread(self): 
-    """
+    def emg_thread(self): 
+        is_looping_emg = True
+        start_time_loop_emg= time.time()
+        handler_emg = EMGHandler_new(self.csv_path_emg1)
 
-    """def shutdown_thread(self):
-        is_looping = False
-            handler.opt_client.shutdown()
-            handler.f.close()"""
+        while is_looping_emg is True:
+            handler_emg.acquire_data_emg()
+            if time.time() - start_time_loop_emg > self.duration:
+                is_looping_emg = False
+                handler_emg.shutdown_emg()
+
+
+    
+
+
 
 
 def main():
