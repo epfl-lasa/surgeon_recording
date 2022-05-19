@@ -9,10 +9,12 @@ import time
 import json
 import keyboard
 import subprocess
+from shutil import copyfile
 
 #from surgeon_recording.sensor_handlers.optitrack_handler_new import OptitrackHandlerNew
 from surgeon_recording.sensor_handlers.optitrack_handler_new2 import OptitrackHandlerNew2
 from surgeon_recording.sensor_handlers.emg_handler_new import EMGHandler_new
+from surgeon_recording.sensor_handlers.tps_calib import TPScalibration
 
 
 class RecorderNew():
@@ -24,28 +26,36 @@ class RecorderNew():
         self.subject_nb = input('subject nb')
 
         #self.folder = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder"
-        self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder", self.folder_input, self.subject_nb)
+        self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb)
+
+     
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
         #self.csv_path_optitrack = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder/optitrack_1.csv"
         self.csv_path_optitrack1 = join(self.folder, "optitrack2_stats.csv")
         self.csv_path_optitrack2 = join(self.folder, "optitrack2_2.csv")
+        self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
+        self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
+
+
 
         self.csv_path_emg1 = join(self.folder, "emg.csv")
+
+        self.copy_calibration_files()
 
     
 
     def start_threads(self):
 
         #self.stop_event = Event()
-        recording_thread_opti = Thread(target=self.optitrack_thread)
-        recording_thread_opti.start()
-        self.lock = Lock()
+        #recording_thread_opti = Thread(target=self.optitrack_thread)
+        #recording_thread_opti.start()
+        #self.lock = Lock()
 
-        recording_thread_emg = Thread(target=self.emg_thread)
-        recording_thread_emg.start()
+        #recording_thread_emg = Thread(target=self.emg_thread)
+        #recording_thread_emg.start()
 
-        time.sleep(10)
+        #time.sleep(10)
 
         recording_thread_tps = Thread(target=self.tps_thread)
         recording_thread_tps.start()
@@ -57,7 +67,7 @@ class RecorderNew():
         #handler_opti = OptitrackHandlerNew(self.csv_path_optitrack)
         handler_opti = OptitrackHandlerNew2(self.csv_path_optitrack1,self.csv_path_optitrack2 )
 
-        
+        print("Hello optitrack")
         while is_looping is True:
 
             #handler_opti.write_optitrack_data()
@@ -102,7 +112,6 @@ class RecorderNew():
                 print("Raising SystemExit emg tread")
                 raise SystemExit"""
 
-            
 
             if keyboard.is_pressed('q'):
                 print('goodbye emg')
@@ -111,17 +120,48 @@ class RecorderNew():
                 raise Exception('Exiting')
 
     def tps_thread(self): 
-        filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording/bin/x64/WatchCapture.exe"
+        filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"
         proc = subprocess.run([filename])
+        #proc = subprocess.Popen([filename])
+
+        #a = proc.communicate(input="file", timeout=None)
+        calib_tps = TPScalibration(self.csv_path_tps_cal, self.folder_input, self.subject_nb, self.csv_path_tps_raw)
+
+
+    def copy_calibration_files(self):
+        
+        calibration_dir = r'C:\Program Files\Pressure Profile Systems\Chameleon TVR\setup'
+        destination_dir = join('source', 'surgeon_recording', 'config')
+
+        #destination_dir_tps = join("/Users/LASA/Documents/Recordings/surgeon_recording", self.folder_input, "setup")
+        #if not os.path.exists(destination_dir_tps):
+            #os.makedirs(destination_dir_tps)
+      
+        for i in range(1, 3):
+            calibration_file = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
+            # first remove old calibration files
+            if os.path.exists(join(destination_dir, calibration_file)):
+                os.remove(join(destination_dir, calibration_file))
+
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
+                copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
+                print(calibration_file + ' copied')
+            
+            #if os.path.exists(join(destination_dir_tps, calibration_file)):
+                #os.remove(join(destination_dir_tps, calibration_file))
+
+            #if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
+                #copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
+                #print(calibration_file + ' copied')
 
     
 
-
-
+    
 
 def main():
     recorder = RecorderNew()
     recorder.start_threads()
     
+
 if __name__ == '__main__':
     main()
