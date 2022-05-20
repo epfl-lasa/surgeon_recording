@@ -124,8 +124,8 @@ class RecorderNew():
         proc = subprocess.run([filename])
         #proc = subprocess.Popen([filename])
 
-        #a = proc.communicate(input="file", timeout=None)
-        calib_tps = TPScalibration(self.csv_path_tps_cal, self.folder_input, self.subject_nb, self.csv_path_tps_raw)
+        calib_tps = TPScalibration(csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
+
 
 
     def copy_calibration_files(self):
@@ -133,9 +133,9 @@ class RecorderNew():
         calibration_dir = r'C:\Program Files\Pressure Profile Systems\Chameleon TVR\setup'
         destination_dir = join('source', 'surgeon_recording', 'config')
 
-        #destination_dir_tps = join("/Users/LASA/Documents/Recordings/surgeon_recording", self.folder_input, "setup")
-        #if not os.path.exists(destination_dir_tps):
-            #os.makedirs(destination_dir_tps)
+        destination_dir_tps = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, "calib")
+        if not os.path.exists(destination_dir_tps):
+            os.makedirs(destination_dir_tps)
       
         for i in range(1, 3):
             calibration_file = 'FingerTPS_EPFL' + str(i) + '-cal.txt'
@@ -147,12 +147,12 @@ class RecorderNew():
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
                 print(calibration_file + ' copied')
             
-            #if os.path.exists(join(destination_dir_tps, calibration_file)):
-                #os.remove(join(destination_dir_tps, calibration_file))
+            if os.path.exists(join(destination_dir_tps, calibration_file)):
+                os.remove(join(destination_dir_tps, calibration_file))
 
-            #if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
-                #copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
-                #print(calibration_file + ' copied')
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
+                copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
+                print(calibration_file + ' copied')
 
     
 
