@@ -10,11 +10,12 @@ from csv import reader
 
 
 class TPScalibration:
-    def __init__(self, csv_path, folder_input, subject_nb, csv_raw_data):
+    def __init__(self, folder_path, csv_path, folder_input, subject_nb, csv_raw_data):
     #def __init__(self):
         """self.folder_input = "6"
         self.subject_nb = "6"
         """
+        self.folder_path = folder_path
         self.subject_nb = subject_nb
         self.csv_path = csv_path
         self.folder_input = folder_input
@@ -67,7 +68,9 @@ class TPScalibration:
 
     def load_calibrations(self):
         filepath = os.path.abspath(os.path.dirname(__file__))
-        calib_folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, "calib")
+        #calib_folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self., "calib")
+        calib_folder = join(self.folder_path, "calib")
+
         if not os.path.exists(calib_folder):
             print("no calibration file")
             raise Exception('Exiting')

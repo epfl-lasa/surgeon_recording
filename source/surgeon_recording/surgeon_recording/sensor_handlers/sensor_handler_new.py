@@ -24,16 +24,17 @@ class RecorderNew():
         self.lock = ()
         self.folder_input = input('Name of folder')
         self.subject_nb = input('subject nb')
+        self.task_input = input('run nb (ex 1)')
 
         #self.folder = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder"
-        self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb)
+        self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self.task_input)
 
      
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
         #self.csv_path_optitrack = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder/optitrack_1.csv"
-        self.csv_path_optitrack1 = join(self.folder, "optitrack2_stats.csv")
-        self.csv_path_optitrack2 = join(self.folder, "optitrack2_2.csv")
+        self.csv_path_optitrack1 = join(self.folder, "optitrack_stats.csv")
+        self.csv_path_optitrack2 = join(self.folder, "optitrack.csv")
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
 
@@ -47,18 +48,20 @@ class RecorderNew():
 
     def start_threads(self):
 
-        #self.stop_event = Event()
-        #recording_thread_opti = Thread(target=self.optitrack_thread)
-        #recording_thread_opti.start()
-        #self.lock = Lock()
+        self.stop_event = Event()
+        recording_thread_opti = Thread(target=self.optitrack_thread)
+        recording_thread_opti.start()
+        self.lock = Lock()
 
-        #recording_thread_emg = Thread(target=self.emg_thread)
-        #recording_thread_emg.start()
-
-        #time.sleep(10)
+        time.sleep(5)
 
         recording_thread_tps = Thread(target=self.tps_thread)
         recording_thread_tps.start()
+
+        time.sleep(20)
+
+        recording_thread_emg = Thread(target=self.emg_thread)
+        recording_thread_emg.start()
 
 
     def optitrack_thread(self):
@@ -88,7 +91,8 @@ class RecorderNew():
                 print('goodbye optitrack ')
                 is_looping = False
                 handler_opti.shutdown_optitrack()
-                raise Exception('Exiting')
+                #time.sleep(5)
+                #raise Exception('Exiting')
 
     
     def emg_thread(self): 
@@ -101,11 +105,9 @@ class RecorderNew():
             """if time.time() - start_time_loop_emg > self.duration:
                 is_looping_emg = False
                 handler_emg.shutdown_emg()"""
-
             """try:
                 #handler_emg.acquire_data_emg()
                 pass
-
             except KeyboardInterrupt:
                 is_looping_emg = False
                 handler_emg.shutdown_emg()
@@ -117,14 +119,19 @@ class RecorderNew():
                 print('goodbye emg')
                 is_looping_emg = False
                 handler_emg.shutdown_emg()
-                raise Exception('Exiting')
+                #time.sleep(5)
+                #raise Exception('Exiting')
 
     def tps_thread(self): 
         filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"
         proc = subprocess.run([filename])
         #proc = subprocess.Popen([filename])
 
-        calib_tps = TPScalibration(csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
+        if os.path.exists(self.csv_path_tps_raw):
+            calib_tps = TPScalibration(folder_path = self.folder, csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
+
+        else:
+            print("WARNING: CALIBRATION NOT OK (raw file not found")
 
 
 
@@ -133,7 +140,7 @@ class RecorderNew():
         calibration_dir = r'C:\Program Files\Pressure Profile Systems\Chameleon TVR\setup'
         destination_dir = join('source', 'surgeon_recording', 'config')
 
-        destination_dir_tps = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, "calib")
+        destination_dir_tps = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self.task_input, "calib")
         if not os.path.exists(destination_dir_tps):
             os.makedirs(destination_dir_tps)
       
@@ -146,6 +153,8 @@ class RecorderNew():
             if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
                 print(calibration_file + ' copied')
+            else:
+                print("WARNING: calibration file " + calibration_file+ "not copied, too old")
             
             if os.path.exists(join(destination_dir_tps, calibration_file)):
                 os.remove(join(destination_dir_tps, calibration_file))
@@ -153,6 +162,8 @@ class RecorderNew():
             if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
                 print(calibration_file + ' copied')
+            else:
+                print("WARNING: calibration file" + calibration_file + "not copied, too old")
 
     
 
