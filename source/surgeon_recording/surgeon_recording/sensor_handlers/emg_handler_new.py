@@ -59,7 +59,7 @@ class EMGHandler_new:
             
             self.emg_file = open(self.csv_path_emg1, 'w', newline='')
             self.writer_emg = csv.writer(self.emg_file)
-            header_emg = ["index global", "index buffer", "absolute time", "relative time"] + self.parameters_emg["header"]
+            header_emg = ["index_global", "index_buffer", "absolute_time", "relative_time"] + self.parameters_emg["header"]
             self.writer_emg.writerow(header_emg)
 
 

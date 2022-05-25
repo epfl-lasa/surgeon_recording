@@ -58,7 +58,7 @@ class RecorderNew():
         recording_thread_tps = Thread(target=self.tps_thread)
         recording_thread_tps.start()
 
-        time.sleep(20)
+        time.sleep(25)
 
         recording_thread_emg = Thread(target=self.emg_thread)
         recording_thread_emg.start()

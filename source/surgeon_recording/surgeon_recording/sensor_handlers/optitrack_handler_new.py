@@ -22,7 +22,7 @@ class OptitrackHandlerNew:
         self.running_optitrack = (self.parameters_optitrack['status'] == 'on')
 
         if self.running_optitrack:
-            self.header_optitrack = ["index", "relative_time", "absolute time"]
+            self.header_optitrack = ["index", "relative_time", "absolute_time"]
             for i in range(len(self.parameters_optitrack['header'])):
                 self.header_optitrack.append(self.parameters_optitrack['header'][i])
             self.data_optitrack = []
