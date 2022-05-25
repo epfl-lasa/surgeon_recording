@@ -77,12 +77,16 @@ class Synchro(object):
             #self.align_relative_time()
             #self.data_changed = True
             
-    def take_closest(self, myList, myNumber, min_frame):
+    def take_closest(self, myList, myNumber, min_frame, sensor):
         """ gives closest value to MyNumber (time reference) in MyList (time available for other cameras) and it position, starting looking in the list from min_frame  """
     
     #Assumes myList is sorted. Returns closest value to myNumber.
     #If two numbers are equally close, return the smallest number.
-        myList = myList.values.tolist()
+        if sensor == "optitrack" or sensor == "TPS_calibrated":
+            myList = myList
+        else:
+            myList = myList.values.tolist()
+         
         pos = bisect_left(myList, myNumber, min_frame)       
         #donne la position a laquelle il faudrait placer la valeur pour garder la liste ordonnee, et on regarde que au dessus de la frame de ref (avant abs_time NAN anyway)
         if pos == 0:
