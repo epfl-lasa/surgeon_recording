@@ -82,23 +82,24 @@ class Synchro(object):
     
     #Assumes myList is sorted. Returns closest value to myNumber.
     #If two numbers are equally close, return the smallest number.
-        if sensor == "optitrack" or sensor == "TPS_calibrated":
-            myList = myList
-        else:
-            myList = myList.values.tolist()
+        #if sensor == "optitrack" or sensor == "TPS_calibrated":
+        #    myList = myList
+        #else:
+        myList = myList.values.tolist()
          
         pos = bisect_left(myList, myNumber, min_frame)       
         #donne la position a laquelle il faudrait placer la valeur pour garder la liste ordonnee, et on regarde que au dessus de la frame de ref (avant abs_time NAN anyway)
         if pos == 0:
             return myList[0]
-        if pos == len(myList):
+        elif pos == len(myList):
             return myList[-1]
-        before = myList[pos - 1]
-        after = myList[pos]
-        if after - myNumber < myNumber - before:
-            return [pos, after]
-        else:
-            return [pos, before]   
+        else: 
+            before = myList[pos - 1]
+            after = myList[pos]
+            if after - myNumber < myNumber - before:
+                return [pos, after]
+            else:
+                return [pos, before]   
         
     
     def bag_to_png(self, path_to_data, data_folder, camera):
