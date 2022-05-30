@@ -22,10 +22,8 @@ class EMGHandler_new:
     def __init__(self, csv_path1):
 
         self.csv_path_emg1 = csv_path1
-        start_time = time.perf_counter()
-
-        self.time_vect1 = [start_time]
-        self.time_vect2 = [time.time()]
+        
+       
 
         self.count = 0
 
@@ -62,6 +60,9 @@ class EMGHandler_new:
             header_emg = ["index_global", "index_buffer", "absolute_time", "relative_time"] + self.parameters_emg["header"]
             self.writer_emg.writerow(header_emg)
 
+            self.time_vect1 = [time.time()]
+            self.time_start = time.time()
+
 
     def read_config_file(self, sensor_name):
         filepath = os.path.abspath(os.path.dirname(__file__))
@@ -84,26 +85,36 @@ class EMGHandler_new:
         #print("hello")
         #while (time.perf_counter()-time_vect1[-1]) < 0.048:
         #pass
+        
+        #if self.count == 0:
+            #self.start_time = time.perf_counter()
+            #print(self.start_time)
+            #self.time_vect1 = [0]
+            #time_abs = (time.time())
+        
+
         emg_data = self.emgClient.getSignals()
-        self.time_vect1.append(time.perf_counter())
-        time_abs = (time.time())
+        #self.time_vect1.append(time.perf_counter()-self.start_time)
+        self.time_vect1.append(time.time())
+
+        
 
         if len(self.time_vect1) > 2:
             self.time_vect1 = [self.time_vect1[-2], self.time_vect1[-1]]
         
-          
-        #all_Data = np.hstack((all_Data, emg_data))
-        
+                
         index_data = list(range(len(emg_data[1])))
-
         size_buffer = len(emg_data[1])
 
         dt = (self.time_vect1[-1]-self.time_vect1[-2])/size_buffer
         tmp_time_vector = np.linspace(self.time_vect1[-2], self.time_vect1[-2]+(dt*size_buffer),size_buffer,endpoint=False)
+
+        # ATTENTION time perf counter: The reference point of the returned value is undefined, so that only the difference between the results of consecutive calls is valid. 
+        # when emg only; reference was approx 0 because luck but with all sensors ref might start when we run the script = not good
         
         for index in range(len(emg_data[1])):
      
-            row = [len(emg_data[1])*self.count + index_data[index], index, tmp_time_vector[index] + time_abs, tmp_time_vector[index]]
+            row = [len(emg_data[1])*self.count + index_data[index], index, tmp_time_vector[index], tmp_time_vector[index]-self.time_start]
             for c in range(self.nb_channels):
                 row.append(emg_data[c][index])
             self.writer_emg.writerow(row)
