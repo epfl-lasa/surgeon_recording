@@ -27,7 +27,7 @@ class OptitrackHandlerNew2:
         self.running_optitrack = (self.parameters_optitrack['status'] == 'on')
 
         if self.running_optitrack:
-            header_ini = ["index", "relative_time", "absolute time"]
+            header_ini = ["index", "relative_time", "absolute_time"]
             self.header_optitrack1 = ["nb of frame loops", "nb of body loops", "number of points", "value last index"]
             self.header_optitrack2= header_ini +  self.parameters_optitrack['header']
                         

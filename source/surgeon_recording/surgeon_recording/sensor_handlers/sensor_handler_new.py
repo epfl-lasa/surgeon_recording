@@ -150,7 +150,7 @@ class RecorderNew():
             if os.path.exists(join(destination_dir, calibration_file)):
                 os.remove(join(destination_dir, calibration_file))
 
-            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 1200: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
                 print(calibration_file + ' copied')
             else:
@@ -159,7 +159,7 @@ class RecorderNew():
             if os.path.exists(join(destination_dir_tps, calibration_file)):
                 os.remove(join(destination_dir_tps, calibration_file))
 
-            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 600: # file not older than 10 minutes
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 1200: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
                 print(calibration_file + ' copied')
             else:
