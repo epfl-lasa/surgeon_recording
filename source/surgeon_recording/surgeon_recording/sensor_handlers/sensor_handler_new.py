@@ -72,21 +72,6 @@ class RecorderNew():
 
         print("Hello optitrack")
         while is_looping is True:
-
-            #handler_opti.write_optitrack_data()
-            """if time.time() - start_time_loop > self.duration:
-                is_looping = False
-                handler_opti.shutdown_optitrack()"""
-
-            """try:
-                pass
-
-            except KeyboardInterrupt:
-                is_looping = False
-                handler_opti.shutdown_optitrack()
-                print("Raising SystemExit optitrack thread")
-                raise SystemExit"""
-
             if keyboard.is_pressed('q'):
                 print('goodbye optitrack ')
                 is_looping = False
@@ -102,19 +87,7 @@ class RecorderNew():
 
         while is_looping_emg is True:
             handler_emg.acquire_data_emg()
-            """if time.time() - start_time_loop_emg > self.duration:
-                is_looping_emg = False
-                handler_emg.shutdown_emg()"""
-            """try:
-                #handler_emg.acquire_data_emg()
-                pass
-            except KeyboardInterrupt:
-                is_looping_emg = False
-                handler_emg.shutdown_emg()
-                print("Raising SystemExit emg tread")
-                raise SystemExit"""
-
-
+            
             if keyboard.is_pressed('q'):
                 print('goodbye emg')
                 is_looping_emg = False
@@ -152,18 +125,18 @@ class RecorderNew():
 
             if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 1200: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
-                print(calibration_file + ' copied')
+                print("OK: " + calibration_file + ' copied in config folder')
             else:
-                print("WARNING: calibration file " + calibration_file+ "not copied, too old")
+                print("WARNING: calibration file " + calibration_file+ " not copied in config folder, too old")
             
             if os.path.exists(join(destination_dir_tps, calibration_file)):
                 os.remove(join(destination_dir_tps, calibration_file))
 
             if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 1200: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
-                print(calibration_file + ' copied')
+                print("OK: " + calibration_file + ' copied in data folder')
             else:
-                print("WARNING: calibration file" + calibration_file + "not copied, too old")
+                print("WARNING: calibration file" + calibration_file + " not copied in data folder, too old")
 
     
 
