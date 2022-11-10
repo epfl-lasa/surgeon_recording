@@ -14,3 +14,6 @@ __pycache__/
 /source/surgeon_recording/build/
 /source/surgeon_recording/dist/
 */.ipynb_checkpoints/
+source/surgeon_recording/surgeon_recording/.ipynb_checkpoints/
+source/surgeon_recording/surgeon_recording/sensor_handlers/.ipynb_checkpoints/
+
