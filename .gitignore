@@ -17,3 +17,5 @@ __pycache__/
 source/surgeon_recording/surgeon_recording/.ipynb_checkpoints/
 source/surgeon_recording/surgeon_recording/sensor_handlers/.ipynb_checkpoints/
 .ipynb_checkpoints/recorder_app-checkpoint.py
+data_exp/*
+data_paper/*
