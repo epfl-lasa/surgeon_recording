@@ -6,11 +6,7 @@ from os.path import join
 import csv
 import json
 
-
-
-
-# deifne the directory of the emgAcquireClient python_module 
-#emgAcquire_dir = r"C:\Users\LASA\Documents\Recordings\surgeon_recording\source\emgAcquire\python_module"
+# define the directory of the emgAcquireClient python_module 
 emgAcquire_dir = r"C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emgAcquire/python_module"
 
 # append the path including the directory of the python_module
@@ -21,15 +17,17 @@ import emgAcquireClient
 class EMGHandler_new:
     def __init__(self, csv_path1):
 
+        # path of csv file to write data
         self.csv_path_emg1 = csv_path1
         
-       
-
+        # to count the number of time we access the buffer
         self.count = 0
 
 
         self.parameters_emg=[]
         self.get_parameters_emg()
+
+        #force status to on
         self.running_emg = (self.parameters_emg['status'] == 'on')
 
 
@@ -47,14 +45,8 @@ class EMGHandler_new:
             self.emgClient.start()
 
             self.emg_data = []
-            self.emg_data2 = []
-        
-            #self.emg_array = []
-        
-            #self.returned_data = []
-
-            #self.emgClient.run()
             
+            # set up csv file
             self.emg_file = open(self.csv_path_emg1, 'w', newline='')
             self.writer_emg = csv.writer(self.emg_file)
             header_emg = ["index_global", "index_buffer", "absolute_time", "relative_time"] + self.parameters_emg["header"]
@@ -64,9 +56,10 @@ class EMGHandler_new:
             self.time_start = time.time()
 
 
+    # get the parameters (nb of channels status) from the file
     def read_config_file(self, sensor_name):
         filepath = os.path.abspath(os.path.dirname(__file__))
-        with open(join(filepath, '..', '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
+        with open(join(filepath, '..', '..','..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
             config = json.load(paramfile)
         if not sensor_name in config.keys():
             config[sensor_name] = {}
@@ -82,9 +75,14 @@ class EMGHandler_new:
 
 
     def acquire_data_emg(self):
-        #print("hello")
+        
+        ## test with time condition to access the buffer only when it is full 
+        ## tried different amount of time but not better results
         #while (time.perf_counter()-time_vect1[-1]) < 0.048:
         #pass
+        
+        # Test with time perf counter: should be more precise BUT The reference point of the returned value is undefined, so that only the difference between the results of consecutive calls is valid. 
+        # when emg only; reference was approx 0 because luck but with all sensors ref might start when we run the script = not good
         
         #if self.count == 0:
             #self.start_time = time.perf_counter()
@@ -92,32 +90,37 @@ class EMGHandler_new:
             #self.time_vect1 = [0]
             #time_abs = (time.time())
         
-
+        # get data from buffer
         emg_data = self.emgClient.getSignals()
+
         #self.time_vect1.append(time.perf_counter()-self.start_time)
-        self.time_vect1.append(time.time())
-
         
-
+        # take the absolute time of the computer when receiving the buffer (50 data)
+        self.time_vect1.append(time.time())
+        
+        # keep the last 2 timestamps in memory
         if len(self.time_vect1) > 2:
             self.time_vect1 = [self.time_vect1[-2], self.time_vect1[-1]]
         
-                
+        # index of data in the buffer (from 0 to lenght of data)
         index_data = list(range(len(emg_data[1])))
+
+        # get the amount of data points we got
         size_buffer = len(emg_data[1])
 
+        # interpolate the time for each data points (assuming equal dt for all points in the buffer)
         dt = (self.time_vect1[-1]-self.time_vect1[-2])/size_buffer
         tmp_time_vector = np.linspace(self.time_vect1[-2], self.time_vect1[-2]+(dt*size_buffer),size_buffer,endpoint=False)
 
-        # ATTENTION time perf counter: The reference point of the returned value is undefined, so that only the difference between the results of consecutive calls is valid. 
-        # when emg only; reference was approx 0 because luck but with all sensors ref might start when we run the script = not good
         
+        # write data: global index (total), index in the buffer (from 0 to 50), absolute time, relative time, data for teh channels
         for index in range(len(emg_data[1])):
-     
             row = [len(emg_data[1])*self.count + index_data[index], index, tmp_time_vector[index], tmp_time_vector[index]-self.time_start]
             for c in range(self.nb_channels):
                 row.append(emg_data[c][index])
             self.writer_emg.writerow(row)
+
+        # count the number of times we got the data from the buffer
         self.count = self.count + 1
     
         
@@ -125,8 +128,7 @@ class EMGHandler_new:
         self.emgClient.shutdown()
         self.emg_file.close()
         print("emg closed cleanly")
-        #print(all_Data.shape)
-        #print(count)
+     
 
     
    

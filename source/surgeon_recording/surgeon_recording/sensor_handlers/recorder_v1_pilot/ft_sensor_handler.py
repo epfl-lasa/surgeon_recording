@@ -3,7 +3,7 @@ import time
 import numpy as np
 import os
 from os.path import join
-from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.sensor_handler import SensorHandler
 
 
 class FTSensorHandler(SensorHandler):

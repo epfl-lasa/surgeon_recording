@@ -6,7 +6,7 @@ from os.path import join
 from shutil import copyfile
 import itertools
 from sklearn.linear_model import LinearRegression
-from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.sensor_handler import SensorHandler
 
 class TPSHandler(SensorHandler):
     def __init__(self, parameters):

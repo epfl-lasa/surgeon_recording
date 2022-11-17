@@ -19,9 +19,9 @@ import struct
 from threading import Thread
 import copy
 import time
-import DataDescription
-import MoCapData
-
+    
+import surgeon_recording.sensor_handlers.recorder_v2_PDM.DataDescription as DataDescription 
+import surgeon_recording.sensor_handlers.recorder_v2_PDM.MoCapData as MoCapData
 
 def trace( *args ):
     # uncomment the one you want to use

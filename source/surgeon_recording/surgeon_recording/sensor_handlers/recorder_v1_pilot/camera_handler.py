@@ -6,7 +6,7 @@ import csv
 import os
 from os.path import join
 import time
-from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.sensor_handler import SensorHandler
 
 class CameraHandler(SensorHandler):
     def __init__(self, parameters):

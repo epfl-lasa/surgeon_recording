@@ -5,8 +5,8 @@
 	         "streaming_port": 5556,
 	         "status": "on" },
 
-	"optitrack": { "frames": [{ "label": "needleHolder_new", "streaming_id": 30},
-							  { "label": "tweezer_New", "streaming_id": 31}
+	"optitrack": { "frames": [{ "label": "tweezer", "streaming_id": 30},
+							  { "label": "needle_holder", "streaming_id": 37}
 							],
 				   "frame_timeout": 0.1,
 				   "streaming_ip": "*",

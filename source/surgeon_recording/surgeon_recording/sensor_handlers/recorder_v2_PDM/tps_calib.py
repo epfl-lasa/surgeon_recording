@@ -11,19 +11,12 @@ from csv import reader
 
 class TPScalibration:
     def __init__(self, folder_path, csv_path, folder_input, subject_nb, csv_raw_data):
-    #def __init__(self):
-        """self.folder_input = "6"
-        self.subject_nb = "6"
-        """
+ 
         self.folder_path = folder_path
         self.subject_nb = subject_nb
         self.csv_path = csv_path
         self.folder_input = folder_input
         self.csv_raw_data = csv_raw_data
-
-        """self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb)
-        self.csv_raw_data  = join(self.folder, "TPS_recording_raw.csv")
-        self.csv_path = join(self.folder, "TPS_calibrated.csv")"""
 
         self.parameters_tps=[]
         self.get_parameters_tps()
@@ -33,7 +26,6 @@ class TPScalibration:
 
         self.data = []
 
-
         # load the calibrations
         #calib1, calib2 = self.load_calibrations()
         calib2 = self.load_calibrations()
@@ -41,19 +33,15 @@ class TPScalibration:
         #self.calibrations = calib1 + calib2
         self.calibrations =  calib2
         
-        
-
         self.f = open(self.csv_path, 'w', newline='')
         self.writer = csv.writer(self.f)
-        #header = ["index", "absolute time", "relative time","cal data", "raw data"]
-        #self.writer.writerow(header)
         print("calibration csv")
         self.read_tps_raw_file(self.csv_raw_data)
 
 
     def read_config_file(self, sensor_name):
         filepath = os.path.abspath(os.path.dirname(__file__))
-        with open(join(filepath, '..', '..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
+        with open(join(filepath, '..', '..','..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
             config = json.load(paramfile)
         if not sensor_name in config.keys():
             config[sensor_name] = {}
@@ -68,15 +56,13 @@ class TPScalibration:
 
     def load_calibrations(self):
         filepath = os.path.abspath(os.path.dirname(__file__))
-        #calib_folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self., "calib")
         calib_folder = join(self.folder_path, "calib")
+        print(calib_folder)
 
         if not os.path.exists(calib_folder):
             print("no calibration file")
             raise Exception('Exiting')
-        #print(calib_folder)
         #calibration_file1 = join(calib_folder, 'FingerTPS_EPFL1-cal.txt')
-        #print(calibration_file1)
         calibration_file2 = join(calib_folder, 'FingerTPS_EPFL2-cal.txt')
         #calib1 = self.read_calibration_file(calibration_file1)
         calib2 = self.read_calibration_file(calibration_file2)
@@ -90,7 +76,6 @@ class TPScalibration:
             file = open(calibration_file, 'r')
             lines = file.readlines()
             # only read the lines counting as selected fingers
-            
             for i in self.selected_fingers:
                 line = lines[i+1].split('\t')[:-1]
                 # if there is calibration data
@@ -119,11 +104,10 @@ class TPScalibration:
             # Iterate over each row in the csv using reader object
             for line in csv_reader:
                 # row variable is a list that represents a row in csv
-                #print(line[3])
-                #print(line)
                 for i in range(len(line)):
                     self.data.append(line[i])
-
+                
+                #first line: add the names of the calibrated fingers
                 if cnt == 0:
                     for j, f in enumerate(self.selected_fingers):                        
                         self.data.append("elem " + str(f) + " calibrated " + self.names_fingers[j])
@@ -131,21 +115,23 @@ class TPScalibration:
 
                 else:
                     for j, f in enumerate(self.selected_fingers):
-                        #print(line[f+3])
+                        # elem 0,1,2 in columns 4,5,6 and elements 6,7,8 in columns 12,13,14
+                        # in the raw csv file, elements 0,1,2 are the same as 6,7,8 and elements 3,4,5 are the same as elements 9,10,11 (when we have sensors only on 0,1,2,6,7,8 channels)
+                        # (not exact same value (sometimes 1 digit difference) but when we plot we see it is the same data)
+                        # WARNING: not sure why, so if we add other channels we should check that we take the good columns (maybe f+3 not 6 in this case when f>6)
                         raw_value = float(line[f+3]) if f < 6 else float(line[f+6])
-                        #print(raw_value)
+                        # if raw value too low it corresponds to a missing data so add an empty calibrated data
                         if raw_value < 1e-2:
                             self.data.append("")
                         else:
-                            #print(self.calibrations[j])
+                            # use the calibration factors (in self.calibration) to predict the calibrated outputs
+                            # put raw output if we don't have the caliration factor 
                             calibrated_value = self.calibrations[j].predict([[raw_value]])[0] if j < len(self.calibrations) else raw_value
                             self.data.append(calibrated_value)
                 
                 row = self.data
-                #print(row)
                 self.writer.writerow(row)
                 cnt = cnt +1
-                #print(cnt)
                 self.data = []
         
        
@@ -153,13 +139,7 @@ class TPScalibration:
 
 
 def main():
-    #print("vf")
-    #tps_calib = TPScalibration()
     return
-    
-    #tps_calib.read_tps_raw_file(tps_calib.csv_raw_data)
-    
-    
 
 if __name__ == '__main__':
     main()

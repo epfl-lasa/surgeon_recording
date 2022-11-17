@@ -12,9 +12,9 @@ import subprocess
 from shutil import copyfile
 
 #from surgeon_recording.sensor_handlers.optitrack_handler_new import OptitrackHandlerNew
-from surgeon_recording.sensor_handlers.optitrack_handler_new2 import OptitrackHandlerNew2
-from surgeon_recording.sensor_handlers.emg_handler_new import EMGHandler_new
-from surgeon_recording.sensor_handlers.tps_calib import TPScalibration
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.optitrack_handler_new2 import OptitrackHandlerNew2
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_handler_new import EMGHandler_new
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.tps_calib import TPScalibration
 
 
 class RecorderNew():
@@ -37,9 +37,6 @@ class RecorderNew():
         self.csv_path_optitrack2 = join(self.folder, "optitrack.csv")
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
-
-
-
         self.csv_path_emg1 = join(self.folder, "emg.csv")
 
         self.copy_calibration_files()
@@ -98,7 +95,6 @@ class RecorderNew():
     def tps_thread(self): 
         filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"
         proc = subprocess.run([filename])
-        #proc = subprocess.Popen([filename])
 
         if os.path.exists(self.csv_path_tps_raw):
             calib_tps = TPScalibration(folder_path = self.folder, csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
@@ -123,7 +119,7 @@ class RecorderNew():
             if os.path.exists(join(destination_dir, calibration_file)):
                 os.remove(join(destination_dir, calibration_file))
 
-            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 1200: # file not older than 10 minutes
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 2000: 
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
                 print("OK: " + calibration_file + ' copied in config folder')
             else:
@@ -132,7 +128,7 @@ class RecorderNew():
             if os.path.exists(join(destination_dir_tps, calibration_file)):
                 os.remove(join(destination_dir_tps, calibration_file))
 
-            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 1200: # file not older than 10 minutes
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 2000: # file not older than 10 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
                 print("OK: " + calibration_file + ' copied in data folder')
             else:

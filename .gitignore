@@ -13,3 +13,4 @@ __pycache__/
 /surgeon_data/*
 /source/surgeon_recording/build/
 /source/surgeon_recording/dist/
+/exp_data/*
