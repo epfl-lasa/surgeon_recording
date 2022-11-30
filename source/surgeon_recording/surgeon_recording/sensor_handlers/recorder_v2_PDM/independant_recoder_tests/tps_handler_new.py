@@ -114,9 +114,6 @@ def main():
     writer2.writerow(header2)
     duration = 30
     
-    #freq = 10
-    #dt = 1/freq
-
     tps_handler = TPSHandlerNew()
     
     tps_handler.index = 0
@@ -178,9 +175,6 @@ def main():
 
     fig, ax2 = plt.subplots()
     ax2.plot(tps_handler.freq_vect3[2:-1])
-
-    
-
 
     plt.show()
 
