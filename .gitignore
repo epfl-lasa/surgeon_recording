@@ -2,7 +2,7 @@ data/
 data2/
 __pycache__/
 /source/surgeon_recording/surgeon_recording/*/__pycache__/
-/notebooks/.ipynb_checkpoints
+.ipynb_checkpoints
 /source/surgeon_recording/config/FingerTPS_EPFL1-cal.txt
 /source/surgeon_recording/config/FingerTPS_EPFL2-cal.txt
 /pictures/
