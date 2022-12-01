@@ -20,7 +20,7 @@ from threading import Thread
 import copy
 import time
     
-import surgeon_recording.sensor_handlers.recorder_v2_PDM.DataDescription as DataDescription 
+import surgeon_recording.sensor_handlers.recorder_v2_PDM.DataDescription as DataDescriptions
 import surgeon_recording.sensor_handlers.recorder_v2_PDM.MoCapData as MoCapData
 
 def trace( *args ):
