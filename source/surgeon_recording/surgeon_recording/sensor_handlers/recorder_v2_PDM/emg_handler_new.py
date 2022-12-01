@@ -1,10 +1,11 @@
-import numpy as np
-import time
-import sys
-import os
-from os.path import join
 import csv
 import json
+import os
+import sys
+import time
+from os.path import join
+
+import numpy as np
 
 # define the directory of the emgAcquireClient python_module 
 emgAcquire_dir = r"C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emgAcquire/python_module"
@@ -59,7 +60,7 @@ class EMGHandler_new:
     # get the parameters (nb of channels status) from the file
     def read_config_file(self, sensor_name):
         filepath = os.path.abspath(os.path.dirname(__file__))
-        with open(join(filepath, '..', '..','..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
+        with open(join(filepath, '..','..','..', 'config', 'sensor_parameters.json'), 'r') as paramfile:
             config = json.load(paramfile)
         if not sensor_name in config.keys():
             config[sensor_name] = {}

@@ -9,3 +9,4 @@ fastdtw
 dtw
 jupyterlab
 kaleido
+keyboard

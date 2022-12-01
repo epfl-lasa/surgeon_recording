@@ -24,11 +24,6 @@ class EMGHandler_new(object):
         self.emg_data = []
         self.emg_data2 = []
         
-        
-
-
-
-    
 
     def acquire_data(self):
         print("hello")
