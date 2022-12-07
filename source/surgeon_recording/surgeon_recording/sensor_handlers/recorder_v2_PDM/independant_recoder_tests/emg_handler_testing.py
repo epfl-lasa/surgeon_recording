@@ -18,7 +18,7 @@ import emgAcquireClient
 
 
 class EMGHandler_new:
-    def __init__(self, csv_path1):
+    def __init__(self, csv_path1, csv_path2):
 
         # path of csv file to write data
         self.csv_path_emg1 = csv_path1
@@ -26,7 +26,11 @@ class EMGHandler_new:
         # to count the number of time we access the buffer
         self.count = 0
 
-        self.test=True
+        # Testing variables
+        self.loop_dur_csv = csv_path2
+        self.full_loop_duration = []
+        self.writing_time = []
+        self.acquire_time = []
         self.global_idx = []
         self.buffer_idx = []
         self.abs_time = []
@@ -45,7 +49,7 @@ class EMGHandler_new:
             self.nb_channels = self.parameters_emg["nb_channels"]
         
             # create an emgClient object for acquiring the data
-            self.emgClient = emgAcquireClient.emgAcquireClient(nb_channels = self.nb_channels)
+            self.emgClient = emgAcquireClient.emgAcquireClient(freq=16, nb_channels = self.nb_channels)
             # initialize the node
             init_test = self.emgClient.initialize()
             if init_test<0:
@@ -99,12 +103,15 @@ class EMGHandler_new:
             #self.time_vect1 = [0]
             #time_abs = (time.time())
         
+        # test loop duration
+        start_time = time.time()
+
         # get data from buffer
+        acq_start_time = time.time()
+
         emg_data = self.emgClient.getSignals()
 
-        if self.test ==True:
-            print(emg_data)
-            self.test=False
+        acq_duration = time.time()-acq_start_time
 
         #self.time_vect1.append(time.perf_counter()-self.start_time)
         
@@ -125,23 +132,32 @@ class EMGHandler_new:
         dt = (self.time_vect1[-1]-self.time_vect1[-2])/size_buffer
         tmp_time_vector = np.linspace(self.time_vect1[-2], self.time_vect1[-2]+(dt*size_buffer),size_buffer,endpoint=False)
 
-        
+
+        writing_start_time = time.time()
+
         # write data: global index (total), index in the buffer (from 0 to 50), absolute time, relative time, data for teh channels
-        # for index in range(len(emg_data[1])):
-        #     row = [len(emg_data[1])*self.count + index_data[index], index, tmp_time_vector[index], tmp_time_vector[index]-self.time_start]
-        #     for c in range(self.nb_channels):
-        #         row.append(emg_data[c][index])
-        #     self.writer_emg.writerow(row)
+        for index in range(len(emg_data[1])):
+            row = [len(emg_data[1])*self.count + index_data[index], index, tmp_time_vector[index], tmp_time_vector[index]-self.time_start]
+            for c in range(self.nb_channels):
+                row.append(emg_data[c][index])
+            self.writer_emg.writerow(row)
 
-        # TODO : NEED RESHAPE 
-        self.global_idx.append([len(emg_data[1])*self.count + idx for idx in index_data])
-        self.buffer_idx.append(index_data)
-        self.abs_time.append(tmp_time_vector)
-        self.rel_time.append([tmp_time_vec - self.time_start for tmp_time_vec in tmp_time_vector])
-        self.buffer_data.append(emg_data.T)
+        write_duration = time.time() - writing_start_time
 
+        # Save loop duration
+        self.full_loop_duration.append(time.time() - start_time)
+        self.writing_time.append(write_duration)
+        self.acquire_time.append(acq_duration)
 
-        # TODO : test writing when closing rather than at every loop 
+        self.global_idx.extend([len(emg_data[1])*self.count + idx for idx in index_data])
+        self.buffer_idx.extend(index_data)
+        self.abs_time.extend(tmp_time_vector)
+        self.rel_time.extend([tmp_time_vec - self.time_start for tmp_time_vec in tmp_time_vector])
+        self.buffer_data.extend(emg_data.T) #TODO : hstack might work better ?? (exten dmight reorder data wrong)
+
+        # DEBUG PRINT
+        if self.count % 10 :
+            print("Acq message size:", np.shape(emg_data))
 
         # count the number of times we got the data from the buffer
         self.count = self.count + 1
@@ -149,17 +165,29 @@ class EMGHandler_new:
         
     def shutdown_emg(self):
 
+        time_dict = {"full loop duration": self.full_loop_duration,
+                    "acquire duration" : self.acquire_time,
+                    "writing duration": self.writing_time}
+
+        time_df = pd.DataFrame(time_dict)
+        time_df.to_csv(self.loop_dur_csv)
+
         # Save all to dict then csv
         # TODO: separate each channel for further data proc (or do that later maybe?)
         data_dict = {'index_global': self.global_idx, 
-                    'index_buffer': self.buffer_data,
+                    'index_buffer': self.buffer_idx,
                     'absolute_time': self.abs_time,
                     'relative_time': self.rel_time,
                     'emg_channels': self.buffer_data}
         
         data_df = pd.DataFrame.from_dict(data=data_dict)
-        data_df.to_csv(self.csv_path_emg1)
+        # data_df.to_csv(self.csv_path_emg1)
         print("saved data all good")
+
+        print("Count =", self.count)
+
+
+                
 
         self.emgClient.shutdown()
         self.emg_file.close()
@@ -172,10 +200,12 @@ def main():
     is_looping_emg = True
     print("Start Time:", time.time())
 
-    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/02-12-2022/"
+    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/05-12-2022/"
     csv_path = data_dir + "emg.csv"
 
-    handler_emg = EMGHandler_new(csv_path)
+    loop_dur_path = data_dir + "loop_durations.csv"
+
+    handler_emg = EMGHandler_new(csv_path, loop_dur_path)
 
     while is_looping_emg is True:
         handler_emg.acquire_data_emg()
