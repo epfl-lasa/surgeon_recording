@@ -49,7 +49,7 @@ class EMGHandler_new:
             self.nb_channels = self.parameters_emg["nb_channels"]
         
             # create an emgClient object for acquiring the data
-            self.emgClient = emgAcquireClient.emgAcquireClient(freq=10, nb_channels = self.nb_channels)
+            self.emgClient = emgAcquireClient.emgAcquireClient(freq=20, nb_channels = self.nb_channels)
             # initialize the node
             init_test = self.emgClient.initialize()
             if init_test<0:

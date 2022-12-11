@@ -6,17 +6,23 @@ import scipy.signal as sp
 import matplotlib.pyplot as plt
 from scipy import interpolate
 
-data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/09-12-2022/test_4/'
+data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/09-12-2022/test_2/'
 path_to_mydata = data_dir + 'mydata.csv'
 path_to_emg = data_dir + 'emg.csv'
 
 mydataDF = pd.read_csv(path_to_mydata, sep=';', header=0, usecols=['time', 'ch1'])
 emgDF = pd.read_csv(path_to_emg, usecols=['relative_time', 'emg0', 'index_buffer'])
 
+# Clip EMG values
+emgDF['emg0'].clip(-8000, 8000, inplace=True)
+mydataDF['ch1'].clip(-8000, 8000, inplace=True)
+
 # CHANGE THIS VALUE FOR EACH DATASET (time diffesrence between mydata and emg recordings - FOR PLOT)
-time_offset = 2.16
-# test 1 09 - 18.587729
+time_offset = 3.677729 #8.439994
+# test 4 09 - 4.2611013
+# test 3 09 - 2.133789
 # test 2 09 - 3.677729
+# test 1 09 - 18.587729
 # test 1 07 - 10.67141
 # test 4 07 - 4.47602 #
 # test2 07 - 10.78141 
@@ -33,7 +39,7 @@ time_offset = 2.16
 # fig = px.line(time_df)
 
 # Interpolate data to deal with packet loss
-end_time =emgDF['index_buffer'].iloc[-1] # will be end_abs - start_abs
+end_time =emgDF['relative_time'].iloc[-1]
 print(end_time)
 sr_freq = 1000
 nb_samples = int(sr_freq*end_time)
@@ -54,7 +60,7 @@ rec_time_array = np.linspace(0, end_time, len(mydataDF.index))
 s = interpolate.InterpolatedUnivariateSpline(rec_time_array, mydataDF['ch1'])
 ctrl_data_interp = s(time_array_ctrl)
 print("SHAPES :", np.shape(mydataDF['ch1']), np.shape(ctrl_data_interp))
-
+## More points raw than interpolated -> probably due to weird data density on start of emgAcquire
 
 print("number fo samples vs estimated:", len(emgDF.index), nb_samples)
 
@@ -107,7 +113,7 @@ df = pd.DataFrame({
     'RMS':rms_env[start_zoom:stop_zoom] #rms_env[start_zoom:stop_zoom]
 })
 
-start_zoom = 10
+start_zoom = 0
 stop_zoom = len(time_array)-10#1000
 
 df_interp = pd.DataFrame({
@@ -119,7 +125,7 @@ df_interp = pd.DataFrame({
 })
 
 start_zoom = 0
-stop_zoom = len(mydataDF.index)
+stop_zoom = 100000# len(mydataDF.index)
 df_ctrl = pd.DataFrame({ 
     'name': 'my data',
     'time': correct_time[start_zoom:stop_zoom] - time_offset,
@@ -128,7 +134,7 @@ df_ctrl = pd.DataFrame({
     'RMS':rms_env_ctrl[start_zoom:stop_zoom]
 })
 
-df_both = pd.concat([df, df_ctrl, df_interp])
+df_both = pd.concat([df, df_ctrl, df_interp])#
 fig = px.line(df_both, x='time', y=['Butterworth'], color='name')
 
 # fig = px.line(df_ctrl, x='time CTRL', y=['rec CTRL', 'RMS CTRL'])
@@ -142,15 +148,15 @@ fig.show()
 ## Interpolate to recreate time vector in postprocessing
 
 #assume 1000Hz sampling rate -> 
-end_time =emgDF['relative_time'].iloc[-1] # will be end_abs - start_abs
-sr_freq = 1500
-nb_samples = int(sr_freq*end_time)
-time_array = np.linspace(0, end_time, nb_samples)
+# end_time =emgDF['relative_time'].iloc[-1] # will be end_abs - start_abs
+# sr_freq = 1500
+# nb_samples = int(sr_freq*end_time)
+# time_array = np.linspace(0, end_time, nb_samples)
 
-rec_time_array = np.linspace(0, end_time, len(df.index))
-# TODO : use linspac eot approx time instead of recorded time array wiht issues 
-s = interpolate.InterpolatedUnivariateSpline(rec_time_array, df['RMS'])
-interp_emg = s(time_array)
+# rec_time_array = np.linspace(0, end_time, len(df.index))
+# # TODO : use linspac eot approx time instead of recorded time array wiht issues 
+# s = interpolate.InterpolatedUnivariateSpline(rec_time_array, df['RMS'])
+# interp_emg = s(time_array)
 
 # ax.plot(rms_env)
 # ax.plot(rms_env_ctrl[16576:])
