@@ -1,12 +1,7 @@
-from importlib.abc import ResourceReader
-import numpy as np
-import zmq
-import csv
 from threading import Thread, Event, Lock
 import os
 from os.path import join
 import time
-import json
 import keyboard
 import subprocess
 from shutil import copyfile
@@ -22,9 +17,9 @@ class RecorderNew():
         self.duration = 100
         
         self.lock = ()
-        self.folder_input = input('Name of folder')
-        self.subject_nb = input('subject nb')
-        self.task_input = input('run nb (ex 1)')
+        self.folder_input = input('Name of folder : ')
+        self.subject_nb = input('subject nb : ')
+        self.task_input = input('run nb (ex 1) : ')
 
         #self.folder = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder"
         self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self.task_input)
@@ -43,7 +38,6 @@ class RecorderNew():
         self.copy_calibration_files()
 
     
-
     def start_threads(self):
 
         self.stop_event = Event()
@@ -154,7 +148,15 @@ class RecorderNew():
 
 def main():
     recorder = RecorderNew()
-    recorder.emg_calib()
+
+    # Optional EMG claibraiton (in case of crash)
+    calibrate_emg = input("Calibrate EMG ? [y/n]")
+    if calibrate_emg == 'y' or calibrate_emg == 'Y' or calibrate_emg == 'yes':
+        recorder.emg_calib()
+    else :
+        print("Skipped EMG calibration. \n")
+    
+    input("Waiting for input : PRESS ENTER TO START.")
     recorder.start_threads()
     
 
