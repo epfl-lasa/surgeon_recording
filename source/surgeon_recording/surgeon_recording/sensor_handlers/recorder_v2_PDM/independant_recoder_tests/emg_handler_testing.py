@@ -49,14 +49,15 @@ class EMGHandler_new:
             self.nb_channels = self.parameters_emg["nb_channels"]
         
             # create an emgClient object for acquiring the data
-            self.emgClient = emgAcquireClient.emgAcquireClient(freq=16, nb_channels = self.nb_channels)
+            self.emgClient = emgAcquireClient.emgAcquireClient(freq=10, nb_channels = self.nb_channels)
             # initialize the node
             init_test = self.emgClient.initialize()
             if init_test<0:
                 print("unable to initialize")
                 exit()
             self.emgClient.start()
-
+            self.time_start = time.time()
+            
             self.emg_data = []
             
             # set up csv file
@@ -66,7 +67,7 @@ class EMGHandler_new:
             self.writer_emg.writerow(header_emg)
 
             self.time_vect1 = [time.time()]
-            self.time_start = time.time()
+            
 
 
     # get the parameters (nb of channels status) from the file
@@ -143,20 +144,27 @@ class EMGHandler_new:
             self.writer_emg.writerow(row)
 
         write_duration = time.time() - writing_start_time
+        loop_duration = time.time() - start_time
+
+        # Check for why 0 duration loops occur at freq >= 20
+        if loop_duration == 0:
+            print("0 loop")
+            print("Size buffer:", size_buffer)
 
         # Save loop duration
-        self.full_loop_duration.append(time.time() - start_time)
+        self.full_loop_duration.append(loop_duration)
         self.writing_time.append(write_duration)
         self.acquire_time.append(acq_duration)
 
-        self.global_idx.extend([len(emg_data[1])*self.count + idx for idx in index_data])
-        self.buffer_idx.extend(index_data)
-        self.abs_time.extend(tmp_time_vector)
-        self.rel_time.extend([tmp_time_vec - self.time_start for tmp_time_vec in tmp_time_vector])
-        self.buffer_data.extend(emg_data.T) #TODO : hstack might work better ?? (exten dmight reorder data wrong)
+        # WORTHLESS - CANT REORD MORE THAN 10seconds without OOM at the end when trying to saveq
+        # self.global_idx.extend([len(emg_data[1])*self.count + idx for idx in index_data])
+        # self.buffer_idx.extend(index_data)
+        # self.abs_time.extend(tmp_time_vector)
+        # self.rel_time.extend([tmp_time_vec - self.time_start for tmp_time_vec in tmp_time_vector])
+        # self.buffer_data.extend(emg_data.T) #TODO : hstack might work better ?? (exten dmight reorder data wrong)
 
         # DEBUG PRINT
-        if self.count % 10 :
+        if self.count % 10 == 0  :
             print("Acq message size:", np.shape(emg_data))
 
         # count the number of times we got the data from the buffer
@@ -164,6 +172,7 @@ class EMGHandler_new:
     
         
     def shutdown_emg(self):
+        end_time = time.time()
 
         time_dict = {"full loop duration": self.full_loop_duration,
                     "acquire duration" : self.acquire_time,
@@ -181,13 +190,16 @@ class EMGHandler_new:
                     'emg_channels': self.buffer_data}
         
         data_df = pd.DataFrame.from_dict(data=data_dict)
-        # data_df.to_csv(self.csv_path_emg1)
+        # data_df.to_csv(r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/07-12-2022/emg_df.csv")
+        # np.savetxt(r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/07-12-2022/emg_data_only.csv", self.buffer_data)
         print("saved data all good")
 
         print("Count =", self.count)
 
-
-                
+        # Add recording duration at end of file
+        row = ["Recording Duration [s]",end_time-self.time_start ]
+        row.extend(np.zeros(2+self.nb_channels)) # to avoid Nan issues
+        self.writer_emg.writerow(row)
 
         self.emgClient.shutdown()
         self.emg_file.close()
@@ -200,17 +212,21 @@ def main():
     is_looping_emg = True
     print("Start Time:", time.time())
 
-    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/05-12-2022/"
+    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/09-12-2022/"
     csv_path = data_dir + "emg.csv"
 
     loop_dur_path = data_dir + "loop_durations.csv"
 
     handler_emg = EMGHandler_new(csv_path, loop_dur_path)
+    start_end_time = []
+    start_end_time.append(time.time())
 
     while is_looping_emg is True:
         handler_emg.acquire_data_emg()
         
         if keyboard.is_pressed('q'):
+            start_end_time.append(time.time())
+            print("Recording Duration : ", start_end_time[1]-start_end_time[0])
             print('goodbye emg')
             
             handler_emg.shutdown_emg()
