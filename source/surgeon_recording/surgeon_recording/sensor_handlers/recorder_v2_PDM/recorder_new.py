@@ -38,6 +38,7 @@ class RecorderNew():
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
         self.csv_path_emg1 = join(self.folder, "emg.csv")
+        self.csv_path_emg_cal = join(self.folder, "emg.csv")
 
         self.copy_calibration_files()
 
@@ -79,7 +80,6 @@ class RecorderNew():
     
     def emg_thread(self): 
         is_looping_emg = True
-        start_time_loop_emg= time.time()
         handler_emg = EMGHandler_new(self.csv_path_emg1)
 
         while is_looping_emg is True:
@@ -90,6 +90,21 @@ class RecorderNew():
                 is_looping_emg = False
                 handler_emg.shutdown_emg()
                 #time.sleep(5)
+                #raise Exception('Exiting')
+    
+    def emg_calib(self):
+        is_looping_emg = True
+        print("Starting EMG Calibration, press 'q' when finished")
+        handler_emg = EMGHandler_new(self.csv_path_emg_cal)
+
+        while is_looping_emg is True:
+            handler_emg.acquire_data_emg()
+            
+            if keyboard.is_pressed('q'):
+                print('Stopped emg Calibration')
+                is_looping_emg = False
+                handler_emg.shutdown_emg()
+                time.sleep(5)
                 #raise Exception('Exiting')
 
     def tps_thread(self): 
@@ -140,6 +155,7 @@ class RecorderNew():
 
 def main():
     recorder = RecorderNew()
+    recorder.emg_calib()
     recorder.start_threads()
     
 

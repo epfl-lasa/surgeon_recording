@@ -20,10 +20,12 @@ class EMGHandler_new:
 
         # path of csv file to write data
         self.csv_path_emg1 = csv_path1
+
+        # path of csv file to write start and end time
+        self.csv_path_emg_time = join(os.path.dirname(csv_path1), "emg_duration.csv")
         
         # to count the number of time we access the buffer
         self.count = 0
-
 
         self.parameters_emg=[]
         self.get_parameters_emg()
@@ -43,15 +45,16 @@ class EMGHandler_new:
             if init_test<0:
                 print("unable to initialize")
                 exit()
-            self.emgClient.start()
 
-            self.emg_data = []
-            
             # set up csv file
             self.emg_file = open(self.csv_path_emg1, 'w', newline='')
             self.writer_emg = csv.writer(self.emg_file)
             header_emg = ["index_global", "index_buffer", "absolute_time", "relative_time"] + self.parameters_emg["header"]
             self.writer_emg.writerow(header_emg)
+
+            self.emg_data = []
+
+            self.emgClient.start()
 
             self.time_vect1 = [time.time()]
             self.time_start = time.time()
@@ -126,6 +129,11 @@ class EMGHandler_new:
     
         
     def shutdown_emg(self):
+        # Save duration in separate file
+        end_time = time.time()
+        time_to_save = [['Start time', self.time_start], ['End time', end_time], ['Duration', end_time-self.time_start]]
+        np.savetxt(self.csv_path_emg_time, time_to_save, delimiter =", ", fmt ='% s')
+
         self.emgClient.shutdown()
         self.emg_file.close()
         print("emg closed cleanly")
