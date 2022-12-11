@@ -38,7 +38,7 @@ class RecorderNew():
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
         self.csv_path_emg1 = join(self.folder, "emg.csv")
-        self.csv_path_emg_cal = join(self.folder, "emg.csv")
+        self.csv_path_emg_cal = join(self.folder, "emg_calibration.csv")
 
         self.copy_calibration_files()
 
@@ -64,7 +64,6 @@ class RecorderNew():
 
     def optitrack_thread(self):
         is_looping = True
-        start_time_loop = time.time()
         #handler_opti = OptitrackHandlerNew(self.csv_path_optitrack)
         handler_opti = OptitrackHandlerNew2(self.csv_path_optitrack1,self.csv_path_optitrack2 )
 
