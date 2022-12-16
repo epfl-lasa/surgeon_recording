@@ -13,7 +13,8 @@ from shutil import copyfile
 
 #from surgeon_recording.sensor_handlers.optitrack_handler_new import OptitrackHandlerNew
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.optitrack_handler_new2 import OptitrackHandlerNew2
-from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_handler_new import EMGHandler_new
+# from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_handler_new import EMGHandler_new
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_time_handler import EMGTimeHandler
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.tps_calib import TPScalibration
 
 
@@ -38,6 +39,7 @@ class RecorderNew():
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
         self.csv_path_emg1 = join(self.folder, "emg.csv")
+        self.csv_path_emg_cal = join(self.folder, "emg_calibration.csv")
 
         self.copy_calibration_files()
 
@@ -79,17 +81,31 @@ class RecorderNew():
     
     def emg_thread(self): 
         is_looping_emg = True
-        start_time_loop_emg= time.time()
-        handler_emg = EMGHandler_new(self.csv_path_emg1)
+        handler_emg = EMGTimeHandler(self.csv_path_emg1)
 
         while is_looping_emg is True:
-            handler_emg.acquire_data_emg()
+            # Wait for closing signal
             
             if keyboard.is_pressed('q'):
                 print('goodbye emg')
                 is_looping_emg = False
                 handler_emg.shutdown_emg()
                 #time.sleep(5)
+                #raise Exception('Exiting')
+
+    def emg_calib(self): 
+        is_looping_emg = True
+        print("Starting EMG Calibration, press 'q' when finished.")
+        handler_emg = EMGTimeHandler(self.csv_path_emg_cal)
+
+        while is_looping_emg is True:
+            # Wait for closing signal
+            
+            if keyboard.is_pressed('q'):
+                print('goodbye emg')
+                is_looping_emg = False
+                handler_emg.shutdown_emg()
+                time.sleep(5)
                 #raise Exception('Exiting')
 
     def tps_thread(self): 
@@ -136,10 +152,17 @@ class RecorderNew():
 
     
 
-    
-
 def main():
     recorder = RecorderNew()
+
+    # Optional EMG claibraiton (in case of crash)
+    calibrate_emg = input("Calibrate EMG ? [y/n]")
+    if calibrate_emg == 'y' or calibrate_emg == 'Y' or calibrate_emg == 'yes':
+        recorder.emg_calib()
+    else :
+        print("Skipped EMG calibration. \n")
+    
+    input("Waiting for input : PRESS ENTER TO START.")
     recorder.start_threads()
     
 

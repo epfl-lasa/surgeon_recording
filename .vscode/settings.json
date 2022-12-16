@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
         "./source/emgAcquire/python_module"
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }

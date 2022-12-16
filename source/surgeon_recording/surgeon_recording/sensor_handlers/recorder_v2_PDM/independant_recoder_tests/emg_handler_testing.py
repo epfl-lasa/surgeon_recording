@@ -197,8 +197,8 @@ class EMGHandler_new:
         print("Count =", self.count)
 
         # Add recording duration at end of file
-        row = ["Recording Duration [s]",end_time-self.time_start ]
-        row.extend(np.zeros(2+self.nb_channels)) # to avoid Nan issues
+        row = ["Recording Duration [s]",end_time-self.time_start, self.time_start, end_time ]
+        row.extend(np.zeros(self.nb_channels)) # to avoid Nan issues
         self.writer_emg.writerow(row)
 
         self.emgClient.shutdown()
@@ -212,7 +212,7 @@ def main():
     is_looping_emg = True
     print("Start Time:", time.time())
 
-    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/09-12-2022/"
+    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/16-12-2022/"
     csv_path = data_dir + "emg.csv"
 
     loop_dur_path = data_dir + "loop_durations.csv"
