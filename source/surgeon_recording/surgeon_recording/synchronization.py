@@ -18,6 +18,7 @@ from natsort import natsorted
 
 from moviepy.editor import *
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 
 class Synchro(object):
     
@@ -102,7 +103,7 @@ class Synchro(object):
                 return [pos, before]   
         
     
-    def bag_to_png(self, path_to_data, data_folder, camera):
+    def bag_to_png(self, path_to_data, data_folder, recording_session, subject, camera):
         """ extract all png from a bag file (here for RS camera, file stored in BAG folder for REALSENSE)"""
        
         bag_file = [x[2] for x in os.walk(join(data_folder, camera, 'BAG'))]
@@ -121,7 +122,7 @@ class Synchro(object):
         print('image folder: ' + image_folder)
                    
         image_files = [os.path.join(image_folder,img) for img in os.listdir(image_folder) if img.endswith(".png")]
-        clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(natsorted(image_files), fps=fps)
+        clip = ImageSequenceClip(natsorted(image_files), fps=fps)
         path_mp4 = join(data_folder, camera, 'MP4', 'rs_converted.mp4')
         print('mp4 file: ' + path_mp4)
         clip.write_videofile(path_mp4)

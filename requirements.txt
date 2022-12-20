@@ -7,3 +7,9 @@ opencv-python
 scikit-learn
 fastdtw
 dtw
+ipykernel
+matplotlib
+natsort
+statsmodels
+pyquaternion
+moviepy 
