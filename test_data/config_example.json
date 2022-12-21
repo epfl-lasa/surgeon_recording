@@ -1,8 +1,0 @@
-{
-    "nb_channels": 16,
-    "RecordSignals": 1,
-    "saveFile": "../../exp_data/12122022/1/1/complete_emg",
-    "streamSignals": 1,
-    "serverIP": "localhost",
-    "port": 10352
-}
