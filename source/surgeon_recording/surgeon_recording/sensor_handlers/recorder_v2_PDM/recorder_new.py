@@ -1,12 +1,7 @@
-from importlib.abc import ResourceReader
-import numpy as np
-import zmq
-import csv
 from threading import Thread, Event, Lock
 import os
 from os.path import join
 import time
-import json
 import keyboard
 import subprocess
 from shutil import copyfile
@@ -23,9 +18,9 @@ class RecorderNew():
         self.duration = 100
         
         self.lock = ()
-        self.folder_input = input('Name of folder')
-        self.subject_nb = input('subject nb')
-        self.task_input = input('run nb (ex 1)')
+        self.folder_input = input('Name of folder : ')
+        self.subject_nb = input('subject nb : ')
+        self.task_input = input('run nb (ex 1) : ')
 
         #self.folder = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder"
         self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self.task_input)
@@ -44,7 +39,6 @@ class RecorderNew():
         self.copy_calibration_files()
 
     
-
     def start_threads(self):
 
         self.stop_event = Event()
@@ -65,7 +59,6 @@ class RecorderNew():
 
     def optitrack_thread(self):
         is_looping = True
-        start_time_loop = time.time()
         #handler_opti = OptitrackHandlerNew(self.csv_path_optitrack)
         handler_opti = OptitrackHandlerNew2(self.csv_path_optitrack1,self.csv_path_optitrack2 )
 
@@ -81,6 +74,7 @@ class RecorderNew():
     
     def emg_thread(self): 
         is_looping_emg = True
+
         handler_emg = EMGTimeHandler(self.csv_path_emg1)
 
         while is_looping_emg is True:
@@ -91,6 +85,21 @@ class RecorderNew():
                 is_looping_emg = False
                 handler_emg.shutdown_emg()
                 #time.sleep(5)
+                #raise Exception('Exiting')
+    
+    def emg_calib(self):
+        is_looping_emg = True
+        print("Starting EMG Calibration, press 'q' when finished")
+        handler_emg = EMGHandler_new(self.csv_path_emg_cal)
+
+        while is_looping_emg is True:
+            handler_emg.acquire_data_emg()
+            
+            if keyboard.is_pressed('q'):
+                print('Stopped emg Calibration')
+                is_looping_emg = False
+                handler_emg.shutdown_emg()
+                time.sleep(5)
                 #raise Exception('Exiting')
 
     def emg_calib(self): 
