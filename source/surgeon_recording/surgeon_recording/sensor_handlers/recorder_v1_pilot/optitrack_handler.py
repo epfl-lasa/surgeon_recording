@@ -3,7 +3,7 @@ import zmq
 import time
 import sys
 from surgeon_recording.sensor_handlers.NatNetClient import NatNetClient
-from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.sensor_handler import SensorHandler
 
 
 class OptitrackHandler(SensorHandler):

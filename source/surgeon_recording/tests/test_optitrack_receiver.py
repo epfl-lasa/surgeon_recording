@@ -1,4 +1,4 @@
-from surgeon_recording.sensor_handlers.optitrack_handler import OptitrackHandler
+from surgeon_recording.sensor_handlers.recoder_v1_pilot.optitrack_handler import OptitrackHandler
 import zmq
 import time
 

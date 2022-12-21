@@ -1,4 +1,4 @@
-from surgeon_recording.sensor_handlers.ft_sensor_handler import FTSensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.ft_sensor_handler import FTSensorHandler
 import zmq
 import time
 

@@ -7,3 +7,6 @@ opencv-python
 scikit-learn
 fastdtw
 dtw
+jupyterlab
+kaleido
+keyboard
