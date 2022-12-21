@@ -23,6 +23,8 @@ mydataDF = pd.read_csv(path_to_mydata, sep=';', header=0) #, usecols=['time [ms]
 correct_time = mydataDF['time [ms]'] * 1e-3
 
 # Interpolate Data to deal wit potntial packet loss
+#modif by cecile
+
 start_idx = 500 # remove bad data at start of recording 
 start_time = mydataDF['absolute time [s]'].iloc[start_idx]
 end_time =  mydataDF['absolute time [s]'].iloc[-1] #mydataDF['time [ms]'].iloc[-1] * 1e-3 # will be end_abs - start_abs
