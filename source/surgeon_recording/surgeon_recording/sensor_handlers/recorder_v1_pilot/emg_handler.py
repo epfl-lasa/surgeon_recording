@@ -2,11 +2,11 @@ import numpy as np
 import zmq
 import time
 import sys
-from surgeon_recording.sensor_handlers.sensor_handler import SensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.sensor_handler import SensorHandler
 
 if sys.platform == 'win32':
     # deifne the directory of the emgAcquireClient python_module 
-    emgAcquire_dir = r"C:\Users\buschbapti\Documents\GitHub\surgeon_recording\source\emgAcquire\python_module"
+    emgAcquire_dir = r"C:\Users\LASA\Documents\Recordings\surgeon_recording\source\emgAcquire\python_module"
     # append the path including the directory of the python_module
     sys.path.append(emgAcquire_dir)
     # import the module

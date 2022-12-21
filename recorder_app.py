@@ -105,32 +105,32 @@ def emg_graph(step):
 
     fig = go.Figure()
 
-    # emg_data = recorder.get_buffered_data("emg")
-    # trace1 = []
-    # emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
-    # for i, emg in enumerate(emg_labels):
-    #     trace1.append(go.Scatter(x=emg_data["relative_time"],
-    #                              y=emg_data["emg" + str(i)],
-    #                              mode='lines',
-    #                              opacity=0.7,
-    #                              name=emg,
-    #                              textposition='bottom center'))
-    # traces = [trace1]
-    # data = [val for sublist in traces for val in sublist]
-    # figure = {'data': data,
-    #           'layout': go.Layout(
-    #               colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
-    #               template='plotly_dark',
-    #               paper_bgcolor='rgba(0, 0, 10, 0.3)',
-    #               plot_bgcolor='rgba(0, 0, 0, 0)',
-    #               margin={'b': 15},
-    #               hovermode='x',
-    #               autosize=True,
-    #               title={'text': 'EMG signals', 'font': {'color': 'white'}, 'x': 0.5},
-    #               xaxis={'range': [emg_data["relative_time"].iloc[0], emg_data["relative_time"].iloc[-1]]},
-    #           ),
+    emg_data = recorder.get_buffered_data("emg")
+    trace1 = []
+    emg_labels = ["channel " + str(i) for i in range(len(emg_data.columns) -2)]
+    for i, emg in enumerate(emg_labels):
+        trace1.append(go.Scatter(x=emg_data["relative_time"],
+                                 y=emg_data["emg" + str(i)],
+                                 mode='lines',
+                                 opacity=0.7,
+                                 name=emg,
+                                 textposition='bottom center'))
+    traces = [trace1]
+    data = [val for sublist in traces for val in sublist]
+    figure = {'data': data,
+              'layout': go.Layout(
+                  colorway=["#5E0DAC", '#FF4F00', '#375CB1', '#FF7400', '#FFF400', '#FF0056'],
+                  template='plotly_dark',
+                  paper_bgcolor='rgba(0, 0, 10, 0.3)',
+                  plot_bgcolor='rgba(0, 0, 0, 0)',
+                  margin={'b': 15},
+                  hovermode='x',
+                  autosize=True,
+                  title={'text': 'EMG signals', 'font': {'color': 'white'}, 'x': 0.5},
+                  xaxis={'range': [emg_data["relative_time"].iloc[0], emg_data["relative_time"].iloc[-1]]},
+              ),
 
-    #           }
+              }
 
     return fig
 

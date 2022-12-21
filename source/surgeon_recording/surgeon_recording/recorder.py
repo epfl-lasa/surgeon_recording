@@ -9,11 +9,11 @@ from threading import Event
 import pandas as pd
 from collections import deque
 import zmq
-from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
-from surgeon_recording.sensor_handlers.emg_handler import EMGHandler
-from surgeon_recording.sensor_handlers.optitrack_handler import OptitrackHandler
-from surgeon_recording.sensor_handlers.tps_handler import TPSHandler
-from surgeon_recording.sensor_handlers.ft_sensor_handler import FTSensorHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.camera_handler import CameraHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.emg_handler import EMGHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.optitrack_handler import OptitrackHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.tps_handler import TPSHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.ft_sensor_handler import FTSensorHandler
 
 class Recorder(object):
     def __init__(self, data_folder):

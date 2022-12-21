@@ -15,6 +15,6 @@ setup(
     author_email = "baptiste.busch@epfl.ch",
     description = ("Set of recorders for the surgeon recording project"),
     license = "BSD",
-    packages=['surgeon_recording', 'surgeon_recording.sensor_handlers', 'surgeon_recording.data_analysis'],
+    packages=['surgeon_recording', 'surgeon_recording.sensor_handlers.recorder_v2_PDM', 'surgeon_recording.data_analysis'],
     long_description=read('README.md'),
 )
