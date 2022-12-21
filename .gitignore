@@ -15,3 +15,5 @@ __pycache__/
 /source/surgeon_recording/dist/
 /exp_data/*
 /test_data/*
+.vs/*
+.vscode/*
