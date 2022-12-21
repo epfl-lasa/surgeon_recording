@@ -14,4 +14,4 @@ __pycache__/
 /source/surgeon_recording/build/
 /source/surgeon_recording/dist/
 /exp_data/*
-/test_data/16-12-2022/*
+/test_data/*

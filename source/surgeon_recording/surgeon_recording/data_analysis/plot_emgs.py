@@ -7,17 +7,19 @@ import matplotlib.pyplot as plt
 import os
 from scipy import interpolate
 
-data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/16-12-2022/test_4/'
+data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/20-12-2022/calibration_torstein/'
 # data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emgAcquire/'
 path_to_mydata = data_dir + 'mydata.csv'
 path_to_emg = data_dir + 'emg.csv'
 
-mydataDF = pd.read_csv(path_to_mydata, sep=';', header=0, usecols=['time [ms]', 'absolute time [s]', 'ch1'])
+channel = 'ch1'
+
+mydataDF = pd.read_csv(path_to_mydata, sep=';', header=0, usecols=['time [ms]', 'absolute time [s]', channel])
 emgDF = pd.read_csv(path_to_emg, usecols=['relative_time', 'absolute_time', 'emg0'])
 
 # Clip EMG values
 emgDF['emg0'].clip(-8000, 8000, inplace=True)
-mydataDF['ch1'].clip(-8000, 8000, inplace=True)
+mydataDF[channel].clip(-8000, 8000, inplace=True)
 
 # CHANGE THIS VALUE FOR EACH DATASET (time diffesrence between mydata and emg recordings - FOR PLOT)
 time_offset = 6.08244
@@ -53,8 +55,8 @@ sr_freq = 1000
 nb_samples = int(sr_freq*end_time)
 time_array = np.linspace(0, end_time, nb_samples)
 
-rec_time_array = np.linspace(0, end_time, len(emgDF['relative_time'].iloc[:-1]))
-s = interpolate.InterpolatedUnivariateSpline(rec_time_array, emgDF['emg0'].iloc[:-1])
+rec_time_array = np.linspace(0, end_time, len(emgDF['relative_time'].iloc[:-2]))
+s = interpolate.InterpolatedUnivariateSpline(rec_time_array, emgDF['emg0'].iloc[:-2])
 data_interp = s(time_array)
 print("SHAPES :", np.shape(emgDF['emg0']), np.shape(data_interp))
 
@@ -68,18 +70,18 @@ sr_freq = 1500
 nb_samples = int(sr_freq*duration)
 time_array_ctrl = np.linspace(0, duration, nb_samples)
 
-# rec_time_array = np.linspace(0, duration, len(mydataDF.index[start_idx:]))
-rec_time_array = correct_time[start_idx:]
-s = interpolate.InterpolatedUnivariateSpline(np.array(rec_time_array), mydataDF['ch1'].iloc[start_idx:])
+rec_time_array = np.linspace(0, duration, len(mydataDF.index[start_idx:]))
+# rec_time_array = correct_time[start_idx:]
+s = interpolate.InterpolatedUnivariateSpline(np.array(rec_time_array), mydataDF[channel].iloc[start_idx:])
 ctrl_data_interp = s(time_array_ctrl)
-print("SHAPES :", np.shape(mydataDF['ch1']), np.shape(ctrl_data_interp))
+print("SHAPES :", np.shape(mydataDF[channel]), np.shape(ctrl_data_interp))
 ## More points raw than interpolated -> probably due to weird data density on start of emgAcquire
 
 print("number fo samples vs estimated:", len(emgDF.index), nb_samples)
 
 # Filter current - EMG
 data_current = emgDF['emg0'].iloc[:-1]
-data_current_control = mydataDF['ch1']
+data_current_control = mydataDF[channel]
 
 # fig, ax1 = plt.subplots()
 
@@ -156,7 +158,7 @@ df_ctrl = pd.DataFrame({
 })
 
 start_zoom = 1000
-stop_zoom = 100000# len(mydataDF.index)
+stop_zoom = len(mydataDF.index)
 df_interp_ctrl = pd.DataFrame({ 
     'name': 'interpolated my data',
     'time': time_array_ctrl[start_zoom:stop_zoom] + mydataDF['absolute time [s]'].iloc[0],  #correct_time[start_zoom:stop_zoom] - time_offset,
@@ -166,10 +168,10 @@ df_interp_ctrl = pd.DataFrame({
 })
 
 
-df_both = pd.concat([df, df_ctrl, df_interp_ctrl])#, df_interp
+df_both = pd.concat([df, df_interp_ctrl])#, df_interp
 title_str = os.path.basename(os.path.dirname(os.path.dirname(data_dir))) +' '+ os.path.basename(os.path.dirname(data_dir))
 
-fig = px.line(df_both, x='time', y=['rectified signal'], color='name', title =title_str)
+fig = px.line(df_interp_ctrl, x='time', y=['Butterworth'], color='name', title =title_str)
 
 # fig = px.line(df_ctrl, x='time CTRL', y=['rec CTRL', 'RMS CTRL'])
 # fig2 = px.line(df, x='time', y=['rectified signal', 'RMS'])

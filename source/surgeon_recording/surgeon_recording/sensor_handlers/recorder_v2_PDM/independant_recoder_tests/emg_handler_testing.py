@@ -23,6 +23,10 @@ class EMGHandler_new:
         # path of csv file to write data
         self.csv_path_emg1 = csv_path1
         
+        # path of csv file to write start and end time
+        self.csv_path_emg_time = join(os.path.dirname(csv_path1), "emg_duration.csv")
+        self.times_to_save = []
+        
         # to count the number of time we access the buffer
         self.count = 0
 
@@ -54,9 +58,7 @@ class EMGHandler_new:
             init_test = self.emgClient.initialize()
             if init_test<0:
                 print("unable to initialize")
-                exit()
-            self.emgClient.start()
-            self.time_start = time.time()
+                exit()       
             
             self.emg_data = []
             
@@ -65,7 +67,10 @@ class EMGHandler_new:
             self.writer_emg = csv.writer(self.emg_file)
             header_emg = ["index_global", "index_buffer", "absolute_time", "relative_time"] + self.parameters_emg["header"]
             self.writer_emg.writerow(header_emg)
-
+            
+            # Start Client and time recording
+            self.emgClient.start()
+            self.time_start = time.time()
             self.time_vect1 = [time.time()]
             
 
@@ -147,16 +152,16 @@ class EMGHandler_new:
         loop_duration = time.time() - start_time
 
         # Check for why 0 duration loops occur at freq >= 20
-        if loop_duration == 0:
-            print("0 loop")
-            print("Size buffer:", size_buffer)
+        # if loop_duration == 0:
+        #     print("0 loop")
+        #     print("Size buffer:", size_buffer)
 
         # Save loop duration
         self.full_loop_duration.append(loop_duration)
         self.writing_time.append(write_duration)
         self.acquire_time.append(acq_duration)
 
-        # WORTHLESS - CANT REORD MORE THAN 10seconds without OOM at the end when trying to saveq
+        # WORTHLESS - CANT RECORD MORE THAN 10seconds without OOM at the end when trying to saveq
         # self.global_idx.extend([len(emg_data[1])*self.count + idx for idx in index_data])
         # self.buffer_idx.extend(index_data)
         # self.abs_time.extend(tmp_time_vector)
@@ -164,8 +169,8 @@ class EMGHandler_new:
         # self.buffer_data.extend(emg_data.T) #TODO : hstack might work better ?? (exten dmight reorder data wrong)
 
         # DEBUG PRINT
-        if self.count % 10 == 0  :
-            print("Acq message size:", np.shape(emg_data))
+        # if self.count % 10 == 0  :
+        #     print("Acq message size:", np.shape(emg_data))
 
         # count the number of times we got the data from the buffer
         self.count = self.count + 1
@@ -173,6 +178,11 @@ class EMGHandler_new:
         
     def shutdown_emg(self):
         end_time = time.time()
+
+         # Save duration in separate file
+        self.times_to_save = [['Start time', self.time_start], ['End time', end_time], ['Duration', end_time-self.time_start]]
+        np.savetxt(self.csv_path_emg_time, self.times_to_save, delimiter =", ", fmt ='% s')
+
 
         time_dict = {"full loop duration": self.full_loop_duration,
                     "acquire duration" : self.acquire_time,
@@ -183,13 +193,13 @@ class EMGHandler_new:
 
         # Save all to dict then csv
         # TODO: separate each channel for further data proc (or do that later maybe?)
-        data_dict = {'index_global': self.global_idx, 
-                    'index_buffer': self.buffer_idx,
-                    'absolute_time': self.abs_time,
-                    'relative_time': self.rel_time,
-                    'emg_channels': self.buffer_data}
+        # data_dict = {'index_global': self.global_idx, 
+        #             'index_buffer': self.buffer_idx,
+        #             'absolute_time': self.abs_time,
+        #             'relative_time': self.rel_time,
+        #             'emg_channels': self.buffer_data}
         
-        data_df = pd.DataFrame.from_dict(data=data_dict)
+        # data_df = pd.DataFrame.from_dict(data=data_dict)
         # data_df.to_csv(r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/07-12-2022/emg_df.csv")
         # np.savetxt(r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/07-12-2022/emg_data_only.csv", self.buffer_data)
         print("saved data all good")
@@ -212,7 +222,7 @@ def main():
     is_looping_emg = True
     print("Start Time:", time.time())
 
-    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/16-12-2022/"
+    data_dir = r"/Users/LASA/Documents/Recordings/surgeon_recording/test_data/20-12-2022/"
     csv_path = data_dir + "emg.csv"
 
     loop_dur_path = data_dir + "loop_durations.csv"
@@ -231,8 +241,15 @@ def main():
             
             handler_emg.shutdown_emg()
             is_looping_emg = False
+
+        # if keyboard.is_pressed('c'):
+        #     cut_time = time.time()
+        #     cut_label = input("Desired label for cut :")
+        #     handler_emg.times_to_save.append([cut_label, cut_time])
     
     return
+
+
        
     
 
