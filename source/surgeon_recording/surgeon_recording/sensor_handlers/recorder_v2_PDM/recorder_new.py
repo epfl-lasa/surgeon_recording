@@ -90,7 +90,7 @@ class RecorderNew():
     def emg_calib(self):
         is_looping_emg = True
         print("Starting EMG Calibration, press 'q' when finished")
-        handler_emg = EMGHandler_new(self.csv_path_emg_cal)
+        handler_emg = EMGTimeHandler(self.csv_path_emg_cal)
 
         while is_looping_emg is True:
             handler_emg.acquire_data_emg()

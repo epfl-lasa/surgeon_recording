@@ -1,3 +1,5 @@
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import csv
@@ -7,7 +9,7 @@ import matplotlib.pyplot as plt
 import os
 from scipy import interpolate
 
-data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/20-12-2022/calibration_torstein/'
+data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/20-12-2022/calibration_torstein_1/'
 path_to_mydata = data_dir + 'mydata.csv'
 
 # Choose emg channel 
@@ -36,8 +38,8 @@ sr_freq = 1500
 nb_samples = int(sr_freq*duration)
 time_array_ctrl = np.linspace(0, duration, nb_samples)
 
-# rec_time_array = np.linspace(0, duration, len(mydataDF.index[start_idx:]))
-rec_time_array = correct_time[start_idx:]
+rec_time_array = np.linspace(0, duration, len(mydataDF.index[start_idx:]))
+# rec_time_array = correct_time[start_idx:]
 s = interpolate.InterpolatedUnivariateSpline(np.array(rec_time_array), mydataDF[channel].iloc[start_idx:])
 ctrl_data_interp = s(time_array_ctrl)
 
@@ -77,5 +79,16 @@ title_str = os.path.basename(os.path.dirname(os.path.dirname(data_dir))) +' '+ o
 # Line to plot
 # TODO : change y to plot different filters ( can be a list of strings ['rectified signal', 'RMS'])
 fig = px.line(df_interp_ctrl, x='time', y=['Butterworth'], color='name', title =title_str)
-
 fig.show()
+
+# Plot raw emg signal 
+nb_channels = 8
+
+fig = make_subplots(rows=nb_channels, cols=1, shared_xaxes=True, vertical_spacing=0.02,
+subplot_titles=mydataDF.columns.values.tolist()[2:])
+
+for ch_nbr in range(1, nb_channels+1):
+
+    fig.add_trace(go.Scatter(x=mydataDF['time [ms]'], y=mydataDF['ch'+str(ch_nbr)]), row=ch_nbr, col=1)
+
+
