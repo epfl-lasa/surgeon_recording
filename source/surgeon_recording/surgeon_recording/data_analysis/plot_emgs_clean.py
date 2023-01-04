@@ -8,8 +8,9 @@ import scipy.signal as sp
 import matplotlib.pyplot as plt
 import os
 from scipy import interpolate
+from plotly.offline import plot
 
-data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/20-12-2022/calibration_torstein_1/'
+data_dir = r'C:/Users/cabasse/Documents/Microsurgery/test_cecile/calibration_cecile/'
 path_to_mydata = data_dir + 'mydata.csv'
 
 # Choose emg channel 
@@ -24,7 +25,7 @@ mydataDF = pd.read_csv(path_to_mydata, sep=';', header=0) #, usecols=['time [ms]
 # Convert time array ( ms to s)
 correct_time = mydataDF['time [ms]'] * 1e-3
 
-# Interpolate Data to deal wit potntial packet loss
+# Interpolate Data to deal with potential packet loss
 #modif by cecile
 
 start_idx = 500 # remove bad data at start of recording 
@@ -43,7 +44,7 @@ rec_time_array = np.linspace(0, duration, len(mydataDF.index[start_idx:]))
 s = interpolate.InterpolatedUnivariateSpline(np.array(rec_time_array), mydataDF[channel].iloc[start_idx:])
 ctrl_data_interp = s(time_array_ctrl)
 
-# Print to chekc interpolated signal should have more points than original
+# Print to check interpolated signal should have more points than original
 print("SHAPES :", np.shape(mydataDF[channel]), np.shape(ctrl_data_interp))
 
 # Filter EMG
@@ -75,11 +76,13 @@ df_interp_ctrl = pd.DataFrame({
 
 # Title string
 title_str = os.path.basename(os.path.dirname(os.path.dirname(data_dir))) +' '+ os.path.basename(os.path.dirname(data_dir) + " " + channel)
+#print(title_str) = test_cecile calibration_cecile ch1
 
 # Line to plot
 # TODO : change y to plot different filters ( can be a list of strings ['rectified signal', 'RMS'])
 fig = px.line(df_interp_ctrl, x='time', y=['Butterworth'], color='name', title =title_str)
-fig.show()
+#fig.show()
+plot(fig)
 
 # Plot raw emg signal 
 nb_channels = 8

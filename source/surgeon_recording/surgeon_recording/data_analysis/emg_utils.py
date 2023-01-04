@@ -1,11 +1,15 @@
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+from plotly.offline import plot
 import pandas as pd
 import numpy as np
 import scipy.signal as sp
 import os
 from scipy import interpolate
 import time 
+
+import plotly.io as pio
+pio.renderers.default='browser'
 
 def clean_emg(mydata_path, emg_placement):
     # Input : raw EMG signal
@@ -78,6 +82,9 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
     # Plots raw data from mydata.csv 
 
     mydataDF = pd.read_csv(mydata_path, sep=';', header=0)
+    
+    #To delete Unnamed column added at the end 
+    mydataDF = mydataDF.loc[:,~mydataDF.columns.str.match("Unnamed")] 
 
     # Get labels
     labels=mydataDF.columns.values.tolist()[2:18]
@@ -90,7 +97,7 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
         fig.add_trace(go.Scatter(x=mydataDF['time [ms]'], y=mydataDF['ch'+str(ch_nbr)]), row=ch_nbr, col=1)
 
     fig.update_layout(height=1500, width=1500, title_text=title_str, showlegend=False)
-
+    
     fig.show()
 
 def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG'):
