@@ -17,3 +17,4 @@ __pycache__/
 /test_data/*
 .vs/*
 .vscode/*
+/source/surgeon_recording/surgeon_recording/emg_recordings/*

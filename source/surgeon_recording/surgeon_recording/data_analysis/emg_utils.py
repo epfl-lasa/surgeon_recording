@@ -19,6 +19,10 @@ def clean_emg(mydata_path, emg_placement):
 
     # Convert channels labels to muscle labels
     channel_list = rawmydataDF.columns.values.tolist()[2:18]
+    
+    #TO CHANGE FOR FULL DATA (BOTH ARMS)
+    #channel_list = rawmydataDF.columns.values.tolist()[2:10] 
+
     muscle_list = channel_to_muscle_label(channel_list, emg_placement)
 
     # Create new DF with correct labels
@@ -91,7 +95,8 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
     nb_channels = len(labels)
     
     # Create figure and plot
-    fig = make_subplots(rows=nb_channels, cols=1, shared_xaxes=True, vertical_spacing=0.02, subplot_titles=labels)
+    fig = make_subplots(rows=nb_channels, cols=1, shared_xaxes=True, vertical_spacing=0.02, 
+                        x_title='Time [ms]', y_title='EMG [mV]', subplot_titles=labels)
     
     for ch_nbr in range(1, nb_channels+1):
         fig.add_trace(go.Scatter(x=mydataDF['time [ms]'], y=mydataDF['ch'+str(ch_nbr)]), row=ch_nbr, col=1)
@@ -100,7 +105,7 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
     
     fig.show()
 
-def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG'):
+def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytitle = 'EMG normalized by MVIC'):
     # Input must be reformatted DF of emg, time_for_plot one of ['relative time', 'absolute time']
     # Plots all channels from emgDF
 
@@ -108,13 +113,15 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG'):
     labels=emgDF.columns.values.tolist()[2:]
     
     # Create figure and plot
-    fig = make_subplots(rows=len(labels), cols=1, shared_xaxes=True, vertical_spacing=0.02, subplot_titles=labels)
+    fig = make_subplots(rows=len(labels), cols=1, shared_xaxes=True, vertical_spacing=0.02,
+                        x_title='Time [ms]', y_title= ytitle, subplot_titles=labels)
     
     for i in range(len(labels)):
         fig.add_trace(go.Scatter(x=emgDF[time_for_plot], y=emgDF[labels[i]]), row=i+1, col=1)
 
     fig.update_layout(height=1500, width=1500, title_text=title_str, showlegend=False)
-
+    fig.update_annotations(font_size=14)
+    
     fig.show()
 
 def channel_to_muscle_label(channel_list, emg_placement):
@@ -198,6 +205,30 @@ def rms_filter(emgDF, rms_window=20):
 
     return rmsDF
 
+#To compare 2 ordered lists
+def compare (a,b):
+    s = 0
+    L=[]
+    for i in range(len(a)):
+        if a[i] == b[i]:
+            s+=1
+            L.append(a[i])
+    return (s,L)
+
+#returns [ nb of common pts compared to expected, the common emgs channels]
+def calibration_validation(Lmaxcalib,expected = [0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15]):
+    #Get the order of when the max appeared by printing the index
+    l=[]
+    for i in range(len(Lmaxcalib)):
+        l.append([Lmaxcalib[i],i])
+    l.sort()
+    sort_index = []
+    
+    for x in l:
+        sort_index.append(x[1]) # list of index of max of each muscle
+        
+    return (compare(sort_index,expected))
+
 
 def main():
     # Example of function calls 
@@ -205,7 +236,7 @@ def main():
     # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
 
     # Path to mydata.csv folder
-    data_dir = r'C:/Users/LASA/Documents/Recordings/surgeon_recording/test_data/20-12-2022/calibration_torstein_1/'
+    data_dir = r'C:/Users/cabasse/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/emg_recordings/20-12-2022/calibration_torstein_1/'
     path_to_mydata = data_dir + 'mydata.csv'
     emg_placement = 'Protocol'
 
