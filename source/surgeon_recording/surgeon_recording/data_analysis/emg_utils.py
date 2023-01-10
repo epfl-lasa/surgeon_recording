@@ -11,14 +11,14 @@ import time
 import plotly.io as pio
 pio.renderers.default='browser'
 
-def clean_emg(mydata_path, emg_placement):
+def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
     # Input : raw EMG signal
     # Output : Format mydata to structured panda DataFrame 
 
     rawmydataDF = pd.read_csv(mydata_path, sep=';', header=0)
 
     # Convert channels labels to muscle labels
-    channel_list = rawmydataDF.columns.values.tolist()[2:18]
+    channel_list = rawmydataDF.columns.values.tolist()[2:nb_rec_channels+2]
     muscle_list = channel_to_muscle_label(channel_list, emg_placement)
 
     # Create new DF with correct labels
@@ -46,12 +46,12 @@ def clean_emg(mydata_path, emg_placement):
     
     return cleanDF
 
-def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500):
+def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500, nb_rec_channels=16):
     # Input : Clean emg DF, index at which to start interpolation (remove first points if needed), Sampling rate of emg
     # Output : interp emg DF with relative time an dinterpolated data
 
     # Create interpolated DF
-    labels_list = cleanDF.columns.values.tolist()[2:]
+    labels_list = cleanDF.columns.values.tolist()[2:nb_rec_channels+2]
     column_names = ['relative time', 'absolute time']
     column_names.extend(labels_list)
     interpDF = pd.DataFrame(columns=column_names)
@@ -78,7 +78,7 @@ def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500):
 
     return interpDF
 
-def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
+def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16):
     # Plots raw data from mydata.csv 
 
     mydataDF = pd.read_csv(mydata_path, sep=';', header=0)
@@ -87,7 +87,7 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
     mydataDF = mydataDF.loc[:,~mydataDF.columns.str.match("Unnamed")] 
 
     # Get labels
-    labels=mydataDF.columns.values.tolist()[2:18]
+    labels=mydataDF.columns.values.tolist()[2:nb_rec_channels+2]
     nb_channels = len(labels)
     
     # Create figure and plot
@@ -100,12 +100,12 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG'):
     
     fig.show()
 
-def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG'):
+def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', nb_rec_channels=16):
     # Input must be reformatted DF of emg, time_for_plot one of ['relative time', 'absolute time']
     # Plots all channels from emgDF
 
     # Get labels
-    labels=emgDF.columns.values.tolist()[2:]
+    labels=emgDF.columns.values.tolist()[2:nb_rec_channels+2]
     
     # Create figure and plot
     fig = make_subplots(rows=len(labels), cols=1, shared_xaxes=True, vertical_spacing=0.02, subplot_titles=labels)
