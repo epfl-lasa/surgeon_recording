@@ -1,9 +1,11 @@
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from plotly.offline import plot
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import scipy.signal as sp
+from scipy.fft import fft
 import os
 from scipy import interpolate
 import time 
@@ -19,7 +21,7 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
 
     # Convert channels labels to muscle labels
     channel_list = rawmydataDF.columns.values.tolist()[2:nb_rec_channels+2]
-    muscle_list = channel_to_muscle_label(channel_list, emg_placement)
+    muscle_list = channel_to_muscle_label(emg_placement)
 
     # Create new DF with correct labels
     column_names = ['relative time', 'absolute time'] #, 'absolute date time']
@@ -78,7 +80,7 @@ def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500, nb_rec_channels=16):
 
     return interpDF
 
-def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16):
+def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, emg_placement = "Jarque-Bou"):
     # Plots raw data from mydata.csv 
 
     mydataDF = pd.read_csv(mydata_path, sep=';', header=0)
@@ -90,16 +92,33 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16):
     labels=mydataDF.columns.values.tolist()[2:nb_rec_channels+2]
     nb_channels = len(labels)
     
-    # Create figure and plot
-    fig = make_subplots(rows=nb_channels, cols=1, shared_xaxes=True, vertical_spacing=0.02, 
-                        x_title='Time [ms]', y_title='EMG [mV]', subplot_titles=labels)
+    # #PLOTLY
+    # # Create figure and plot
+    # fig = make_subplots(rows=nb_channels, cols=1, shared_xaxes=True, vertical_spacing=0.02, 
+    #                     x_title='Time [ms]', y_title='EMG [mV]', subplot_titles=labels)
+    
+    # for ch_nbr in range(1, nb_channels+1):
+    #     fig.add_trace(go.Scatter(x=mydataDF['time [ms]'], y=mydataDF['ch'+str(ch_nbr)]), row=ch_nbr, col=1)
+
+    # fig.update_layout(height=1500, width=1500, title_text=title_str, showlegend=False)
+    
+    # fig.show()
+    
+    #MATPLOTLIB
+    fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
+    
+    fig.suptitle(title_str)
+    plt.xlabel('time [ms]')
+    plt.ylabel('EMG [mV]')
     
     for ch_nbr in range(1, nb_channels+1):
-        fig.add_trace(go.Scatter(x=mydataDF['time [ms]'], y=mydataDF['ch'+str(ch_nbr)]), row=ch_nbr, col=1)
-
-    fig.update_layout(height=1500, width=1500, title_text=title_str, showlegend=False)
+        ax[ch_nbr-1].plot(mydataDF['time [ms]'].to_numpy(), mydataDF['ch'+str(ch_nbr)].to_numpy())
+        ax[ch_nbr-1].set_title(channel_to_muscle_label( emg_placement)[ch_nbr-1], fontsize = 6)
+        ax[ch_nbr-1].tick_params(axis='x', labelsize=6)
+        ax[ch_nbr-1].tick_params(axis='y', labelsize=6)
+         
+    plt.show()
     
-    fig.show()
 
 def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytitle = 'EMG normalized by MVIC', nb_rec_channels=16):
     # Input must be reformatted DF of emg, time_for_plot one of ['relative time', 'absolute time']
@@ -108,19 +127,35 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
     # Get labels
     labels=emgDF.columns.values.tolist()[2:nb_rec_channels+2]
     
-    # Create figure and plot
-    fig = make_subplots(rows=len(labels), cols=1, shared_xaxes=True, vertical_spacing=0.02,
-                        x_title='Time [ms]', y_title= ytitle, subplot_titles=labels)
+    # #PLOTLY
+    # # Create figure and plot
+    # fig = make_subplots(rows=len(labels), cols=1, shared_xaxes=True, vertical_spacing=0.02,
+    #                     x_title='Time [s]', y_title= ytitle, subplot_titles=labels)
     
+    # for i in range(len(labels)):
+    #     fig.add_trace(go.Scatter(x=emgDF[time_for_plot], y=emgDF[labels[i]]), row=i+1, col=1)
+
+    # fig.update_layout(height=1500, width=1500, title_text=title_str, showlegend=False)
+    # fig.update_annotations(font_size=14)
+    
+    # fig.show()
+    
+     #MATPLOTLIB
+    fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
+     
+    fig.suptitle(title_str)
+    plt.xlabel('time [s]')
+    plt.ylabel(ytitle)
+     
     for i in range(len(labels)):
-        fig.add_trace(go.Scatter(x=emgDF[time_for_plot], y=emgDF[labels[i]]), row=i+1, col=1)
+        ax[i].plot(emgDF[time_for_plot].to_numpy(), emgDF[labels[i]].to_numpy())
+        ax[i].set_title(labels[i], fontsize = 6)
+        ax[i].tick_params(axis='x', labelsize=6)
+        ax[i].tick_params(axis='y', labelsize=6)
+          
+    plt.show()
 
-    fig.update_layout(height=1500, width=1500, title_text=title_str, showlegend=False)
-    fig.update_annotations(font_size=14)
-    
-    fig.show()
-
-def channel_to_muscle_label(channel_list, emg_placement):
+def channel_to_muscle_label(emg_placement):
     # Returns corresponding muscle for plot label depending on emg placement
 
     if emg_placement == 'Protocol':
@@ -163,7 +198,7 @@ def channel_to_muscle_label(channel_list, emg_placement):
 
     return muscle_list
 
-def butterworth_filter(emgDF, sr=1500, fco=25, N=4):
+def butterworth_filter(emgDF, sr=1500, fco_HP=10, fco_LP=500, N=4):
 
     # Create new DF from emgDF
     labels_list = emgDF.columns.values.tolist()
@@ -175,13 +210,13 @@ def butterworth_filter(emgDF, sr=1500, fco=25, N=4):
 
     # Set up filter parameters
     fny = sr/2 #nyquist frequency
-    fco = 25  #cut off frequency
+    fco = [fco_HP, fco_LP]  #cut off frequency
     N = 4
-    [b, a] = sp.butter(N, 1.16*fco/fny)
+    [b, a] = sp.butter(N, 1.116*np.array(fco)/fny, btype = 'bandpass')
 
     # Filter data
     for label in labels_list[2:]:
-        butterworthDF[label] = sp.filtfilt(b, a, emgDF[label])
+        butterworthDF[label] = sp.filtfilt(b, a, emgDF[label].values)
 
     return butterworthDF
 
