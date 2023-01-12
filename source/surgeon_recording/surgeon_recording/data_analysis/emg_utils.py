@@ -18,7 +18,7 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
     # Output : Format mydata to structured panda DataFrame 
 
     rawmydataDF = pd.read_csv(mydata_path, sep=';', header=0)
-
+    
     # Convert channels labels to muscle labels
     channel_list = rawmydataDF.columns.values.tolist()[2:nb_rec_channels+2]
     muscle_list = channel_to_muscle_label(emg_placement)
@@ -40,6 +40,9 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
 
     # Copy absolute time
     cleanDF['absolute time'] = rawmydataDF['absolute time [s]']
+
+    # Fill NaN with the previous non-NaN value in the same column
+    cleanDF.fillna(method = 'ffill', inplace = True)
 
     # Complicates matter smore than anything, kept comented for possible later use to ease readability
     # Convert absolute time to datetime format
@@ -108,6 +111,12 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, emg_pl
     fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
     
     fig.suptitle(title_str)
+    plt.subplots_adjust(top=0.95,
+                        bottom=0.04,
+                        left=0.025,
+                        right=0.995,
+                        hspace=0.4,
+                        wspace=0.2)
     plt.xlabel('time [ms]')
     plt.ylabel('EMG [mV]')
     
@@ -144,6 +153,12 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
     fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
      
     fig.suptitle(title_str)
+    plt.subplots_adjust(top=0.95,
+                        bottom=0.04,
+                        left=0.025,
+                        right=0.995,
+                        hspace=0.4,
+                        wspace=0.2)
     plt.xlabel('time [s]')
     plt.ylabel(ytitle)
      
