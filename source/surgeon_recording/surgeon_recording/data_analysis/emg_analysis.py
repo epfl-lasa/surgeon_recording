@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = r'../emg_recordings/10-01-2023/'
-path_to_calibration = data_dir + 'calib_maxime/mydata.csv'
-path_to_mydata = data_dir + 'task_maxime/mydata.csv'
+data_dir = r'../emg_recordings/12-01-2023/'
+path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
+# path_to_mydata = data_dir + 'task_maxime/mydata.csv'
 
 emg_placement = 'Jarque-Bou'
   
@@ -57,15 +57,15 @@ rms_calib = myfct.rms_filter(interp_calib)
 
 
 # PLOT EFFECT OF FILTERS 
-label_studied = cleanemg_calib.columns.values.tolist()[2]
+label_studied = cleanemg_calib.columns.values.tolist()[15]
 
-plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib")
-plt.plot(butt_calib["relative time"], butt_calib[label_studied], color= 'r', label = "butt_calib")
+# plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib")
+# plt.plot(butt_calib["relative time"], butt_calib[label_studied], color= 'r', label = "butt_calib")
 plt.plot(interp_calib["relative time"], interp_calib[label_studied], color= 'c', label = "interp_calib")
 plt.plot(rms_calib["relative time"], rms_calib[label_studied], color= 'g', label = "rms_calib")
 
 plt.legend()
-plt.xlim([0, 1400])
+plt.xlim([0, 600])
 plt.show()
 
 # AMPLITUDE NORMALIZATION
@@ -99,12 +99,12 @@ for col in range (2, rms_calib.shape[1]):
     normDF_calib.iloc[:,col] = (normDF_calib.iloc[:,col] - mean_min_col) / (mean_max_col - mean_min_col)
 
     # normDF.iloc[:,col] = (normDF.iloc[:,col] - min_col) / (max_col - min_col)
-    normDF.iloc[:,col] = (normDF.iloc[:,col] - mean_min_col) / (mean_max_col - mean_min_col)
+    # normDF.iloc[:,col] = (normDF.iloc[:,col] - mean_min_col) / (mean_max_col - mean_min_col)
 
   
 
 
-myfct.plot_emgDF(normDF,title_str = "Maxime 10-01-23") 
+# myfct.plot_emgDF(normDF,title_str = "Maxime 10-01-23") 
 myfct.plot_emgDF(normDF_calib, title_str='Normalized calibration EMG')
 
 expected = [0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15]

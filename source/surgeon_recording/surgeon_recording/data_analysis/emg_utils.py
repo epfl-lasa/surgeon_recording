@@ -73,8 +73,6 @@ def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500, nb_rec_channels=16):
     interpDF['absolute time'] = time_array + cleanDF['absolute time'].iloc[0] # TODO : should be start_time here, but this creates offset, why ??
 
     # Get orginal time array form recording
-    print('cleanDF.index[start_idx:]) =', cleanDF.index[start_idx:])
-    print("cleanDF['relative time'][start_idx]", cleanDF['relative time'][start_idx])
     rec_time_array = np.linspace(cleanDF['relative time'][start_idx], duration, len(cleanDF.index[start_idx:]))
     # rec_time_array = cleanDF['relative time'][start_idx:]
 
