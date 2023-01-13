@@ -1,4 +1,5 @@
 import emg_utils as myfct
+import matplotlib.pyplot as plt
 
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
@@ -13,7 +14,7 @@ emg_placement = 'Jarque-Bou'
 #myfct.plot_mydata_raw(path_to_calibration)
 
 cleanemg_calib = myfct.clean_emg(path_to_calibration, emg_placement)   
-cleanemgDF = myfct.clean_emg(path_to_mydata, emg_placement)   
+# cleanemgDF = myfct.clean_emg(path_to_mydata, emg_placement)   
 # myfct.plot_emgDF(cleanemg_calib)
 #myfct.plot_emgDF(cleanemgDF)
 print(f"Calibration recording duration : {cleanemg_calib['relative time'].iloc[-1]:.2f} s")
@@ -40,23 +41,35 @@ print(f"Calibration recording duration : {cleanemg_calib['relative time'].iloc[-
 
 # Might not be necessary for data analysis
 butt_calib = myfct.butterworth_filter(cleanemg_calib)
-butt = myfct.butterworth_filter(cleanemgDF)
+# butt = myfct.butterworth_filter(cleanemgDF)
 # myfct.plot_emgDF(butt_calib)
 # myfct.plot_emgDF(butt)
 
 interp_calib = myfct.interpolate_clean_emg(butt_calib, start_idx=0)
-interpDF = myfct.interpolate_clean_emg(butt, start_idx=50)
+# interpDF = myfct.interpolate_clean_emg(butt, start_idx=50)
 # myfct.plot_emgDF(interpDF, title_str='Interpolated EMG')
 # myfct.plot_emgDF(interp_calib, title_str='Interpolated calibrated EMG')
 
 rms_calib = myfct.rms_filter(interp_calib)
-rms = myfct.rms_filter(interpDF)
+# rms = myfct.rms_filter(interpDF)
 #myfct.plot_emgDF(rms_calib.iloc[:910000,:],title_str = "Cécile rms_calib_3 21.12.22", ytitle = 'EMG of calibration [mV]')
 #myfct.plot_emgDF(rms)
 
 
+# PLOT EFFECT OF FILTERS 
+label_studied = cleanemg_calib.columns.values.tolist()[2]
+
+plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib")
+plt.plot(butt_calib["relative time"], butt_calib[label_studied], color= 'r', label = "butt_calib")
+plt.plot(interp_calib["relative time"], interp_calib[label_studied], color= 'c', label = "interp_calib")
+plt.plot(rms_calib["relative time"], rms_calib[label_studied], color= 'g', label = "rms_calib")
+
+plt.legend()
+plt.xlim([0, 1400])
+plt.show()
+
 # AMPLITUDE NORMALIZATION
-normDF = rms
+# normDF = rms
 normDF_calib = rms_calib
 
 #to compare the different calibrations

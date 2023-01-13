@@ -73,6 +73,8 @@ def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500, nb_rec_channels=16):
     interpDF['absolute time'] = time_array + cleanDF['absolute time'].iloc[0] # TODO : should be start_time here, but this creates offset, why ??
 
     # Get orginal time array form recording
+    print('cleanDF.index[start_idx:]) =', cleanDF.index[start_idx:])
+    print("cleanDF['relative time'][start_idx]", cleanDF['relative time'][start_idx])
     rec_time_array = np.linspace(cleanDF['relative time'][start_idx], duration, len(cleanDF.index[start_idx:]))
     # rec_time_array = cleanDF['relative time'][start_idx:]
 
@@ -83,7 +85,7 @@ def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500, nb_rec_channels=16):
 
     return interpDF
 
-def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, emg_placement = "Jarque-Bou"):
+def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, ytitle = 'raw EMG n[mV]',  emg_placement = "Jarque-Bou"):
     # Plots raw data from mydata.csv 
 
     mydataDF = pd.read_csv(mydata_path, sep=';', header=0)
@@ -111,9 +113,10 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, emg_pl
     fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
     
     fig.suptitle(title_str)
+    fig.supylabel(ytitle)
     plt.subplots_adjust(top=0.95,
                         bottom=0.04,
-                        left=0.025,
+                        left=0.055,
                         right=0.995,
                         hspace=0.4,
                         wspace=0.2)
@@ -121,6 +124,7 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, emg_pl
     plt.ylabel('EMG [mV]')
     
     for ch_nbr in range(1, nb_channels+1):
+        ax[ch_nbr].set_ylabel('ch' + str(ch_nbr))
         ax[ch_nbr-1].plot(mydataDF['time [ms]'].to_numpy(), mydataDF['ch'+str(ch_nbr)].to_numpy())
         ax[ch_nbr-1].set_title(channel_to_muscle_label( emg_placement)[ch_nbr-1], fontsize = 6)
         ax[ch_nbr-1].tick_params(axis='x', labelsize=6)
@@ -151,18 +155,21 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
     
      #MATPLOTLIB
     fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
-     
+    
     fig.suptitle(title_str)
+    fig.supylabel(ytitle)
     plt.subplots_adjust(top=0.95,
                         bottom=0.04,
-                        left=0.025,
+                        left=0.055,
                         right=0.995,
                         hspace=0.4,
                         wspace=0.2)
+    plt.xlim([0, emgDF[time_for_plot].to_numpy()[-1]])
     plt.xlabel('time [s]')
-    plt.ylabel(ytitle)
+    
      
     for i in range(len(labels)):
+        ax[i].set_ylabel('ch' + str(i+1))
         ax[i].plot(emgDF[time_for_plot].to_numpy(), emgDF[labels[i]].to_numpy())
         ax[i].set_title(labels[i], fontsize = 6)
         ax[i].tick_params(axis='x', labelsize=6)
