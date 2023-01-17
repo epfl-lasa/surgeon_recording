@@ -2,19 +2,26 @@ from goprocam import GoProCamera, constants
 import time
 import numpy as np
 
-gopro = GoProCamera.GoPro(constants.gpcontrol)
+gopro = GoProCamera.GoPro()#constants.gpcontrol
 
 gopro.overview()
 
 time_start = time.time()
-gopro.shoot_video(10)
+print("Start Time : ", time_start)
+print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time_start)))
+
+gopro.shutter(constants.start)
+# gopro.shoot_video(10)
+
+
+time.sleep(5)
+
+# gopro.shutter(constants.stop)
+gopro.overview()
 
 time_end = time.time()
-
-print("Start Time : ")
-time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time_start))
-print("End Time : ")
-time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time_end))
+print("End Time : ", time_end)
+print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time_end)))
 
 # Save time recordings
 save_path = "/Users/LASA/Documents/gopro_rec_time.txt"
