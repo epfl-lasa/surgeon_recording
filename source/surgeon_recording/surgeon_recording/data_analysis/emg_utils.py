@@ -13,7 +13,7 @@ import time
 import plotly.io as pio
 pio.renderers.default='browser'
 
-def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
+def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
     # Input : raw EMG signal
     # Output : Format mydata to structured panda DataFrame 
 
@@ -40,7 +40,11 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
 
     # Copy absolute time
     cleanDF['absolute time'] = rawmydataDF['absolute time [s]']
-
+    
+    #Replace values higher than clip_upper by nan 
+    cleanDF.clip(upper = clip_upper)
+    cleanDF = cleanDF.replace(clip_upper, np.nan)
+                
     # Fill NaN with the previous non-NaN value in the same column
     cleanDF.fillna(method = 'ffill', inplace = True)
 
@@ -122,7 +126,7 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, ytitle
     plt.ylabel('EMG [mV]')
     
     for ch_nbr in range(1, nb_channels+1):
-        ax[ch_nbr].set_ylabel('ch' + str(ch_nbr))
+        ax[ch_nbr-1].set_ylabel('ch' + str(ch_nbr))
         ax[ch_nbr-1].plot(mydataDF['time [ms]'].to_numpy(), mydataDF['ch'+str(ch_nbr)].to_numpy())
         ax[ch_nbr-1].set_title(channel_to_muscle_label( emg_placement)[ch_nbr-1], fontsize = 6)
         ax[ch_nbr-1].tick_params(axis='x', labelsize=6)
@@ -279,6 +283,15 @@ def calibration_validation(Lmaxcalib,expected = [0, 8, 1, 9, 2, 10, 3, 11, 4, 12
         sort_index.append(x[1]) # list of index of max of each muscle
         
     return (compare(sort_index,expected))
+
+def normalization(emgDF, emg_calib):
+    normDF = emgDF.copy()
+    for col in range (2, emgDF.shape[1]):
+        max_col = emg_calib.iloc[:, col].max() #finds the highest value of each column
+        min_col = emg_calib.iloc[:, col].min() #finds the smallest value of each column
+        
+        normDF.iloc[:,col] = (normDF.iloc[:,col] - min_col) / (max_col - min_col) #normalization
+    return (normDF)
 
 
 def main():
