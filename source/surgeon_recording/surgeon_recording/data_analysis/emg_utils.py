@@ -34,6 +34,10 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
         rawmydataDF[channel_list[channel_nbr]].clip(-5000, 5000, inplace=True)
         # copy to new DF
         cleanDF[muscle_list[channel_nbr]] = abs(rawmydataDF[channel_list[channel_nbr]])
+        #correction of EMG signal by removing DC offset
+        cleanDF[muscle_list[channel_nbr]] = cleanDF[muscle_list[channel_nbr]] - np.mean(cleanDF[muscle_list[channel_nbr]])
+        
+        
 
     # Convert time array from ms to s
     cleanDF['relative time'] = rawmydataDF['time [ms]'] * 1e-3
