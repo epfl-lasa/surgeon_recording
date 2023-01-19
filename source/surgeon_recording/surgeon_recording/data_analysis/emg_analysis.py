@@ -5,6 +5,7 @@ import scipy.signal as sp
 import pyemgpipeline as pep
 import numpy as np
 from matplotlib.figure import SubplotParams
+import os 
 
 # GLOBAL VAR 
 SR = 1500
@@ -13,7 +14,7 @@ SR = 1500
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = r'../emg_recordings/12-01-2023/'
+data_dir = os.path.join(os.getcwd(), 'source/surgeon_recording/surgeon_recording', 'emg_recordings/12-01-2023/') #r'../emg_recordings/12-01-2023/'
 path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
 path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
 
