@@ -248,7 +248,9 @@ def butterworth_filter(emgDF, sr=1500, fco_HP=10, fco_LP=500, N=4):
 
     return butterworthDF
 
-def rms_filter(emgDF, rms_window=20):
+def rms_filter(emgDF, rms_window=450): 
+    #recommendations for dynamic contraction is window of 300ms (https://doi.org/10.1186/1475-925X-9-72)
+    #as SR = 1500, window = 1500*0.3
 
     # Create new DF from emgDF
     labels_list = emgDF.columns.values.tolist()
