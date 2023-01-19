@@ -107,7 +107,6 @@ low_pass = 8/(SR/2) #8Hz is the Fc
 b2, a2 = sp.butter(4, low_pass, btype='lowpass')
 envelopeDF = normDF.copy()
 for label in labels_list[2:]:
-    print(label)
     envelopeDF[label] = sp.filtfilt(b2, a2, normDF[label].values)
     
 # -RMS
@@ -124,35 +123,43 @@ f, Pxx_spec = sp.periodogram(normDF, SR, 'flattop', scaling='spectrum')
 # The peak height in the power spectrum is an estimate of the RMS amplitude.
 RMSamplitude = np.sqrt(Pxx_spec.max())
 
-#-PEMGPIPELINE
-mgr = pep.wrappers.DataProcessingManager()
-emg_plot_params = pep.plots.EMGPlotParams(
-    n_rows=16,
-    n_cols=1,
-    fig_kwargs={
-        'figsize': (16, 4),
-        'subplotpars': SubplotParams(top=0.8, wspace=0.1, hspace=0.4)})
-mgr.set_data_and_params(normDF.values.tolist(), hz=SR, channel_names=labels_list, emg_plot_params=emg_plot_params)
+#-GAUSSIAN MOVING WINDOW
+gaussDF = normDF.copy()
+# gaussDF = gaussDF.rolling(51, center=True, win_type = "gaussian", axis=1).sum(std=7)
+for label in labels_list[2:]:
+    gaussDF = gaussDF.loc[label].rolling(51, center=True, win_type = "gaussian", on = gaussDF.loc[label], axis=1).sum(std=7)
 
-c = mgr.process_all(is_plot_processing_chain=True, is_overlapping_trials=True,
-                    cycled_colors=['brown', 'green'],
-                    legend_kwargs={'loc':'right', 'bbox_to_anchor':(1.4, 0.5), 'fontsize':'small'},
-                    axes_pos_adjust=(0, 0, 0.75, 1))
+#-PYEMGPIPELINE
+# mgr = pep.wrappers.DataProcessingManager()
+# emg_plot_params = pep.plots.EMGPlotParams(
+#     n_rows=16,
+#     n_cols=1,
+#     fig_kwargs={
+#         'figsize': (16, 4),
+#         'subplotpars': SubplotParams(top=0.8, wspace=0.1, hspace=0.4)})
+# mgr.set_data_and_params(normDF.values.tolist(), hz=SR, channel_names=labels_list, emg_plot_params=emg_plot_params)
+
+# c = mgr.process_all(is_plot_processing_chain=True, is_overlapping_trials=True,
+#                     cycled_colors=['brown', 'green'],
+#                     legend_kwargs={'loc':'right', 'bbox_to_anchor':(1.4, 0.5), 'fontsize':'small'},
+#                     axes_pos_adjust=(0, 0, 0.75, 1))
 
 
 # PLOT FILTERS
 # plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
 # plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'r', label = "envelopeDF", alpha = 0.5)
 # plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'r', label = "rmsDF", alpha = 0.5)
+plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
+
 
 # plt.semill('ogy(freq, np.sqrt(normDF[label_studied]), color= 'r', label = "rmsDF")
 # plt.xlabel('frequency [Hz]')
 # plt.ylabeLinear spectrum [V RMS]')
 
 
-# plt.legend()
-# plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
-# plt.show()
+plt.legend()
+plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
+plt.show()
 
 # myfct.plot_emgDF(envelopeDF, title_str='EnvelopeDF EMG')
 # myfct.plot_emgDF(rmsDF, title_str='rmsDF EMG')
