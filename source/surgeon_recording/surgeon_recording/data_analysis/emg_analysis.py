@@ -6,6 +6,7 @@ import pyemgpipeline as pep
 import numpy as np
 from matplotlib.figure import SubplotParams
 import os 
+import pywt
 
 # GLOBAL VAR 
 SR = 1500
@@ -14,7 +15,7 @@ SR = 1500
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = os.path.join(os.getcwd(), 'source/surgeon_recording/surgeon_recording', 'emg_recordings/12-01-2023/') #r'../emg_recordings/12-01-2023/'
+data_dir = r'../emg_recordings/12-01-2023/'
 path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
 path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
 
@@ -135,6 +136,17 @@ hammDF = normDF.copy()
 for label in labels_list[2:]:
     hammDF[label] = hammDF[label].rolling(window = 5, win_type='hamming', center=True).sum()
 
+#-DAUBECHIES WAVELET TRANSFORM
+wavelet2 = pywt.Wavelet(normDF,'db2')
+wavelet4 = pywt.Wavelet(normDF,'db4')
+wavelet6 = pywt.Wavelet(normDF,'db6')
+wavelet44 = pywt.Wavelet(normDF,'db44')
+wavelet45 = pywt.Wavelet(normDF,'db45')
+
+fig, axs = plt.subplots(5,1,sharex='col')
+axs[0].plot(normDF["relative time"], normDF[label_studied],normDF["relative time"], wavelet2, label='db2' )
+axs[0].set_ylabel('s1 and s2')
+plt.show()
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
@@ -154,9 +166,9 @@ for label in labels_list[2:]:
 
 # PLOT FILTERS fOR FEATURE EXTRACTION 
 # plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
-plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'b', label = "envelopeDF", alpha = 0.5)
+# plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'b', label = "envelopeDF", alpha = 0.5)
 # plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'g', label = "rmsDF", alpha = 0.5)
-plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
+# plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
 # plt.plot(hammDF["relative time"], hammDF[label_studied], color= 'r', label = "hammDF", alpha = 0.5)
 
 
@@ -165,9 +177,9 @@ plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "
 # plt.ylabeLinear spectrum [V RMS]')
 
 
-plt.legend()
-plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
-plt.show()
+# plt.legend()
+# plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
+# plt.show()
 
 # myfct.plot_emgDF(envelopeDF, title_str='EnvelopeDF EMG')
 # myfct.plot_emgDF(rmsDF, title_str='rmsDF EMG')
