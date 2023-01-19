@@ -29,6 +29,7 @@ data = np.genfromtxt(path_to_mydata, delimiter=';', skip_header=5, skip_footer=5
 print(data.shape)
 #Remove rows woth Nan
 data = data[~np.isnan(data).any(axis=1)]
+
 # Check if the NumPy array contains any NaN value
 if(np.isnan(data).any()):
     print("The Array contain NaN values")
