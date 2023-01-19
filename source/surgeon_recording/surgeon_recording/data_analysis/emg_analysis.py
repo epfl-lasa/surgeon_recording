@@ -99,7 +99,7 @@ label_studied = cleanemg_calib.columns.values.tolist()[15]
 # plt.xlim([0, 600])
 # plt.show()
 
-# FILTERS
+# FEATURE EXTRACTION
 labels_list = cleanemg_calib.columns.values.tolist()
 
 # -LINEAR ENVELOPE: creates lowpass filter and apply to rectified signal to get EMG envelope
@@ -124,9 +124,10 @@ f, Pxx_spec = sp.periodogram(normDF, SR, 'flattop', scaling='spectrum')
 RMSamplitude = np.sqrt(Pxx_spec.max())
 
 #-GAUSSIAN MOVING WINDOW
-gaussDF = normDF.copy()
+# gaussDF = normDF.copy() #gaussian smoothing on normDF
+gaussDF = envelopeDF.copy() #gaussian smoothing on normDF
 for label in labels_list[2:]:
-    gaussDF[label] = gaussDF[label].rolling(window = 5, win_type='gaussian', center=True).sum(std=1)
+    gaussDF[label] = gaussDF[label].rolling(window = 450, win_type='gaussian', center=True).sum(std=1)
 
 #-HAMMING MOVING WINDOW
 hammDF = normDF.copy()
@@ -150,11 +151,11 @@ for label in labels_list[2:]:
 #                     axes_pos_adjust=(0, 0, 0.75, 1))
 
 
-# PLOT FILTERS
-plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
-plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'r', label = "envelopeDF", alpha = 0.5)
-plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'g', label = "rmsDF", alpha = 0.5)
-# plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
+# PLOT FILTERS fOR FEATURE EXTRACTION 
+# plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
+plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'b', label = "envelopeDF", alpha = 0.5)
+# plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'g', label = "rmsDF", alpha = 0.5)
+plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
 # plt.plot(hammDF["relative time"], hammDF[label_studied], color= 'r', label = "hammDF", alpha = 0.5)
 
 
