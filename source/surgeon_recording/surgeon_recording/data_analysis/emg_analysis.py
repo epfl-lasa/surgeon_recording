@@ -5,6 +5,7 @@ import scipy.signal as sp
 import pyemgpipeline as pep
 import numpy as np
 from matplotlib.figure import SubplotParams
+import os 
 
 # GLOBAL VAR 
 SR = 1500
@@ -13,7 +14,7 @@ SR = 1500
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = r'../emg_recordings/12-01-2023/'
+data_dir = os.path.join(os.getcwd(), 'source/surgeon_recording/surgeon_recording', 'emg_recordings/12-01-2023/') #r'../emg_recordings/12-01-2023/'
 path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
 path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
 
@@ -125,6 +126,23 @@ f, Pxx_spec = sp.periodogram(normDF, SR, 'flattop', scaling='spectrum')
 RMSamplitude = np.sqrt(Pxx_spec.max())
 
 #-PEMGPIPELINE
+
+# Data reformatting to correspond wiht library (remove time array)
+all_timestamp = []
+all_data = []
+
+# Get raw data, remove last line to avoid size error( due to missing values in last row)
+data = np.genfromtxt(path_to_mydata, delimiter=';', skip_header=1, skip_footer=1)
+all_timestamp.append(data[:, 0] / SR)
+all_data.append(data[:, 2:17]) # dont use col 1 -> absolute time 
+
+print(data.shape())
+# Check if the NumPy array contains any NaN value
+if(np.isnan(all_data).any()):
+    print("The Array contain NaN values")
+else:
+    print("The Array does not contain NaN values")
+
 mgr = pep.wrappers.DataProcessingManager()
 emg_plot_params = pep.plots.EMGPlotParams(
     n_rows=16,
@@ -132,7 +150,7 @@ emg_plot_params = pep.plots.EMGPlotParams(
     fig_kwargs={
         'figsize': (16, 4),
         'subplotpars': SubplotParams(top=0.8, wspace=0.1, hspace=0.4)})
-mgr.set_data_and_params(normDF.values.tolist(), hz=SR, channel_names=labels_list, emg_plot_params=emg_plot_params)
+mgr.set_data_and_params(all_data=all_data, hz=SR, all_timestamp=all_timestamp, channel_names=labels_list, emg_plot_params=emg_plot_params)
 
 c = mgr.process_all(is_plot_processing_chain=True, is_overlapping_trials=True,
                     cycled_colors=['brown', 'green'],
