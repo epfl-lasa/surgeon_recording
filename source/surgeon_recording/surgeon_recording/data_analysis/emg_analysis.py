@@ -125,9 +125,14 @@ RMSamplitude = np.sqrt(Pxx_spec.max())
 
 #-GAUSSIAN MOVING WINDOW
 gaussDF = normDF.copy()
-# gaussDF = gaussDF.rolling(51, center=True, win_type = "gaussian", axis=1).sum(std=7)
 for label in labels_list[2:]:
-    gaussDF = gaussDF.loc[label].rolling(51, center=True, win_type = "gaussian", on = gaussDF.loc[label], axis=1).sum(std=7)
+    gaussDF[label] = gaussDF[label].rolling(window = 5, win_type='gaussian', center=True).sum(std=1)
+
+#-HAMMING MOVING WINDOW
+hammDF = normDF.copy()
+for label in labels_list[2:]:
+    hammDF[label] = hammDF[label].rolling(window = 5, win_type='hamming', center=True).sum()
+
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
@@ -146,10 +151,11 @@ for label in labels_list[2:]:
 
 
 # PLOT FILTERS
-# plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
-# plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'r', label = "envelopeDF", alpha = 0.5)
-# plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'r', label = "rmsDF", alpha = 0.5)
-plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
+plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
+plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'r', label = "envelopeDF", alpha = 0.5)
+plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'g', label = "rmsDF", alpha = 0.5)
+# plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
+# plt.plot(hammDF["relative time"], hammDF[label_studied], color= 'r', label = "hammDF", alpha = 0.5)
 
 
 # plt.semill('ogy(freq, np.sqrt(normDF[label_studied]), color= 'r', label = "rmsDF")
