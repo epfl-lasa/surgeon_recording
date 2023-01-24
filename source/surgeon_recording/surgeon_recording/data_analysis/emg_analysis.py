@@ -54,9 +54,6 @@ print(f"Recording duration : {cleanemgDF['relative time'].iloc[-1]:.2f} s")
 # # Obtained freq at -3dB is 8*10^-6 Hz which is really small ...
 
 
-# TODO : check the effect of butt, interp and rms on the signal
-
-
 butt_calib = myfct.butterworth_filter(cleanemg_calib)
 butt = myfct.butterworth_filter(cleanemgDF)
 # myfct.plot_emgDF(butt_calib)
