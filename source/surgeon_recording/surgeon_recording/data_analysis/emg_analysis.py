@@ -134,7 +134,7 @@ for label in labels_list[2:]:
 
 
 #-DAUBECHIES WAVELET TRANSFORM
-wavelet2 = pywt.Wavelet(normDF,'db2')
+wavelet2 = pywt.Wavelet('db2')
 wavelet4 = pywt.Wavelet(normDF,'db4')
 wavelet6 = pywt.Wavelet(normDF,'db6')
 wavelet44 = pywt.Wavelet(normDF,'db44')
@@ -142,7 +142,7 @@ wavelet45 = pywt.Wavelet(normDF,'db45')
 
 fig, axs = plt.subplots(5, 1, sharex='col')
 axs[0].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], wavelet2, label='db2' )
-axs[0].set_ylabel('normDF and db2 (Hz)')
+axs[0].set_ylabel('normDF and db2 (mV)')
 
 axs[1].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], wavelet4, label='db4' )
 
