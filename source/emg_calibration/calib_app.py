@@ -6,10 +6,12 @@ from PyQt5.QtCore import QTimer, Qt
 import sys
 import simpleaudio as sa
 import os
+import atexit
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_time_handler import EMGTimeHandler
 
 class Window(QMainWindow):
 
-	def __init__(self):
+	def __init__(self, emg_time):
 		super().__init__()
 
 		# setting title
@@ -17,6 +19,9 @@ class Window(QMainWindow):
 
 		# setting geometry
 		self.setGeometry(100, 100, 800, 700)
+
+		# Set emgTimeHandler object
+		self.emg_time = emg_time
 
 		# Set muscle dictionnaries 
 		self.muscle_name_dict = ['Flexor Carpi Ulnaris/Radialis + Digitorum',
@@ -29,7 +34,7 @@ class Window(QMainWindow):
 			'Palm up - Flex wrist up and push fingers up against assistant',
 			'Palm up - Wrist flat, push thumb up against assistant',
 			'Palm down - Extend wrist up and extend fingers up against assistant',
-			'Palm down - Wrist flat, push thumb to the side agisnt assistant'
+			'Palm down - Wrist flat, push thumb to the side agaisnt assistant'
 		]
 
 		self.dict_index = 0
@@ -65,7 +70,6 @@ class Window(QMainWindow):
 		# setting alignment to the text of label
 		self.label.setAlignment(Qt.AlignCenter)
 
-		# TODO : Make two labels to have a fiexed one with description and a changing one wiht timer
 		# TODO : add progresion bar ? self.pbar = QProgressBar(self), self.pbar.setValue(i)
 
 		# creating a label to display current Action Status : Rest, activation 
@@ -86,7 +90,7 @@ class Window(QMainWindow):
 		# setting geometry of label
 		self.up_next.setGeometry(50, 425, 250, 50)
 		# setting text to the label
-		self.up_next.setText("Next Activation")
+		self.up_next.setText("Next Activation :")
 		# adding border to the label
 		self.up_next.setStyleSheet("border : 1px solid black; background-color: lightblue")
 		# setting font to the label
@@ -157,11 +161,11 @@ class Window(QMainWindow):
 		pause.pressed.connect(self.Pause)
 
 		# creating reset button
-		re_set = QPushButton("Re-set", self)
+		advance = QPushButton("Advance", self)
 		# setting geometry to the button
-		re_set.setGeometry(125, 350, 150, 40)
+		advance.setGeometry(125, 350, 150, 40)
 		# add action to the method
-		re_set.pressed.connect(self.Re_set)
+		advance.pressed.connect(self.Advance)
 
 		# creating a timer object
 		timer = QTimer(self)
@@ -205,6 +209,9 @@ class Window(QMainWindow):
 				self.current_status = 'Rest'
 				self.status.setStyleSheet("border : 2px solid black; background-color: lightgreen")
 
+				# Change 'Next Activation'
+				self.up_next.setText("Next Activation :")
+
 				# Update arm (To other arm)
 				if self.current_arm == 'Right':
 					self.current_arm = 'Left'
@@ -223,6 +230,9 @@ class Window(QMainWindow):
 				self.current_status = 'Activation'
 				self.status.setStyleSheet("border : 2px solid black; background-color: red")
 
+				# Change 'Next Activation'
+				self.up_next.setText("Current Activation :")
+
 			# Switch display for DIFFERENT muscle
 			if self.flex_count == 4:
 				
@@ -232,10 +242,17 @@ class Window(QMainWindow):
 				# Set longer rest time (between different movements)
 				self.count = 550
 
-				# Update muscle naem and activation mvmt	
+				# Update muscle name and activation mvmt	
 				self.dict_index +=1
-				self.muscle_name.setText("Muscle Names : " + str(self.muscle_name_dict[self.dict_index]))
-				self.movement.setText("Activation Movement : "+ str(self.activation_mvmt_dict[self.dict_index]))
+				if self.dict_index < len(self.muscle_name_dict):
+					self.muscle_name.setText("Muscle Names : " + str(self.muscle_name_dict[self.dict_index]))
+					self.movement.setText("Activation Movement : "+ str(self.activation_mvmt_dict[self.dict_index]))
+				else:
+					# FINISHED
+					self.count = 0
+					self.Pause()
+					self.current_status = "FINSIHED"
+					self.status.setStyleSheet("border : 2px solid black; background-color: blue")
 
 				#TODO : update image (or gif-video )
 				
@@ -262,6 +279,9 @@ class Window(QMainWindow):
 
 	def Start(self):
 
+		# Start recording duration for calib
+		self.emg_time.start_emg()
+
 		# making flag to true
 		self.flag = True
 
@@ -270,23 +290,38 @@ class Window(QMainWindow):
 		# making flag to False
 		self.flag = False
 
-	def Re_set(self):
+	def Advance(self):
 
 		# making flag to false
 		self.flag = False
 
-		# reseeting the count
+		# resetting the counts
 		self.count = 0
 
 		# setting text to label
 		self.label.setText(str(self.count))
 
+def exit_test(emg_time):
+	emg_time.shutdown_emg()
 
-# create pyqt5 app
-App = QApplication(sys.argv)
 
-# create the instance of our Window
-window = Window()
+def main(csv_path = os.path.join(os.getcwd(), 'emg_calib_duration.csv')):
+	# create pyqt5 app
+	App = QApplication(sys.argv)
+	
+	# Set time handler object + csv path 
+	# TODO : should be main argument
+	emg_time_handle = EMGTimeHandler(csv_path)
 
-# start the app
-sys.exit(App.exec())
+	# create the instance of our Window
+	window = Window(emg_time_handle)
+
+	# To execute when closing app
+	atexit.register(exit_test, emg_time_handle)
+
+	# start the app
+	sys.exit(App.exec())
+
+
+if __name__ == '__main__':
+	main()
