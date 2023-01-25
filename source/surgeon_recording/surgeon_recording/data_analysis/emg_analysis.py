@@ -7,6 +7,7 @@ import numpy as np
 from matplotlib.figure import SubplotParams
 import os 
 import pywt
+import pandas as pd
 
 # GLOBAL VAR 
 SR = 1500
@@ -67,8 +68,6 @@ interpDF = abs(interpDF) # rectify
 # myfct.plot_emgDF(interp_calib, title_str='Interpolated calibrated EMG')
 
 
-rms_calib = myfct.rms_filter(interp_calib)
-
 
 # AMPLITUDE NORMALIZATION
 # for col in range (2, rms_calib.shape[1]):
@@ -81,12 +80,14 @@ rms_calib = myfct.rms_filter(interp_calib)
     # normDF_calib.iloc[:,col] = (normDF_calib.iloc[:,col] - mean_min_col) / (mean_max_col - mean_min_col)
     # normDF.iloc[:,col] = (normDF.iloc[:,col] - mean_min_col) / (mean_max_col - mean_min_col)
     
-norm_calib = myfct.normalization(interp_calib, interp_calib)
+# norm_calib = myfct.normalization(interp_calib, interp_calib) #just to verify
 normDF = myfct.normalization(interpDF, interp_calib)
 
 
 # PLOT EFFECT OF PRE FILTERS 
-### plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib", alpha = 0.5)
+idx_label_studied = 15
+label_studied = cleanemg_calib.columns.values.tolist()[idx_label_studied]
+# plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib", alpha = 0.5)
 #plt.plot(butt_calib["relative time"], butt_calib[label_studied], color= 'r', label = "butt_calib", alpha = 0.5)
 # plt.plot(interp_calib["relative time"], interp_calib[label_studied], color= 'c', label = "interp_calib", alpha = 0.5)
 # plt.plot(rms_calib["relative time"], rms_calib[label_studied], color= 'g', label = "rms_calib", alpha = 0.5)
@@ -106,31 +107,31 @@ b2, a2 = sp.butter(4, low_pass, btype='lowpass')
 envelopeDF = normDF.copy()
 for label in labels_list[2:]:
     envelopeDF[label] = sp.filtfilt(b2, a2, normDF[label].values)
+
+#-GAUSSIAN MOVING WINDOW ON LINEAR ENVELOPE
+gaussDF = envelopeDF.copy() #gaussian smoothing on envelopeDF
+for label in labels_list[2:]:
+    gaussDF[label] = gaussDF[label].rolling(window = 450, win_type='gaussian', center=True).sum(std=1)
+    
+#-HAMMING MOVING WINDOW ON LINEAR ENVELOPE
+hammDF = envelopeDF.copy()
+for label in labels_list[2:]:
+    hammDF[label] = hammDF[label].rolling(window = 5, win_type='hamming', center=True).sum()
+    
     
 # -RMS
 rmsDF = myfct.rms_filter(normDF)
 
 # -POWER SPECTRUM
-N = normDF.shape[0]
-T = N/SR
-n = np.arange(N)
-freq = n/T
-
-f, Pxx_spec = sp.periodogram(normDF, SR, 'flattop', scaling='spectrum')
-
-# The peak height in the power spectrum is an estimate of the RMS amplitude.
-RMSamplitude = np.sqrt(Pxx_spec.max())
-
-#-GAUSSIAN MOVING WINDOW
-# gaussDF = normDF.copy() #gaussian smoothing on normDF
-gaussDF = envelopeDF.copy() #gaussian smoothing on normDF
+Pxx_spec = pd.DataFrame(columns=labels_list)
+f = pd.DataFrame(columns=labels_list)
+RMSamplitude = []
 for label in labels_list[2:]:
-    gaussDF[label] = gaussDF[label].rolling(window = 450, win_type='gaussian', center=True).sum(std=1)
+    f[label], Pxx_spec[label] = sp.periodogram(normDF[label], SR, 'flattop', scaling='spectrum')
 
-#-HAMMING MOVING WINDOW
-hammDF = normDF.copy()
-for label in labels_list[2:]:
-    hammDF[label] = hammDF[label].rolling(window = 5, win_type='hamming', center=True).sum()
+    # The peak height in the power spectrum is an estimate of the RMS amplitude.
+    RMSamplitude.append(np.sqrt(Pxx_spec[label].max()))
+
 
 #-DAUBECHIES WAVELET TRANSFORM
 wavelet2 = pywt.Wavelet(normDF,'db2')
@@ -139,9 +140,14 @@ wavelet6 = pywt.Wavelet(normDF,'db6')
 wavelet44 = pywt.Wavelet(normDF,'db44')
 wavelet45 = pywt.Wavelet(normDF,'db45')
 
-fig, axs = plt.subplots(5,1,sharex='col')
-axs[0].plot(normDF["relative time"], normDF[label_studied],normDF["relative time"], wavelet2, label='db2' )
-axs[0].set_ylabel('s1 and s2')
+fig, axs = plt.subplots(5, 1, sharex='col')
+axs[0].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], wavelet2, label='db2' )
+axs[0].set_ylabel('normDF and db2 (Hz)')
+
+axs[1].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], wavelet4, label='db4' )
+
+axs[4].set_xlabel('time')
+fig.tight_layout()
 plt.show()
 
 #-PYEMGPIPELINE
@@ -167,10 +173,11 @@ plt.show()
 # plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
 # plt.plot(hammDF["relative time"], hammDF[label_studied], color= 'r', label = "hammDF", alpha = 0.5)
 
+# print('Peak height of power spectrum = ' + str(round(RMSamplitude[idx_label_studied], 4)) + ' Hz')
 
-# plt.semill('ogy(freq, np.sqrt(normDF[label_studied]), color= 'r', label = "rmsDF")
+# plt.semilogy(f[label_studied], np.sqrt(Pxx_spec[label_studied]), color= 'r', label = "Power spectrum DF")
 # plt.xlabel('frequency [Hz]')
-# plt.ylabeLinear spectrum [V RMS]')
+# plt.ylabel('Linear spectrum [V RMS]')
 
 
 # plt.legend()
