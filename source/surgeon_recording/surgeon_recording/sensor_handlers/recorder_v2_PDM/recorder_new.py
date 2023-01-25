@@ -33,8 +33,8 @@ class RecorderNew():
         self.csv_path_optitrack2 = join(self.folder, "optitrack.csv")
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
-        self.csv_path_emg1 = join(self.folder, "emg.csv")
-        self.csv_path_emg_cal = join(self.folder, "emg_calibration.csv")
+        self.csv_path_emg = join(self.folder, "emg_duration.csv")
+        self.csv_path_emg_cal = join(self.folder, "emg_calib_duration.csv")
 
         self.copy_calibration_files()
 
@@ -75,7 +75,7 @@ class RecorderNew():
     def emg_thread(self): 
         is_looping_emg = True
 
-        handler_emg = EMGTimeHandler(self.csv_path_emg1)
+        handler_emg = EMGTimeHandler(self.csv_path_emg)
 
         while is_looping_emg is True:
             # Wait for closing signal
@@ -86,26 +86,11 @@ class RecorderNew():
                 handler_emg.shutdown_emg()
                 #time.sleep(5)
                 #raise Exception('Exiting')
-    
-    def emg_calib(self):
-        is_looping_emg = True
-        print("Starting EMG Calibration, press 'q' when finished")
-        handler_emg = EMGTimeHandler(self.csv_path_emg_cal)
-
-        while is_looping_emg is True:
-            handler_emg.acquire_data_emg()
-            
-            if keyboard.is_pressed('q'):
-                print('Stopped emg Calibration')
-                is_looping_emg = False
-                handler_emg.shutdown_emg()
-                time.sleep(5)
-                #raise Exception('Exiting')
 
     def emg_calib(self): 
         is_looping_emg = True
         print("Starting EMG Calibration, press 'q' when finished.")
-        handler_emg = EMGTimeHandler(self.csv_path_emg_cal)
+        handler_emg_calib = EMGTimeHandler(self.csv_path_emg_cal)
 
         while is_looping_emg is True:
             # Wait for closing signal
@@ -113,7 +98,7 @@ class RecorderNew():
             if keyboard.is_pressed('q'):
                 print('goodbye emg')
                 is_looping_emg = False
-                handler_emg.shutdown_emg()
+                handler_emg_calib.shutdown_emg()
                 time.sleep(5)
                 #raise Exception('Exiting')
 
