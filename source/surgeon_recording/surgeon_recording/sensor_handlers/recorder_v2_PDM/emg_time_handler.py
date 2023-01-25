@@ -27,9 +27,6 @@ class EMGTimeHandler:
         end_time = time.time()
         time_to_save = [['Start time', self.time_start], ['End time', end_time], ['Duration', end_time-self.time_start]]
         np.savetxt(self.csv_path_emg_time, time_to_save, delimiter =", ", fmt ='% s')
-
-        self.emgClient.shutdown()
-        self.emg_file.close()
         print("emg closed cleanly")
      
 
