@@ -9,7 +9,7 @@ import os
 import asyncio
 import time
 from shutil import copyfile
-from surgeon_recording.sensor_handlers.camera_handler import CameraHandler
+from surgeon_recording.sensor_handlers.recorder_v1_pilot.camera_handler import CameraHandler
 from os.path import exists
 
 

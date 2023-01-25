@@ -14,12 +14,11 @@ import numpy as np
 # ######
 
 class EMGTimeHandler:
-    def __init__(self, csv_path1):
+    def __init__(self, csv_path):
 
         # path of csv file to write start and end time
-        self.csv_path_emg_time = join(os.path.dirname(csv_path1), "emg_duration.csv")
+        self.csv_path_emg_time = csv_path
 
-        self.time_vect1 = [time.time()]
         self.time_start = time.time()
       
         
@@ -39,7 +38,6 @@ class EMGTimeHandler:
 def main():
     return
        
-    
 
 
 if __name__ == '__main__':
