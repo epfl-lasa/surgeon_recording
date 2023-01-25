@@ -1,7 +1,7 @@
 # importing libraries
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QPushButton
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QFont, QPixmap, QMovie
 from PyQt5.QtCore import QTimer, Qt
 import sys
 import simpleaudio as sa
@@ -18,7 +18,7 @@ class Window(QMainWindow):
 		self.setWindowTitle("Calibration Instructions")
 
 		# setting geometry
-		self.setGeometry(100, 100, 800, 700)
+		self.setGeometry(100, 100, 900, 600)
 
 		# Set emgTimeHandler object
 		self.emg_time = emg_time
@@ -35,6 +35,13 @@ class Window(QMainWindow):
 			'Palm up - Wrist flat, push thumb up against assistant',
 			'Palm down - Extend wrist up and extend fingers up against assistant',
 			'Palm down - Wrist flat, push thumb to the side agaisnt assistant'
+		]
+
+		self.gif_path_dict = [
+			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Flexors_activation.gif',
+			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Extensors_activation.gif',
+			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Thumb_extension.gif',
+			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Thumb_flexion.gif'
 		]
 
 		self.dict_index = 0
@@ -60,7 +67,7 @@ class Window(QMainWindow):
 		# creating a label to show the time
 		self.label = QLabel(self)
 		# setting geometry of label
-		self.label.setGeometry(75, 150, 250, 70)
+		self.label.setGeometry(500, 50, 250, 70)
 		# adding border to the label
 		self.label.setStyleSheet("border : 4px solid black;")
 		# setting text to the label
@@ -75,7 +82,7 @@ class Window(QMainWindow):
 		# creating a label to display current Action Status : Rest, activation 
 		self.status = QLabel(self)
 		# setting geometry of label
-		self.status.setGeometry(75, 50, 250, 70)
+		self.status.setGeometry(75, 40, 270, 90)
 		# adding border to the label
 		self.status.setStyleSheet("border : 2px solid black; background-color: lightgreen")
 		# setting text to the label
@@ -85,10 +92,17 @@ class Window(QMainWindow):
 		# setting alignment to the text of label
 		self.status.setAlignment(Qt.AlignCenter)
 
+		# Vertical line for Aesthetic 
+		self.vertical_line = QLabel(self)
+		# setting geometry of label
+		self.vertical_line.setGeometry(115, 370, 10, 205)
+		# adding border to the label
+		self.vertical_line.setStyleSheet("border : 1px solid black; background-color: lightblue")
+
 		# creating a UP NEXT label
 		self.up_next = QLabel(self)
 		# setting geometry of label
-		self.up_next.setGeometry(50, 425, 250, 50)
+		self.up_next.setGeometry(100, 325, 230, 50)
 		# setting text to the label
 		self.up_next.setText("Next Activation :")
 		# adding border to the label
@@ -101,34 +115,34 @@ class Window(QMainWindow):
 		# creating a label to show the arm to activate
 		self.arm_label = QLabel(self)
 		# setting geometry of label
-		self.arm_label.setGeometry(50, 475, 500, 30)
+		self.arm_label.setGeometry(135, 385, 500, 25)
 		# setting text to the label
 		self.arm_label.setText("Arm : Right")
 		# setting font to the label
 		self.arm_label.setFont(QFont('Arial', 12))
 
+		# creating a label to show the flex counter
+		self.flex_counter = QLabel(self)
+		# setting geometry of label
+		self.flex_counter.setGeometry(135, 420, 500, 25)
+		# setting text to the label
+		self.flex_counter.setText("Activation # : 1/4")
+		# setting font to the label
+		self.flex_counter.setFont(QFont('Arial', 12))
+
 		# creating a label to show the activation movement
 		self.movement = QLabel(self)
 		# setting geometry of label
-		self.movement.setGeometry(50, 490, 1000, 125)
+		self.movement.setGeometry(135, 460, 1000, 50)
 		# setting text to the label
 		self.movement.setText("Activation Movement : \n\t"+ str(self.activation_mvmt_dict[self.dict_index]))
 		# setting font to the label
 		self.movement.setFont(QFont('Arial', 12))
 
-		# creating a label to show the flex counter
-		self.flex_counter = QLabel(self)
-		# setting geometry of label
-		self.flex_counter.setGeometry(50, 575, 500, 50)
-		# setting text to the label
-		self.flex_counter.setText("Flex counter : 0")
-		# setting font to the label
-		self.flex_counter.setFont(QFont('Arial', 12))
-
 		# creating a label to show the muscle name
 		self.muscle_name = QLabel(self)
 		# setting geometry of label
-		self.muscle_name.setGeometry(50, 590, 1000, 125)
+		self.muscle_name.setGeometry(135, 520, 1000, 50)
 		# setting text to the label
 		self.muscle_name.setText("Muscle Names : \n\t" + str(self.muscle_name_dict[self.dict_index]))
 		# setting font to the label
@@ -136,34 +150,32 @@ class Window(QMainWindow):
 		# setting alignment to the text of label
 		# self.muscle_name.setAlignment(Qt.AlignCenter)
 
-		# Add images of arm
+		# Add gifs of aactivation movement
 		self.image = QLabel(self)
-		self.pixmap = QPixmap('C:/Users/LASA/Pictures/arm.PNG')
-		self.pixmap2 = QPixmap('C:/Users/LASA/Pictures/arm2.PNG')
-
-		self.image.setPixmap(self.pixmap)
-		# self.image.resize(self.pixmap.width(), self.pixmap.height())
-		self.image.setGeometry(450, 50, self.pixmap.width(), self.pixmap.height())
+		self.movie = QMovie(self.gif_path_dict[self.dict_index])
+		self.image.setMovie(self.movie)
+		self.movie.start()
+		self.image.setGeometry(400, 175, self.movie.currentImage().size().width(), self.movie.currentImage().size().height())
 		self.image.setAlignment(Qt.AlignCenter)
 
 		# creating start button
 		start = QPushButton("Start", self)
 		# setting geometry to the button
-		start.setGeometry(125, 250, 150, 40)
+		start.setGeometry(135, 150, 150, 40)
 		# add action to the method
 		start.pressed.connect(self.Start)
 
 		# creating pause button
 		pause = QPushButton("Pause", self)
 		# setting geometry to the button
-		pause.setGeometry(125, 300, 150, 40)
+		pause.setGeometry(135, 200, 150, 40)
 		# add action to the method
 		pause.pressed.connect(self.Pause)
 
 		# creating reset button
 		advance = QPushButton("Advance", self)
 		# setting geometry to the button
-		advance.setGeometry(125, 350, 150, 40)
+		advance.setGeometry(135, 250, 150, 40)
 		# add action to the method
 		advance.pressed.connect(self.Advance)
 
@@ -173,8 +185,6 @@ class Window(QMainWindow):
 		timer.timeout.connect(self.showTime)
 		# update the timer every tenth second
 		timer.start(100)
-
-    
 
 	# method called by timer, every 0.1 second
 	def showTime(self):
@@ -200,7 +210,7 @@ class Window(QMainWindow):
 			self.beep('long')
 
 			# Switch display for SAME muscle
-			if self.current_status == 'Activation':
+			if self.current_status == 'Activate':
 				
 				# Reset counter
 				self.count = 250 
@@ -227,11 +237,14 @@ class Window(QMainWindow):
 				self.count = 50 
 		
 				# Change current Status
-				self.current_status = 'Activation'
+				self.current_status = 'Activate'
 				self.status.setStyleSheet("border : 2px solid black; background-color: red")
 
 				# Change 'Next Activation'
 				self.up_next.setText("Current Activation :")
+
+				# Reset gif
+				self.movie.jumpToFrame(0)
 
 			# Switch display for DIFFERENT muscle
 			if self.flex_count == 4:
@@ -245,22 +258,24 @@ class Window(QMainWindow):
 				# Update muscle name and activation mvmt	
 				self.dict_index +=1
 				if self.dict_index < len(self.muscle_name_dict):
-					self.muscle_name.setText("Muscle Names : " + str(self.muscle_name_dict[self.dict_index]))
-					self.movement.setText("Activation Movement : "+ str(self.activation_mvmt_dict[self.dict_index]))
+					self.muscle_name.setText("Muscle Names : \n\t" + str(self.muscle_name_dict[self.dict_index]))
+					self.movement.setText("Activation Movement : \n\t"+ str(self.activation_mvmt_dict[self.dict_index]))
+					self.movie = QMovie(self.gif_path_dict[self.dict_index])
+					self.image.setMovie(self.movie)
+					self.movie.start()
 				else:
 					# FINISHED
 					self.count = 0
 					self.Pause()
 					self.current_status = "FINSIHED"
 					self.status.setStyleSheet("border : 2px solid black; background-color: blue")
-
-				#TODO : update image (or gif-video )
-				
+					self.movie.stop()				
 				
 			# Update display
 			self.status.setText(str(self.current_status))
 			self.arm_label.setText("Arm : " + str(self.current_arm))
-			self.flex_counter.setText("Flex Counter : " + str(self.flex_count))
+			self.flex_counter.setText("Activation # : " + str(self.flex_count+1)+"/4")
+
 
 
 		# 	self.image.setPixmap(self.pixmap2)
@@ -268,11 +283,11 @@ class Window(QMainWindow):
 
 	def beep(self, duration='short'):
 		if duration == 'short':
-			wave_obj = sa.WaveObject.from_wave_file('C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_files/beep-07a.wav')
+			wave_obj = sa.WaveObject.from_wave_file('C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/beep-07a.wav')
 			play_obj = wave_obj.play()
 			# play_obj.wait_done()
 		elif duration == 'long':
-			wave_obj = sa.WaveObject.from_wave_file('C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_files/beep-04.wav')
+			wave_obj = sa.WaveObject.from_wave_file('C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/beep-04.wav')
 			play_obj = wave_obj.play()
 			# play_obj.wait_done()
 
