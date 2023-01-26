@@ -111,7 +111,7 @@ for label in labels_list[2:]:
 #-GAUSSIAN MOVING WINDOW ON LINEAR ENVELOPE
 gaussDF = envelopeDF.copy() #gaussian smoothing on envelopeDF
 for label in labels_list[2:]:
-    gaussDF[label] = gaussDF[label].rolling(window = 450, win_type='gaussian', center=True).sum(std=1)
+    gaussDF[label] = gaussDF[label].rolling(window = 380, win_type='gaussian', center=True).sum(std=1)
     
 #-HAMMING MOVING WINDOW ON LINEAR ENVELOPE
 hammDF = envelopeDF.copy()
@@ -132,23 +132,53 @@ for label in labels_list[2:]:
     # The peak height in the power spectrum is an estimate of the RMS amplitude.
     RMSamplitude.append(np.sqrt(Pxx_spec[label].max()))
 
-
 #-DAUBECHIES WAVELET TRANSFORM
 wavelet2 = pywt.Wavelet('db2')
-wavelet4 = pywt.Wavelet(normDF,'db4')
-wavelet6 = pywt.Wavelet(normDF,'db6')
-wavelet44 = pywt.Wavelet(normDF,'db44')
-wavelet45 = pywt.Wavelet(normDF,'db45')
+wavelet4 = pywt.Wavelet('db4')
+wavelet6 = pywt.Wavelet('db6')
+wavelet20 = pywt.Wavelet('db20')
+wavelet38 = pywt.Wavelet('db38')
+
+n = len(cleanemgDF[label_studied])
+
+# daubechies coefficients
+(cA2, cD2) = pywt.dwt(cleanemgDF[label_studied], 'db2')
+(cA4, cD4) = pywt.dwt(cleanemgDF[label_studied], 'db4')
+(cA6, cD6) = pywt.dwt(cleanemgDF[label_studied], 'db6')
+(cA20, cD20) = pywt.dwt(cleanemgDF[label_studied], 'db20')
+(cA38, cD38) = pywt.dwt(cleanemgDF[label_studied], 'db38')
+
+# Applying the coefficients on cleanemgDF[label_studied]
+w2 = pywt.upcoef('a', cA2, 'db2', take=n, level=3) + pywt.upcoef('d', cD2, 'db2', take=n, level=3)
+w4 = pywt.upcoef('a', cA4, 'db4', take=n, level=3) + pywt.upcoef('d', cD4, 'db4', take=n, level=3)
+w6 = pywt.upcoef('a', cA6, 'db6', take=n, level=3) + pywt.upcoef('d', cD6, 'db6', take=n, level=3)
+w20 = pywt.upcoef('a', cA20, 'db20', take=n, level=3) + pywt.upcoef('d', cD20, 'db20', take=n, level=3)
+w38 = pywt.upcoef('a', cA38, 'db38', take=n, level=3) + pywt.upcoef('d', cD38, 'db38', take=n, level=3)
 
 fig, axs = plt.subplots(5, 1, sharex='col')
-axs[0].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], wavelet2, label='db2' )
-axs[0].set_ylabel('normDF and db2 (mV)')
+axs[0].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w2, label='db2' )
+axs[1].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w4, label='db4' )
+axs[2].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w6, label='db6' )
+axs[3].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w20, label='db20' )
+axs[4].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w38, label='db38' )
 
-axs[1].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], wavelet4, label='db4' )
+axs[0].set_ylabel('cleanemgDF and db2 (mV)')
+axs[1].set_ylabel('cleanemgDF and db4 (mV)')
+axs[2].set_ylabel('cleanemgDF and db6 (mV)')
+axs[3].set_ylabel('cleanemgDF and db20 (mV)')
+axs[4].set_ylabel('cleanemgDF and db38 (mV)')
 
 axs[4].set_xlabel('time')
 fig.tight_layout()
+plt.subplots_adjust(top=0.95,
+                    bottom=0.04,
+                    left=0.055,
+                    right=0.995,
+                    hspace=0.4,
+                    wspace=0.2)
+plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
 plt.show()
+
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
