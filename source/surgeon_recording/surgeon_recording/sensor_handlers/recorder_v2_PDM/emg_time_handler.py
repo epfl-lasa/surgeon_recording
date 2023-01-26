@@ -18,14 +18,17 @@ class EMGTimeHandler:
 
         # path of csv file to write start and end time
         self.csv_path_emg_time = csv_path
-
-        self.time_start = time.time()
-      
+        self.start_time = time.time() #in case of early close
+    
+    def start_emg(self):
+        self.start_time = time.time()
         
     def shutdown_emg(self):
         # Save duration in separate file
         end_time = time.time()
-        time_to_save = [['Start time', self.time_start], ['End time', end_time], ['Duration', end_time-self.time_start]]
+        time_to_save = [['Start time', self.start_time, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(self.start_time))], 
+                        ['End time', end_time, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))], 
+                        ['Duration', end_time-self.start_time, 'seconds']]
         np.savetxt(self.csv_path_emg_time, time_to_save, delimiter =", ", fmt ='% s')
         print("emg closed cleanly")
      
