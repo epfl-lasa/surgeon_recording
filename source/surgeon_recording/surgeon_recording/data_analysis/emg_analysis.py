@@ -133,42 +133,25 @@ for label in labels_list[2:]:
     RMSamplitude.append(np.sqrt(Pxx_spec[label].max()))
 
 #-DAUBECHIES WAVELET TRANSFORM
-wavelet2 = pywt.Wavelet('db2')
-wavelet4 = pywt.Wavelet('db4')
-wavelet6 = pywt.Wavelet('db6')
-wavelet20 = pywt.Wavelet('db20')
-wavelet38 = pywt.Wavelet('db38')
-
-n = len(cleanemgDF[label_studied])
-
-# daubechies coefficients
-(cA2, cD2) = pywt.dwt(cleanemgDF[label_studied], 'db2')
-(cA4, cD4) = pywt.dwt(cleanemgDF[label_studied], 'db4')
-(cA6, cD6) = pywt.dwt(cleanemgDF[label_studied], 'db6')
-(cA20, cD20) = pywt.dwt(cleanemgDF[label_studied], 'db20')
-(cA38, cD38) = pywt.dwt(cleanemgDF[label_studied], 'db38')
-
-# Applying the coefficients on cleanemgDF[label_studied]
-w2 = pywt.upcoef('a', cA2, 'db2', take=n, level=3) + pywt.upcoef('d', cD2, 'db2', take=n, level=3)
-w4 = pywt.upcoef('a', cA4, 'db4', take=n, level=3) + pywt.upcoef('d', cD4, 'db4', take=n, level=3)
-w6 = pywt.upcoef('a', cA6, 'db6', take=n, level=3) + pywt.upcoef('d', cD6, 'db6', take=n, level=3)
-w20 = pywt.upcoef('a', cA20, 'db20', take=n, level=3) + pywt.upcoef('d', cD20, 'db20', take=n, level=3)
-w38 = pywt.upcoef('a', cA38, 'db38', take=n, level=3) + pywt.upcoef('d', cD38, 'db38', take=n, level=3)
+w1 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db1")
+w2 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db2")
+w4 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db4")
+w6 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db6")
+w20 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db20")
 
 fig, axs = plt.subplots(5, 1, sharex='col')
-axs[0].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w2, label='db2' )
-axs[1].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w4, label='db4' )
-axs[2].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w6, label='db6' )
-axs[3].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w20, label='db20' )
-axs[4].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w38, label='db38' )
+axs[0].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w1, label='db4' )
+axs[1].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w2, label='db2' )
+axs[2].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w4, label='db4' )
+axs[3].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w6, label='db6' )
+axs[4].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w20, label='db20' )
 
-axs[0].set_ylabel('cleanemgDF and db2 (mV)')
-axs[1].set_ylabel('cleanemgDF and db4 (mV)')
-axs[2].set_ylabel('cleanemgDF and db6 (mV)')
-axs[3].set_ylabel('cleanemgDF and db20 (mV)')
-axs[4].set_ylabel('cleanemgDF and db38 (mV)')
+axs[0].set_ylabel('cleanemgDF and db1 (mV)')
+axs[1].set_ylabel('cleanemgDF and db2 (mV)')
+axs[2].set_ylabel('cleanemgDF and db4 (mV)')
+axs[3].set_ylabel('cleanemgDF and db6 (mV)')
+axs[4].set_ylabel('cleanemgDF and db20 (mV)')
 
-axs[4].set_xlabel('time')
 fig.tight_layout()
 plt.subplots_adjust(top=0.95,
                     bottom=0.04,
@@ -177,8 +160,12 @@ plt.subplots_adjust(top=0.95,
                     hspace=0.4,
                     wspace=0.2)
 plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
+axs.legend()
+axs.set_title('Removing High Frequency Noise with DWT', fontsize=18)
+axs.set_xlabel('Time')
 plt.show()
 
+# BEST bd4
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()

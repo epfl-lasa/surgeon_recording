@@ -9,6 +9,8 @@ from scipy.fft import fft
 import os
 from scipy import interpolate
 import time 
+import pywt
+
 
 import plotly.io as pio
 pio.renderers.default='browser'
@@ -298,6 +300,14 @@ def normalization(emgDF, emg_calib):
         
         normDF.iloc[:,col] = (normDF.iloc[:,col] - min_col) / (max_col - min_col) #normalization
     return (normDF)
+
+
+def lowpassfilter(signal, thresh = 0.63, wavelet="db4"):
+    thresh = thresh*np.nanmax(signal)
+    coeff = pywt.wavedec(signal, wavelet, mode="per",level=4)
+    coeff[1:] = (pywt.threshold(i, value=thresh, mode="soft" ) for i in coeff[1:])
+    reconstructed_signal = pywt.waverec(coeff, wavelet, mode="per" )
+    return reconstructed_signal
 
 
 def main():
