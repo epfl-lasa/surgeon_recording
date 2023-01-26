@@ -11,6 +11,7 @@ from surgeon_recording.sensor_handlers.recorder_v2_PDM.optitrack_handler_new2 im
 # from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_handler_new import EMGHandler_new
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_time_handler import EMGTimeHandler
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.tps_calib import TPScalibration
+from surgeon_recording.emg_calibration.calib_app import openApp
 
 
 class RecorderNew():
@@ -88,19 +89,8 @@ class RecorderNew():
                 #raise Exception('Exiting')
 
     def emg_calib(self): 
-        is_looping_emg = True
-        print("Starting EMG Calibration, press 'q' when finished.")
-        handler_emg_calib = EMGTimeHandler(self.csv_path_emg_cal)
-
-        while is_looping_emg is True:
-            # Wait for closing signal
-            
-            if keyboard.is_pressed('q'):
-                print('goodbye emg')
-                is_looping_emg = False
-                handler_emg_calib.shutdown_emg()
-                time.sleep(5)
-                #raise Exception('Exiting')
+        # Call calibraiton app
+        openApp(self.csv_path_emg_cal)
 
     def tps_thread(self): 
         filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"

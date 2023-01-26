@@ -38,10 +38,10 @@ class Window(QMainWindow):
 		]
 
 		self.gif_path_dict = [
-			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Flexors_activation.gif',
-			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Extensors_activation.gif',
-			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Thumb_extension.gif',
-			'C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/Thumb_flexion.gif'
+			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Flexors_activation.gif'),
+			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Extensors_activation.gif'),
+			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Thumb_extension.gif'),
+			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Thumb_flexion.gif')
 		]
 
 		self.dict_index = 0
@@ -283,11 +283,11 @@ class Window(QMainWindow):
 
 	def beep(self, duration='short'):
 		if duration == 'short':
-			wave_obj = sa.WaveObject.from_wave_file('C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/beep-07a.wav')
+			wave_obj = sa.WaveObject.from_wave_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'beep-07a.wav'))
 			play_obj = wave_obj.play()
 			# play_obj.wait_done()
 		elif duration == 'long':
-			wave_obj = sa.WaveObject.from_wave_file('C:/Users/LASA/Documents/Recordings/surgeon_recording/source/emg_calibration/audio_video_files/beep-04.wav')
+			wave_obj = sa.WaveObject.from_wave_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'beep-04.wav'))
 			play_obj = wave_obj.play()
 			# play_obj.wait_done()
 
@@ -315,28 +315,25 @@ class Window(QMainWindow):
 
 		# setting text to label
 		self.label.setText(str(self.count))
+	
+	def closeEvent(self, *args):
+		self.emg_time.shutdown_emg()
 
-def exit_test(emg_time):
-	emg_time.shutdown_emg()
 
-
-def main(csv_path = os.path.join(os.getcwd(), 'emg_calib_duration.csv')):
+def openApp(csv_path = os.path.join(os.getcwd(), 'emg_calib_duration.csv')):
 	# create pyqt5 app
 	App = QApplication(sys.argv)
 	
 	# Set time handler object + csv path 
-	# TODO : should be main argument
 	emg_time_handle = EMGTimeHandler(csv_path)
 
 	# create the instance of our Window
 	window = Window(emg_time_handle)
 
-	# To execute when closing app
-	atexit.register(exit_test, emg_time_handle)
-
 	# start the app
-	sys.exit(App.exec())
+	# sys.exit(App.exec())
+	App.exec()
 
 
 if __name__ == '__main__':
-	main()
+	openApp()
