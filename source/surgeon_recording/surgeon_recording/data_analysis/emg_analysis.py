@@ -3,6 +3,7 @@ import emg_utils as myfct
 import matplotlib.pyplot as plt
 import scipy.signal as sp
 import pyemgpipeline as pep
+from scipy.fft import fft
 import numpy as np
 from matplotlib.figure import SubplotParams
 import os 
@@ -31,28 +32,6 @@ cleanemgDF = myfct.clean_emg(path_to_mydata, emg_placement)
 #myfct.plot_emgDF(cleanemgDF)
 print(f"Calibration recording duration : {cleanemg_calib['relative time'].iloc[-1]:.2f} s")
 print(f"Recording duration : {cleanemgDF['relative time'].iloc[-1]:.2f} s")
-
-
-# # CHOOSE CUT OFF FREQ 
-# ch1=cleanemgDF["Flexor Carpi Ulnaris R"].to_numpy()
-# ch1 = myfct.interpolate_clean_emg(cleanemgDF)
-# ch1_fft = fft(ch1)
-# # ch1_fft_db = plt.magnitude_spectrum(ch1_fft, scale = "dB")
-# ch1_fft_db = plt.magnitude_spectrum(ch1_fft)
-
-# time = mydataDF['absolute time [s]'].to_numpy()
-# N = len(ch1)
-# n = np.arange(N)
-# sr=1500
-# T = N/sr
-# freq = n/T
-
-# # plt.plot(1/np.array(time), ch1_fft_db[0])
-# plt.plot(freq, np.abs(ch1_fft_db[0]))
-
-# # plt.xscale("log")
-# plt.show()
-# # Obtained freq at -3dB is 8*10^-6 Hz which is really small ...
 
 
 butt_calib = myfct.butterworth_filter(cleanemg_calib)
@@ -162,10 +141,9 @@ plt.subplots_adjust(top=0.95,
 plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
 axs.legend()
 axs.set_title('Removing High Frequency Noise with DWT', fontsize=18)
-axs.set_xlabel('Time')
+axs[4].set_xlabel('Time')
 plt.show()
-
-# BEST bd4
+# Best = bd4
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
