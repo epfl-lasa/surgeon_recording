@@ -6,7 +6,7 @@ import pyemgpipeline as pep
 from scipy.fft import fft
 import EntropyHub as EH
 import numpy as np
-# import entropy as ent
+#import antropy as ant
 from matplotlib.figure import SubplotParams
 import os 
 import pywt
@@ -151,9 +151,9 @@ axs[4].set_ylabel('normDF and db20 (mV)')
 
 
 # #-SAMPLE ENTROPY
-# std = np.std(normDF[label_studied])
-# # SampEnDF,_ = EH.SampEn(normDF[label_studied], m=2, r = 0.2 * std) 
-# SampEnDF = ent.sample_entropy(normDF[label_studied])
+# std = np.std(cleanemgDF[label_studied])
+# # SampEnDF,_ = EH.SampEn(cleanemgDF[label_studied], m=2, r = 0.2 * std) 
+# SampEnDF = ant.sample_entropy(cleanemgDF[label_studied].to_numpy(), order = int(0.2 * std))
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
@@ -172,11 +172,15 @@ axs[4].set_ylabel('normDF and db20 (mV)')
 
 
 # PLOT FILTERS fOR FEATURE EXTRACTION 
+plt.plot(cleanemgDF["relative time"], cleanemgDF[label_studied], color= 'b', label = "cleanemgDF", alpha = 0.5)
 # plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
+
 # plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'b', label = "envelopeDF", alpha = 0.5)
 # plt.plot(rmsDF["relative time"], rmsDF[label_studied], color= 'g', label = "rmsDF", alpha = 0.5)
 # plt.plot(gaussDF["relative time"], gaussDF[label_studied], color= 'r', label = "gaussDF", alpha = 0.5)
 # plt.plot(hammDF["relative time"], hammDF[label_studied], color= 'r', label = "hammDF", alpha = 0.5)
+# plt.plot(SampEnDF["relative time"], SampEnDF[label_studied], color= 'r', label = "SampEnDF", alpha = 0.5)
+
 
 # print('Peak height of power spectrum = ' + str(round(RMSamplitude[idx_label_studied], 4)) + ' Hz')
 
@@ -185,9 +189,9 @@ axs[4].set_ylabel('normDF and db20 (mV)')
 # plt.ylabel('Linear spectrum [V RMS]')
 
 
-# plt.legend()
-# plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
-# plt.show()
+plt.legend()
+plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
+plt.show()
 
 # myfct.plot_emgDF(envelopeDF, title_str='EnvelopeDF EMG')
 # myfct.plot_emgDF(rmsDF, title_str='rmsDF EMG')
