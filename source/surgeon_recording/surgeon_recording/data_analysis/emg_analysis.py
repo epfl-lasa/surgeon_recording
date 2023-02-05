@@ -6,7 +6,7 @@ import pyemgpipeline as pep
 from scipy.fft import fft
 import EntropyHub as EH
 import numpy as np
-import entropy as ent
+# import entropy as ent
 from matplotlib.figure import SubplotParams
 import os 
 import pywt
@@ -114,24 +114,26 @@ for label in labels_list[2:]:
     RMSamplitude.append(np.sqrt(Pxx_spec[label].max()))
 
 #-DAUBECHIES WAVELET TRANSFORM
-w1 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db1")
-w2 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db2")
-w4 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db4")
-w6 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db6")
-w20 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db20")
+w1 = myfct.lowpassfilter(normDF[label_studied], thresh = 0.05, wavelet="db1")
+w2 = myfct.lowpassfilter(normDF[label_studied], thresh = 0.05, wavelet="db2")
+w4 = myfct.lowpassfilter(normDF[label_studied], thresh = 0.05, wavelet="db4")
+w6 = myfct.lowpassfilter(normDF[label_studied], thresh = 0.05, wavelet="db6")
+w20 = myfct.lowpassfilter(normDF[label_studied], thresh = 0.05, wavelet="db20")
 
-# fig, axs = plt.subplots(5, 1, sharex='col')
-# axs[0].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w1, label='db4' )
-# axs[1].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w2, label='db2' )
-# axs[2].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w4, label='db4' )
-# axs[3].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w6, label='db6' )
-# axs[4].plot(cleanemgDF["relative time"], cleanemgDF[label_studied], cleanemgDF["relative time"], w20, label='db20' )
+fig, axs = plt.subplots(5, 1, sharex='col')
 
-# axs[0].set_ylabel('cleanemgDF and db1 (mV)')
-# axs[1].set_ylabel('cleanemgDF and db2 (mV)')
-# axs[2].set_ylabel('cleanemgDF and db4 (mV)')
-# axs[3].set_ylabel('cleanemgDF and db6 (mV)')
-# axs[4].set_ylabel('cleanemgDF and db20 (mV)')
+#TODO : Verify why normDF[label_studied].shape = 550277 and w1.shape = 550278
+axs[0].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], w1[:-1], label='db4' )
+axs[1].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], w2[:-1], label='db2' )
+axs[2].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], w4[:-1], label='db4' )
+axs[3].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], w6[:-1], label='db6' )
+axs[4].plot(normDF["relative time"], normDF[label_studied], normDF["relative time"], w20[:-1], label='db20' )
+
+axs[0].set_ylabel('normDF and db1 (mV)')
+axs[1].set_ylabel('normDF and db2 (mV)')
+axs[2].set_ylabel('normDF and db4 (mV)')
+axs[3].set_ylabel('normDF and db6 (mV)')
+axs[4].set_ylabel('normDF and db20 (mV)')
 
 # fig.tight_layout()
 # plt.subplots_adjust(top=0.95,
@@ -140,7 +142,7 @@ w20 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db2
 #                     right=0.995,
 #                     hspace=0.4,
 #                     wspace=0.2)
-# plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
+# plt.xlim([0, normDF['relative time'].iloc[-1]])
 # axs.legend()
 # axs.set_title('Removing High Frequency Noise with DWT', fontsize=18)
 # axs[4].set_xlabel('Time')
@@ -148,10 +150,10 @@ w20 = myfct.lowpassfilter(cleanemgDF[label_studied], thresh = 0.05, wavelet="db2
 # # Best = bd4
 
 
-#-SAMPLE ENTROPY
-std = np.std(cleanemgDF[label_studied])
-# SampEnDF,_ = EH.SampEn(cleanemgDF[label_studied], m=2, r = 0.2 * std) 
-SampEnDF = ent.sample_entropy(cleanemgDF[label_studied])
+# #-SAMPLE ENTROPY
+# std = np.std(normDF[label_studied])
+# # SampEnDF,_ = EH.SampEn(normDF[label_studied], m=2, r = 0.2 * std) 
+# SampEnDF = ent.sample_entropy(normDF[label_studied])
 
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
