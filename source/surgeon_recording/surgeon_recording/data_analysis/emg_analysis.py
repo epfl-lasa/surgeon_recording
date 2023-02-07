@@ -150,20 +150,13 @@ axs[4].set_ylabel('normDF and db20 (mV)')
 # # Best = bd4
 
 
-<<<<<<< Updated upstream
-# #-SAMPLE ENTROPY
-# std = np.std(cleanemgDF[label_studied])
-# # SampEnDF,_ = EH.SampEn(cleanemgDF[label_studied], m=2, r = 0.2 * std) 
-# SampEnDF = ant.sample_entropy(cleanemgDF[label_studied].to_numpy(), order = int(0.2 * std))
-=======
+
 # #-SAMPLE ENTROPY -NOT WORKING YET, MIGHT NOT BE USEFUL, ADD A ROLING WINDOW 
 # SampEnDF = []
 # for label in labels_list[2:]:
 #     std = np.std(cleanemgDF[label])
 #     SampEnDF.append( ant.sample_entropy(cleanemgDF[label].to_numpy(), order = int(0.2 * std)))
  
->>>>>>> Stashed changes
-
 #-PYEMGPIPELINE
 # mgr = pep.wrappers.DataProcessingManager()
 # emg_plot_params = pep.plots.EMGPlotParams(
