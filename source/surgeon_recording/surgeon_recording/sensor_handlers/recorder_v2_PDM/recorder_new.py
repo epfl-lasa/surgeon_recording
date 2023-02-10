@@ -12,6 +12,7 @@ from surgeon_recording.sensor_handlers.recorder_v2_PDM.optitrack_handler_new2 im
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_time_handler import EMGTimeHandler
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.tps_calib import TPScalibration
 from surgeon_recording.emg_calibration.calib_app import openApp
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.gopro_handler import GoProHandler
 
 
 class RecorderNew():
@@ -36,11 +37,14 @@ class RecorderNew():
         self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
         self.csv_path_emg = join(self.folder, "emg_duration.csv")
         self.csv_path_emg_cal = join(self.folder, "emg_calib_duration.csv")
+        self.csv_path_gopro = join(self.folder, "gopro_duration.csv")
 
         self.copy_calibration_files()
 
     
     def start_threads(self):
+
+        self.gopro_thread()
 
         self.stop_event = Event()
         recording_thread_opti = Thread(target=self.optitrack_thread)
@@ -57,6 +61,11 @@ class RecorderNew():
         recording_thread_emg = Thread(target=self.emg_thread)
         recording_thread_emg.start()
 
+    def gopro_thread(self):
+        # Start recording with go pro
+        # WARNING: If prints 'Waking up...' in console -> CONNECT GOPRO WITH WIFI
+        gp_handler = GoProHandler(self.csv_path_gopro)
+        gp_handler.start_gopro()
 
     def optitrack_thread(self):
         is_looping = True
@@ -71,7 +80,6 @@ class RecorderNew():
                 handler_opti.shutdown_optitrack()
                 #time.sleep(5)
                 #raise Exception('Exiting')
-
     
     def emg_thread(self): 
         is_looping_emg = True
@@ -101,8 +109,6 @@ class RecorderNew():
 
         else:
             print("WARNING: CALIBRATION NOT OK (raw file not found")
-
-
 
     def copy_calibration_files(self):
         

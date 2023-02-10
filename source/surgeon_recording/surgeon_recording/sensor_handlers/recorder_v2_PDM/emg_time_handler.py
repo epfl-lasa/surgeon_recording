@@ -32,13 +32,3 @@ class EMGTimeHandler:
         np.savetxt(self.csv_path_emg_time, time_to_save, delimiter =", ", fmt ='% s')
         print("emg closed cleanly")
      
-
-    
-   
-def main():
-    return
-       
-
-
-if __name__ == '__main__':
-    main()

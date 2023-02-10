@@ -4,6 +4,10 @@ import numpy as np
 
 gopro = GoProCamera.GoPro()#constants.gpcontrol
 
+test = gopro.IsRecording()
+
+print(test)
+
 gopro.overview()
 
 time_start = time.time()
