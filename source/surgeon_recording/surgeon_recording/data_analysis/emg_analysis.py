@@ -157,24 +157,15 @@ axs[4].set_ylabel('normDF and db20 (mV)')
 #     std = np.std(cleanemgDF[label])
 #     SampEnDF.append( ant.sample_entropy(cleanemgDF[label].to_numpy(), order = int(0.2 * std)))
  
-#-PYEMGPIPELINE
-# mgr = pep.wrappers.DataProcessingManager()
-# emg_plot_params = pep.plots.EMGPlotParams(
-#     n_rows=16,
-#     n_cols=1,
-#     fig_kwargs={
-#         'figsize': (16, 4),
-#         'subplotpars': SubplotParams(top=0.8, wspace=0.1, hspace=0.4)})
-# mgr.set_data_and_params(normDF.values.tolist(), hz=SR, channel_names=labels_list, emg_plot_params=emg_plot_params)
+#-IEMG                   
+iemgDF = normDF.copy()
+for label in labels_list[2:]:
+    iemgDF[label] = iemgDF[label].rolling(window=300).sum()
 
-# c = mgr.process_all(is_plot_processing_chain=True, is_overlapping_trials=True,
-#                     cycled_colors=['brown', 'green'],
-#                     legend_kwargs={'loc':'right', 'bbox_to_anchor':(1.4, 0.5), 'fontsize':'small'},
-#                     axes_pos_adjust=(0, 0, 0.75, 1))
 
 
 # PLOT FILTERS fOR FEATURE EXTRACTION 
-plt.plot(cleanemgDF["relative time"], cleanemgDF[label_studied], color= 'b', label = "cleanemgDF", alpha = 0.5)
+# plt.plot(cleanemgDF["relative time"], cleanemgDF[label_studied], color= 'b', label = "cleanemgDF", alpha = 0.5)
 # plt.plot(normDF["relative time"], normDF[label_studied], color= 'b', label = "normDF", alpha = 0.5)
 
 # plt.plot(envelopeDF["relative time"], envelopeDF[label_studied], color= 'b', label = "envelopeDF", alpha = 0.5)
@@ -191,9 +182,9 @@ plt.plot(cleanemgDF["relative time"], cleanemgDF[label_studied], color= 'b', lab
 # plt.ylabel('Linear spectrum [V RMS]')
 
 
-plt.legend()
-plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
-plt.show()
+# plt.legend()
+# plt.xlim([0, cleanemgDF['relative time'].iloc[-1]])
+# plt.show()
 
 # myfct.plot_emgDF(envelopeDF, title_str='EnvelopeDF EMG')
 # myfct.plot_emgDF(rmsDF, title_str='rmsDF EMG')
