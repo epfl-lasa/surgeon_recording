@@ -86,6 +86,11 @@ class RecorderNew():
 
         handler_emg = EMGTimeHandler(self.csv_path_emg)
 
+        # TODO in EMG HANDLER 
+        # TODO : updte config.json in emgAcquire with correct recoridng path (make update_config function, to call when initializing)
+        # TODO : use subprocess run to start emg recording with arg of new config.json (add to start_emg function)
+
+        # TODO : update shutdown_emg to .terminate() subprocess 
         while is_looping_emg is True:
             # Wait for closing signal
             
@@ -103,6 +108,8 @@ class RecorderNew():
     def tps_thread(self): 
         filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"
         proc = subprocess.run([filename])
+
+        # TODO, use stdin = PIPE , proc.stdin.write(self.folder_input) etc 
 
         if os.path.exists(self.csv_path_tps_raw):
             calib_tps = TPScalibration(folder_path = self.folder, csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)

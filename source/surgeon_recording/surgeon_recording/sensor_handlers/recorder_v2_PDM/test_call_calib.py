@@ -1,23 +1,9 @@
-
-from importlib.abc import ResourceReader
-import numpy as np
-import zmq
-import csv
-from threading import Thread, Event, Lock
-import os
 from os.path import join
-import time
-import json
-import keyboard
-import subprocess
-from shutil import copyfile
-
-
 from surgeon_recording.sensor_handlers.recorder_v2_PDM.tps_calib import TPScalibration
 
-folder_input = "80622"
-subject_input = "5"
-task_input = "5"
+folder_input = "13022023"
+subject_input = "1"
+task_input = "1"
 folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", folder_input, subject_input, task_input)
 
 
