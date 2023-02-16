@@ -34,7 +34,7 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
     for channel_nbr in range(len(channel_list)):
         # Clip data
         rawmydataDF[channel_list[channel_nbr]].clip(-5000, 5000, inplace=True)
-        # copy to new DF
+        # copy to new DF + RECTIFY
         cleanDF[muscle_list[channel_nbr]] = abs(rawmydataDF[channel_list[channel_nbr]])
         #correction of EMG signal by removing DC offset
         cleanDF[muscle_list[channel_nbr]] = cleanDF[muscle_list[channel_nbr]] - np.mean(cleanDF[muscle_list[channel_nbr]])
@@ -141,12 +141,16 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, ytitle
     plt.show()
     
 
-def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytitle = 'EMG normalized by MVIC', nb_rec_channels=16):
+def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytitle = 'EMG normalized by MVIC', nb_rec_channels=16, plot_from_time=0):
     # Input must be reformatted DF of emg, time_for_plot one of ['relative time', 'absolute time']
     # Plots all channels from emgDF
 
     # Get labels
     labels=emgDF.columns.values.tolist()[2:nb_rec_channels+2]
+
+    # Get index of time at which to start plot - WARNNG: given time shoul be an absolute value
+    dist = (emgDF['absolute time'] - plot_from_time).abs()
+    start_idx = dist.idxmin()
     
     # #PLOTLY
     # # Create figure and plot
@@ -161,8 +165,8 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
     
     # fig.show()
     
-     #MATPLOTLIB
-    fig, ax = plt.subplots(16,1, sharex=True,figsize=(30,20))
+    #MATPLOTLIB
+    fig, ax = plt.subplots(nb_rec_channels,1, sharex=True,figsize=(30,20))
     
     fig.suptitle(title_str)
     fig.supylabel(ytitle)
@@ -172,13 +176,13 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
                         right=0.995,
                         hspace=0.4,
                         wspace=0.2)
-    plt.xlim([0, emgDF[time_for_plot].to_numpy()[-1]])
+    plt.xlim([emgDF[time_for_plot].to_numpy()[start_idx], emgDF[time_for_plot].to_numpy()[-1]])
     plt.xlabel('time [s]')
     
      
     for i in range(len(labels)):
         ax[i].set_ylabel('ch' + str(i+1))
-        ax[i].plot(emgDF[time_for_plot].to_numpy(), emgDF[labels[i]].to_numpy())
+        ax[i].plot(emgDF[time_for_plot].to_numpy()[start_idx:], emgDF[labels[i]].to_numpy()[start_idx:])
         ax[i].set_title(labels[i], fontsize = 6)
         ax[i].tick_params(axis='x', labelsize=6)
         ax[i].tick_params(axis='y', labelsize=6)
