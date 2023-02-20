@@ -141,14 +141,14 @@ def plot_mydata_raw(mydata_path, title_str='Raw EMG', nb_rec_channels=16, ytitle
     plt.show()
     
 
-def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytitle = 'EMG normalized by MVIC', nb_rec_channels=16, plot_from_time=0):
+def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytitle = 'EMG normalized by MVIC', nb_rec_channels=16, plot_from_time=0, show_plot=True):
     # Input must be reformatted DF of emg, time_for_plot one of ['relative time', 'absolute time']
     # Plots all channels from emgDF
 
     # Get labels
     labels=emgDF.columns.values.tolist()[2:nb_rec_channels+2]
 
-    # Get index of time at which to start plot - WARNNG: given time shoul be an absolute value
+    # Get index of time at which to start plot - WARNNG: given time should be an absolute value
     dist = (emgDF['absolute time'] - plot_from_time).abs()
     start_idx = dist.idxmin()
     
@@ -187,7 +187,7 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
         ax[i].tick_params(axis='x', labelsize=6)
         ax[i].tick_params(axis='y', labelsize=6)
           
-    plt.show()
+    if show_plot : plt.show()
 
 def channel_to_muscle_label(emg_placement):
     # Returns corresponding muscle for plot label depending on emg placement

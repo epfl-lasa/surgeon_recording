@@ -124,7 +124,7 @@ def plot_tps_csv(mydata_path, title_str='Calibrated TPS', nb_rec_channels=6 ):
     plt.show()
     
 
-def plot_tpsDF(DF, time_for_plot='relative time', title_str='Clean TPS', nb_rec_channels=6):
+def plot_tpsDF(DF, time_for_plot='relative time', title_str='Clean TPS', nb_rec_channels=6, show_plot=True):
     # Input must be reformatted DF of emg, time_for_plot one of ['relative time', 'absolute time']
     # Plots all channels from emgDF
 
@@ -150,18 +150,19 @@ def plot_tpsDF(DF, time_for_plot='relative time', title_str='Clean TPS', nb_rec_
         ax[i].set_title(labels[i], fontsize = 6)
         ax[i].tick_params(axis='x', labelsize=6)
         ax[i].tick_params(axis='y', labelsize=6)
+        ax[i].axhline(y=0.0, c="red", linewidth=1)
           
-    # plt.show()
+    if show_plot : plt.show()
 
 def channel_to_finger_label():
-    # Returns corresponding muscle for plot label depending on emg placement
+    # Returns corresponding fingers for plot labels
     finger_list = [
     'Left index finger',
     'Left middle finger',
     'Left Thumb',
-    'Right Thumb',
     'Right Index',
-    'Right middle finger']
+    'Right middle finger',
+    'Right Thumb']
 
     return finger_list
 
@@ -169,6 +170,27 @@ def get_streaming_id():
     
     stream_id_list = [1,0,2,7,8,6]
     return stream_id_list
+
+def remove_bias(DF, time_to_measure_bias=[20,120], show_values=False):
+
+    # copy() needed to avoid modifying DF 
+    unbiasedDF = DF.copy()
+
+    # Get indexes of time values
+    index_for_measure = []
+    for time in time_to_measure_bias:
+        dist = (DF['relative time'] - time).abs()
+        index_for_measure.append(dist.idxmin())
+
+    # Get lowest/median value of each channel
+    median_values= DF.iloc[index_for_measure[0]:index_for_measure[1]].median(axis=0)[2:]
+    if show_values : print("Median Values used as bias : \n", median_values)
+
+    # Shift data updwards according to bias (=median values during rest time)
+    for i, j in enumerate(median_values.values):
+        unbiasedDF.iloc[:,i+2] = DF.iloc[:,i+2]+ abs(j)
+
+    return unbiasedDF
 
 def main():
     # Example of function calls 
