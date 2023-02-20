@@ -20,7 +20,7 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
     # Output : Format mydata to structured panda DataFrame 
 
     rawmydataDF = pd.read_csv(mydata_path, sep=';', header=0)
-    
+        
     # Convert channels labels to muscle labels
     channel_list = rawmydataDF.columns.values.tolist()[2:nb_rec_channels+2]
     muscle_list = channel_to_muscle_label(emg_placement)

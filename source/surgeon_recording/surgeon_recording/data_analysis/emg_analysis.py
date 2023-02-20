@@ -19,9 +19,9 @@ SR = 1500
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = r'../emg_recordings/12-01-2023/'
-path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
-path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
+data_dir = r'../emg_recordings/13-02-2023/'
+path_to_calibration = data_dir + '1/emg/calib/mydata.csv'
+path_to_mydata = data_dir + '1/emg/task/mydata.csv'
 
 emg_placement = 'Jarque-Bou'
   
@@ -63,7 +63,7 @@ interpDF = abs(interpDF) # rectify
     
 # norm_calib = myfct.normalization(interp_calib, interp_calib) #just to verify
 normDF = myfct.normalization(interpDF, interp_calib)
-
+myfct.plot_emgDF(normDF, title_str='Normalized EMG - Cécile',nb_rec_channels=4)
 
 # PLOT EFFECT OF PRE FILTERS 
 idx_label_studied = 15
