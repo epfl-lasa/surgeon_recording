@@ -19,9 +19,9 @@ SR = 1500
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = r'../emg_recordings/13-02-2023/'
-path_to_calibration = data_dir + '1/emg/calib/mydata.csv'
-path_to_mydata = data_dir + '1/emg/task/mydata.csv'
+data_dir = r'../emg_recordings/12-01-2023/'
+path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
+path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
 
 emg_placement = 'Jarque-Bou'
   
@@ -104,14 +104,30 @@ for label in labels_list[2:]:
 rmsDF = myfct.rms_filter(normDF)
 
 # -POWER SPECTRUM
-Pxx_spec = pd.DataFrame(columns=labels_list)
+psdDF = pd.DataFrame(columns=labels_list)
 f = pd.DataFrame(columns=labels_list)
 RMSamplitude = []
 for label in labels_list[2:]:
-    f[label], Pxx_spec[label] = sp.periodogram(normDF[label], SR, 'flattop', scaling='spectrum')
+    f[label], psdDF[label] = sp.periodogram(normDF[label], SR, 'flattop', scaling='spectrum')
 
     # The peak height in the power spectrum is an estimate of the RMS amplitude.
-    RMSamplitude.append(np.sqrt(Pxx_spec[label].max()))
+    RMSamplitude.append(np.sqrt(psdDF[label].max()))
+
+print('Peak height of power spectrum = ' + str(round(RMSamplitude[idx_label_studied], 4)) + ' Hz')
+
+
+# -FREQUENCY MEAN - average of the frequency
+fmnDF = psdDF.copy()
+for label in labels_list[2:]:
+    num = (psdDF[label]*f[label]).rolling(window = 300).sum()
+    num.dropna()
+    denum = psdDF[label].rolling(window = 300).sum()
+    denum.dropna()
+    fmnDF[label] = num/denum
+    fmnDF[label].dropna()
+    print(fmnDF[label])
+#fmnDF = fmnDF.dropna(how='all')#first window_length points are nan
+
 
 #-DAUBECHIES WAVELET TRANSFORM
 w1 = myfct.lowpassfilter(normDF[label_studied], thresh = 0.05, wavelet="db1")
