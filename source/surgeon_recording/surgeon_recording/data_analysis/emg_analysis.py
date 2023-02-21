@@ -63,7 +63,7 @@ interpDF = abs(interpDF) # rectify
     
 # norm_calib = myfct.normalization(interp_calib, interp_calib) #just to verify
 normDF = myfct.normalization(interpDF, interp_calib)
-myfct.plot_emgDF(normDF, title_str='Normalized EMG - Cécile',nb_rec_channels=4)
+# myfct.plot_emgDF(normDF, title_str='Normalized EMG - Cécile',nb_rec_channels=4)
 
 # PLOT EFFECT OF PRE FILTERS 
 idx_label_studied = 15
@@ -118,15 +118,13 @@ print('Peak height of power spectrum = ' + str(round(RMSamplitude[idx_label_stud
 
 # -FREQUENCY MEAN - average of the frequency
 fmnDF = psdDF.copy()
+
 for label in labels_list[2:]:
-    num = (psdDF[label]*f[label]).rolling(window = 300).sum()
-    num.dropna()
-    denum = psdDF[label].rolling(window = 300).sum()
-    denum.dropna()
-    fmnDF[label] = num/denum
-    fmnDF[label].dropna()
-    print(fmnDF[label])
-#fmnDF = fmnDF.dropna(how='all')#first window_length points are nan
+    fmnDF[label] = (psdDF[label]*f[label]).rolling(window = 300).sum() / psdDF[label].rolling(window = 300).sum()
+  
+fmnDF = fmnDF.dropna(how='all')
+    
+
 
 
 #-DAUBECHIES WAVELET TRANSFORM
