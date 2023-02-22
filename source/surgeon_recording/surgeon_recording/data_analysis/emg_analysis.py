@@ -14,7 +14,7 @@ import pandas as pd
 
 # GLOBAL VAR 
 SR = 1500
-
+emg_placement = 'Jarque-Bou'
 
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
@@ -23,7 +23,6 @@ data_dir = r'../emg_recordings/12-01-2023/'
 path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
 path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
 
-emg_placement = 'Jarque-Bou'
   
 # myfct.plot_mydata_raw(path_to_mydata)
 # myfct.plot_mydata_raw(path_to_calibration)

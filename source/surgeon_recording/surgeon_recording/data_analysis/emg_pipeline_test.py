@@ -9,14 +9,14 @@ import os
 
 # GLOBAL VAR 
 SR = 1500
+emg_placement = 'Jarque-Bou'
 
 # Path to mydata.csv folder
 data_dir = os.path.join(os.getcwd(), 'source/surgeon_recording/surgeon_recording', 'emg_recordings/12-01-2023/') #r'../emg_recordings/12-01-2023/'
 path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
 path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
 
-emg_placement = 'Jarque-Bou'
-  
+
 #-PEMGPIPELINE
 
 # Data reformatting to correspond wiht library (remove time array)
