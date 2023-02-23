@@ -1,5 +1,5 @@
 #IMPORTS 
-import emg_utils as myfct
+from emg_utils import * 
 import scipy.signal as sp
 import numpy as np
 import pandas as pd
@@ -12,19 +12,17 @@ class Emg_analysis_features:
                  file_mydata, 
                  start_idx, 
                  end_idx, 
-                 window_length, 
                  idx_label_studied = 15,
                  SR = 1500, 
                  emg_placement = 'Jarque-Bou'):
         self.data_dir = data_dir
         self.path_to_calibration = data_dir + file_calibration
         self.path_to_mydata = data_dir + file_mydata
-        self.start_idx = start_idx
-        self.end_idx = end_idx
+        self.t_start = start_idx * SR
+        self.t_end = end_idx * SR
         self.SR = SR
         self.emg_placement = emg_placement
         self.idx_label_studied = idx_label_studied
-        self.window_length = window_length
         
         self.filtering()
         self.init_extraction()
@@ -32,21 +30,21 @@ class Emg_analysis_features:
     
     #FILTERING
     def filtering(self):
-        cleanemg_calib = myfct.clean_emg(self.path_to_calibration, self.emg_placement)   
-        cleanemgDF = myfct.clean_emg(self.path_to_mydata, self.emg_placement)   
+        cleanemg_calib = clean_emg(self.path_to_calibration, self.emg_placement)   
+        cleanemgDF = clean_emg(self.path_to_mydata, self.emg_placement)   
         
         #Butterworth
-        butt_calib = myfct.butterworth_filter(cleanemg_calib)
-        butt = myfct.butterworth_filter(cleanemgDF)
+        butt_calib = butterworth_filter(cleanemg_calib)
+        butt = butterworth_filter(cleanemgDF)
         
         #Interpolation and rectification
-        interp_calib = myfct.interpolate_clean_emg(butt_calib, start_idx=0)
+        interp_calib = interpolate_clean_emg(butt_calib, t_start=0)
         interp_calib = abs(interp_calib) #rectify 
-        interpDF = myfct.interpolate_clean_emg(butt, start_idx=50)
+        interpDF = interpolate_clean_emg(butt, t_start=50)
         interpDF = abs(interpDF) # rectify
         
         #Amplitude normalization
-        self.normDF = myfct.normalization(interpDF, interp_calib)
+        self.normDF = normalization(interpDF, interp_calib)
         
         return self.normDF
     
@@ -58,10 +56,10 @@ class Emg_analysis_features:
         #select one knot in normDF
         self.norm2 = self.normDF.copy()
         for label in self.labels_list[2:]:
-            self.norm2[label] = self.normDF[label].iloc[self.start_idx : self.end_idx]
+            self.norm2[label] = self.normDF[label].iloc[self.t_start : self.t_end]
         
         self.norm2= self.norm2.dropna(how="any")
-        # myfct.plot_emgDF(norm2, title_str='Normalized EMG - Torstein')
+        # plot_emgDF(norm2, title_str='Normalized EMG - Torstein')
         
         return self.labels_list, self.label_studied, self.norm2
     
@@ -76,7 +74,7 @@ class Emg_analysis_features:
         return iemgDF
         
     #Mean absolute value
-    def mav(self, df) :
+    def mav(self, df, window_length) :
         mavDF = pd.DataFrame(columns = self.labels_list[2:])
         for label in self.labels_list[2:]:
             mavDF[label] = [(1/self.window_length)*abs(df[label]).sum()]
@@ -92,7 +90,7 @@ class Emg_analysis_features:
         return ssiDF
         
     #Variance - Power of EMG
-    def var(self, df) :
+    def var(self, df, window_length) :
         varDF = pd.DataFrame(columns = self.labels_list[2:])
         for label in self.labels_list[2:]:
             varDF[label] = [(1/(self.window_length-1))*(df[label]**2).sum()]
@@ -147,11 +145,11 @@ class Emg_analysis_features:
         return fmnDF 
     
     #Function that call every feature 
-    def all_features(self, df):
+    def all_features(self, df, window_length):
         iemgDF = self.iemg(df)
-        mavDF = self.mav(df)
+        mavDF = self.mav(df, window_length)
         ssiDF = self.ssi(df)
-        varDf = self.var(df)
+        varDf = self.var(df, window_length)
         rmsDF = self.rms(df)
         wlDF = self.wl(df)
         f, psdDF, RMSamplitude = self.psd(df)
