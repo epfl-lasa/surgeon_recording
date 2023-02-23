@@ -6,12 +6,11 @@ from PyQt5.QtCore import QTimer, Qt
 import sys
 import simpleaudio as sa
 import os
-import atexit
-from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_time_handler import EMGTimeHandler
+from surgeon_recording.sensor_handlers.recorder_v2_PDM.emg_handler import EMGHandler
 
 class Window(QMainWindow):
 
-	def __init__(self, emg_time):
+	def __init__(self, emg_handle):
 		super().__init__()
 
 		# setting title
@@ -20,8 +19,8 @@ class Window(QMainWindow):
 		# setting geometry
 		self.setGeometry(100, 100, 900, 600)
 
-		# Set emgTimeHandler object
-		self.emg_time = emg_time
+		# Set emgHandler object
+		self.emg_handle = emg_handle
 
 		# Set muscle dictionnaries 
 		self.muscle_name_dict = ['Flexor Carpi Ulnaris/Radialis + Digitorum',
@@ -295,7 +294,7 @@ class Window(QMainWindow):
 	def Start(self):
 
 		# Start recording duration for calib
-		self.emg_time.start_emg()
+		self.emg_handle.update_start_time()
 
 		# making flag to true
 		self.flag = True
@@ -317,18 +316,15 @@ class Window(QMainWindow):
 		self.label.setText(str(self.count))
 	
 	def closeEvent(self, *args):
-		self.emg_time.shutdown_emg()
+		self.emg_handle.shutdown_emg()
 
 
-def openApp(csv_path = os.path.join(os.getcwd(), 'emg_calib_duration.csv')):
+def openApp(emg_handle):
 	# create pyqt5 app
 	App = QApplication(sys.argv)
-	
-	# Set time handler object + csv path 
-	emg_time_handle = EMGTimeHandler(csv_path)
 
 	# create the instance of our Window
-	window = Window(emg_time_handle)
+	window = Window(emg_handle)
 
 	# start the app
 	# sys.exit(App.exec())
@@ -336,4 +332,5 @@ def openApp(csv_path = os.path.join(os.getcwd(), 'emg_calib_duration.csv')):
 
 
 if __name__ == '__main__':
-	openApp()
+	emg_handle = EMGHandler(os.path.join(os.getcwd(), 'emg_calib_duration.csv'))
+	openApp(emg_handle)
