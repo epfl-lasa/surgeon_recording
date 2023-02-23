@@ -313,35 +313,3 @@ def lowpassfilter(signal, thresh = 0.63, wavelet="db4"):
     reconstructed_signal = pywt.waverec(coeff, wavelet, mode="per" )
     return reconstructed_signal
 
-
-def main():
-    # Example of function calls 
-    # TODO : Should be used in separate script with 'from emg_utils import *'
-    # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
-
-    # Path to mydata.csv folder
-    data_dir = r'C:/Users/cabasse/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/emg_recordings/20-12-2022/calibration_torstein_1/'
-    path_to_mydata = data_dir + 'mydata.csv'
-    emg_placement = 'Protocol'
-
-    # plot_mydata_raw(path_to_mydata)
-
-    cleanemgDF = clean_emg(path_to_mydata, emg_placement)   
-    # plot_emgDF(cleanemgDF)
-    print(f"Recording duration : {cleanemgDF['relative time'].iloc[-1]:.2f} s" )
-
-    # Might not be necessary for data analysis
-    interpDF = interpolate_clean_emg(cleanemgDF, start_idx=50)
-    plot_emgDF(interpDF, title_str='Interpolated EMG')
-
-    butt = butterworth_filter(interpDF)
-    # plot_emgDF(butt)
-
-    rms = rms_filter(cleanemgDF)
-    # plot_emgDF(rms)
-
-    return
-
-
-if __name__ == '__main__':
-    main()
