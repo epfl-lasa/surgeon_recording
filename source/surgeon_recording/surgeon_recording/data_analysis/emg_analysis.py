@@ -1,5 +1,5 @@
 # IMPORTS
-import emg_utils as myfct
+import modules.emg_utils as myfct
 import matplotlib.pyplot as plt
 import scipy.signal as sp
 import pyemgpipeline as pep

@@ -1,5 +1,5 @@
 #IMPORTS 
-from emg_utils import * 
+import modules.emg_utils as myfct
 import scipy.signal as sp
 import numpy as np
 import pandas as pd
@@ -30,21 +30,21 @@ class Emg_analysis_features:
     
     #FILTERING
     def filtering(self):
-        cleanemg_calib = clean_emg(self.path_to_calibration, self.emg_placement)   
-        cleanemgDF = clean_emg(self.path_to_mydata, self.emg_placement)   
+        cleanemg_calib = myfct.clean_emg(self.path_to_calibration, self.emg_placement)   
+        cleanemgDF = myfct.clean_emg(self.path_to_mydata, self.emg_placement)   
         
-        #Butterworth
-        butt_calib = butterworth_filter(cleanemg_calib)
-        butt = butterworth_filter(cleanemgDF)
+        #Butterworths
+        butt_calib = myfct.butterworth_filter(cleanemg_calib)
+        butt = myfct.butterworth_filter(cleanemgDF)
         
         #Interpolation and rectification
-        interp_calib = interpolate_clean_emg(butt_calib, t_start=0)
+        interp_calib = myfct.interpolate_clean_emg(butt_calib, start_idx=0)
         interp_calib = abs(interp_calib) #rectify 
-        interpDF = interpolate_clean_emg(butt, t_start=50)
+        interpDF = myfct.interpolate_clean_emg(butt, start_idx=50)
         interpDF = abs(interpDF) # rectify
         
         #Amplitude normalization
-        self.normDF = normalization(interpDF, interp_calib)
+        self.normDF = myfct.normalization(interpDF, interp_calib)
         
         return self.normDF
     
@@ -77,7 +77,7 @@ class Emg_analysis_features:
     def mav(self, df, window_length) :
         mavDF = pd.DataFrame(columns = self.labels_list[2:])
         for label in self.labels_list[2:]:
-            mavDF[label] = [(1/self.window_length)*abs(df[label]).sum()]
+            mavDF[label] = [(1/window_length)*abs(df[label]).sum()]
         self.mavDF = mavDF
         return mavDF
     
@@ -93,7 +93,7 @@ class Emg_analysis_features:
     def var(self, df, window_length) :
         varDF = pd.DataFrame(columns = self.labels_list[2:])
         for label in self.labels_list[2:]:
-            varDF[label] = [(1/(self.window_length-1))*(df[label]**2).sum()]
+            varDF[label] = [(1/(window_length-1))*(df[label]**2).sum()]
         self.varDF = varDF
         return varDF
         
