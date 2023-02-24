@@ -10,3 +10,4 @@ dtw
 jupyterlab
 kaleido
 keyboard
+autopy

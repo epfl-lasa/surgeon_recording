@@ -20,17 +20,16 @@ class RecorderNew():
         self.duration = 100
         
         self.lock = ()
+
+        # TODO : read this from file i of input every time 
         self.folder_input = input('Name of folder : ')
         self.subject_nb = input('subject nb : ')
         self.task_input = input('run nb (ex 1) : ')
 
-        #self.folder = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder"
         self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self.task_input)
-
      
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
-        #self.csv_path_optitrack = "/Users/LASA/Documents/Recordings/surgeon_recording/data/new_recorder/optitrack_1.csv"
         self.csv_path_optitrack1 = join(self.folder, "optitrack_stats.csv")
         self.csv_path_optitrack2 = join(self.folder, "optitrack.csv")
         self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
@@ -44,19 +43,19 @@ class RecorderNew():
 
         self.copy_calibration_files()
 
-        # self.gopro_thread()
+        self.gopro_thread()
 
-        # self.stop_event = Event()
-        # recording_thread_opti = Thread(target=self.optitrack_thread)
-        # recording_thread_opti.start()
-        # self.lock = Lock()
+        self.stop_event = Event()
+        recording_thread_opti = Thread(target=self.optitrack_thread)
+        recording_thread_opti.start()
+        self.lock = Lock()
 
-        # time.sleep(5)
+        time.sleep(5)
 
-        # recording_thread_tps = Thread(target=self.tps_thread)
-        # recording_thread_tps.start()
+        recording_thread_tps = Thread(target=self.tps_thread)
+        recording_thread_tps.start()
 
-        # time.sleep(25)
+        time.sleep(5)
 
         recording_thread_emg = Thread(target=self.emg_thread)
         recording_thread_emg.start()
@@ -161,7 +160,7 @@ class RecorderNew():
 def main():
     recorder = RecorderNew()
 
-    # Optional EMG claibraiton (in case of crash)
+    # Optional EMG calibration (in case of crash)
     calibrate_emg = input("Calibrate EMG ? [y/n] \n")
     if calibrate_emg == 'y' or calibrate_emg == 'Y' or calibrate_emg == 'yes':
         recorder.emg_calib()

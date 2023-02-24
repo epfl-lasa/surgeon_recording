@@ -325,6 +325,9 @@ def openApp(emg_handle):
 
 	# create the instance of our Window
 	window = Window(emg_handle)
+	
+	# Display window on foreground
+	window.activateWindow()
 
 	# start the app
 	# sys.exit(App.exec())

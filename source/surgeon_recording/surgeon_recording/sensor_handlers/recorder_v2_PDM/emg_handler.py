@@ -3,8 +3,7 @@ import numpy as np
 import subprocess
 import json
 import os
-import mouse
-# import autopy
+import autopy
 
 # ######
 #
@@ -27,20 +26,17 @@ class EMGHandler:
         self.start_time = time.time()
 
         self.emgAcq_process = subprocess.Popen([self.path_to_exe, self.config_file], cwd=self.emgAcq_cwd)
-        
-        # TODO : automate mouse lcick, mouse module doesn't work for some reason (moving mouse? called twice?)
 
-        # time.sleep(1.5)
-        
-        # autopy.mouse.move(1315, 795)
-        # # time.sleep(0.5)
-        # # mouse.move(1315, 795, absolute=True)
-        # # mouse.move(1315, 795, absolute=True)
-        # autopy.mouse.click(button="left")
+        # Wait for software to open
+        time.sleep(0.5)
+
+        # Move mouse and click on EMG window
+        autopy.mouse.move(1100, 664)
+        autopy.mouse.click()
     
     def write_config_file(self, folder_name, subject, task, emg_file_label):
         # args are path for data file
-        # emg_calib is bool to label csv file correctly
+        # emg_label to name csv file correctly
 
         # Set path to config file
         config_file_path = os.path.join(self.emgAcq_cwd, "cfg", self.config_file)
