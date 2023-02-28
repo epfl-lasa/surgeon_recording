@@ -2,7 +2,7 @@ from modules import emg_utils as myfct
 from modules.emg_analysis_test_features import Emg_analysis_features
 import matplotlib.pyplot as plt
 import pandas as pd
-import textwrap
+from textwrap import wrap
 
 cecile = Emg_analysis_features(data_dir = r'../emg_recordings/13-01-2023/', 
                                file_calibration = 'calib_cecile/mydata.csv', 
@@ -21,23 +21,19 @@ torstein = Emg_analysis_features(data_dir = r'../emg_recordings/12-01-2023/',
 cecile.all_features(cecile.normDF, cecile.normDF.shape[0])
 torstein.all_features(torstein.normDF, torstein.normDF.shape[0])
 
-
-# myfct.plot_emgDF(cecile.normDF)
-# ax = cecile.normDF.plot.bar(rot = 0)
-# ax = cecile.normDF.plot.bar(x = cecile.labels_list, y = cecile.mavDF, rot = 0)
-
-plotdata = pd.DataFrame({"mav Cécile" : cecile.mavDF.values.tolist()[0], 
+#plot mavDFs
+plt.figure()
+plotmav = pd.DataFrame({"mav Cécile" : cecile.mavDF.values.tolist()[0], 
                          "mav Torstein" : torstein.mavDF.values.tolist()[0]}, index = cecile.labels_list[2:])
-plotdata.plot(kind="bar")
-plt.title("Mean absolute value")
-plt.xlabel("Muscles")
-plt.ylabel("mavDF")
+
+ax = plotmav.plot.bar(rot=0)
+ax.set_title("Mean absolute value", fontsize = 25)
+ax.set_xlabel("Muscles", fontsize = 20)
+ax.set_ylabel("mavDF", fontsize = 20)
+
+#to wrap text on xlabels
+labels = [ '\n'.join(wrap(l, 10)) for l in cecile.labels_list[2:]] 
+ax.set_xticklabels(labels, rotation=45, fontsize = 15)
 
 
-# cecile.normDF.reset_index().plot(x= str(cecile.labels_list[2:]), 
-#                                  y=[torstein.mavDF, cecile.mavDF], 
-#                                  title = "Mean absolute value", 
-#                                  xlabel = "Muscles", 
-#                                  ylabel = "mavDF",
-#                                  kind="bar",
-#                                  rot = 0)
+
