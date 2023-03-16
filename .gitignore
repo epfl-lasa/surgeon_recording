@@ -18,3 +18,4 @@ __pycache__/
 .vs/*
 .vscode/*
 *.csv
+/source/surgeon_recording/surgeon_recording/emg_recordings/*
