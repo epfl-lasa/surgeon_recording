@@ -128,7 +128,7 @@ class OptitrackHandlerNew2:
             self.row_optitrack2= [] 
             self.received_id =[]
 
-           # reset variables
+            # reset variables
             for id in self.received_id: 
                 self.received_body[id]['position'] = 0
                 self.received_body[id]['orientation'] =0 
@@ -138,7 +138,7 @@ class OptitrackHandlerNew2:
     # This is a callback function that gets connected to the NatNet client. It is called once per rigid body per frame
     def receive_rigid_body_frame(self, id, position, rotation):      
         if id in self.received_body.keys():
-            # get the id of the tools, th eposition and quaternion values
+            # get the id of the tools, the position and quaternion values
             self.received_id.append(id)
             self.received_body[id]['position'] = position
             self.received_body[id]['orientation'] = rotation
@@ -159,10 +159,10 @@ class OptitrackHandlerNew2:
         # write the statistics
         self.row_optitrack1 = [self.count, self.count2, len(self.received_frames['frame_number']) ,self.received_frames['frame_number'][-1] - self.received_frames['frame_number'][0] ]
         self.writer_opti1.writerow(self.row_optitrack1)
-        print(self.count)
-        print(self.count2)
-        print(len(self.received_frames['frame_number']))
-        print(self.received_frames['frame_number'][-1] - self.received_frames['frame_number'][0])
+        # print(self.count)
+        # print(self.count2)
+        print("Number of RECEIVED frames : ", len(self.received_frames['frame_number']))
+        print("Number of ACQUIRED frames : ", self.received_frames['frame_number'][-1] - self.received_frames['frame_number'][0])
         self.opti1.close()
         self.opti2.close()
 

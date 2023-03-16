@@ -21,7 +21,7 @@ class RecorderNew():
         
         self.lock = ()
 
-        # TODO : read this from file i of input every time 
+        # TODO : read this from file instead of input every time 
         self.folder_input = input('Name of folder : ')
         self.subject_nb = input('subject nb : ')
         self.task_input = input('run nb (ex 1) : ')
@@ -43,7 +43,7 @@ class RecorderNew():
 
         self.copy_calibration_files()
 
-        self.gopro_thread()
+        # self.gopro_thread()
 
         self.stop_event = Event()
         recording_thread_opti = Thread(target=self.optitrack_thread)
@@ -140,7 +140,7 @@ class RecorderNew():
             if os.path.exists(join(destination_dir, calibration_file)):
                 os.remove(join(destination_dir, calibration_file))
 
-            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 2000: 
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 5000: 
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
                 print("OK: " + calibration_file + ' copied in config folder')
             else:
@@ -149,7 +149,7 @@ class RecorderNew():
             if os.path.exists(join(destination_dir_tps, calibration_file)):
                 os.remove(join(destination_dir_tps, calibration_file))
 
-            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 2000: # file not older than 10 minutes
+            if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 5000: # file not older than 30 minutes
                 copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
                 print("OK: " + calibration_file + ' copied in data folder')
             else:
