@@ -19,3 +19,4 @@ __pycache__/
 .vscode/*
 *.csv
 /source/surgeon_recording/surgeon_recording/emg_recordings/*
+/Recorder_2022/exp_data/*

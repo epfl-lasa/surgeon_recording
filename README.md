@@ -1,5 +1,7 @@
 # Surgeon recording
 
+TODO : UPDATE README HERE 
+
 This repository contains a library to record and read the flux of a several sensors such as Realsense camera, EMG, TPS
 and Opitrack.
 

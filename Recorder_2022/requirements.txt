@@ -1,0 +1,13 @@
+numpy
+pyrealsense2
+dash
+zmq
+pandas
+opencv-python
+scikit-learn
+fastdtw
+dtw
+jupyterlab
+kaleido
+keyboard
+autopy
