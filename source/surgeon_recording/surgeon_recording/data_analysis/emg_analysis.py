@@ -19,9 +19,9 @@ emg_placement = 'Jarque-Bou'
 # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
   
 # Path to mydata.csv folder
-data_dir = r'../emg_recordings/12-01-2023/'
-path_to_calibration = data_dir + 'torstein_calib_half/mydata.csv'
-path_to_mydata = data_dir + 'torstein_task_2/mydata.csv'
+data_dir = r'../emg_recordings/17-04-2023/'
+path_to_calibration = data_dir + 'emg_data_calibration.csv'
+path_to_mydata = data_dir + 'emg_data_task.csv'
 
   
 # myfct.plot_mydata_raw(path_to_mydata)
@@ -34,6 +34,18 @@ cleanemgDF = myfct.clean_emg(path_to_mydata, emg_placement)
 print(f"Calibration recording duration : {cleanemg_calib['relative time'].iloc[-1]:.2f} s")
 print(f"Recording duration : {cleanemgDF['relative time'].iloc[-1]:.2f} s")
 
+## CONVERT THE MUSCLES LABELS INTO A LIST
+labels_list = cleanemg_calib.columns.values.tolist()
+idx_label_studied = 15
+label_studied = cleanemg_calib.columns.values.tolist()[idx_label_studied]
+
+
+## SEE FOURIER TRANSFORM OF CLEAN DATA TO VERIFY REAL SAMPLING RATE
+diff_cleanemg_calib = cleanemg_calib["absolute time"].diff() #to see what is the sampling rate
+diff_cleanemg_calib = diff_cleanemg_calib[1:] #remove first nan
+freq_cleanemg_calib = 1/diff_cleanemg_calib
+print("the maximum frequency is in Hz : ", max(freq_cleanemg_calib))
+#plt.plot(freq_cleanemg_calib)
 
 butt_calib = myfct.butterworth_filter(cleanemg_calib)
 butt = myfct.butterworth_filter(cleanemgDF)
@@ -65,8 +77,6 @@ normDF = myfct.normalization(interpDF, interp_calib)
 # myfct.plot_emgDF(normDF, title_str='Normalized EMG - Cécile',nb_rec_channels=4)
 
 # PLOT EFFECT OF PRE FILTERS 
-idx_label_studied = 15
-label_studied = cleanemg_calib.columns.values.tolist()[idx_label_studied]
 # plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib", alpha = 0.5)
 #plt.plot(butt_calib["relative time"], butt_calib[label_studied], color= 'r', label = "butt_calib", alpha = 0.5)
 # plt.plot(interp_calib["relative time"], interp_calib[label_studied], color= 'c', label = "interp_calib", alpha = 0.5)
@@ -79,8 +89,6 @@ label_studied = cleanemg_calib.columns.values.tolist()[idx_label_studied]
 # plt.show()
 
 # FEATURE EXTRACTION
-labels_list = cleanemg_calib.columns.values.tolist()
-
 # -LINEAR ENVELOPE: creates lowpass filter and apply to rectified signal to get EMG envelope
 low_pass = 8/(SR/2) #8Hz is the Fc
 b2, a2 = sp.butter(4, low_pass, btype='lowpass')
