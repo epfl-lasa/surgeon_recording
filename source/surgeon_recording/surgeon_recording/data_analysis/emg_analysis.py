@@ -41,10 +41,11 @@ label_studied = cleanemg_calib.columns.values.tolist()[idx_label_studied]
 
 
 ## SEE FOURIER TRANSFORM OF CLEAN DATA TO VERIFY REAL SAMPLING RATE
-diff_cleanemg_calib = cleanemg_calib["absolute time"].diff() #to see what is the sampling rate
-diff_cleanemg_calib = diff_cleanemg_calib[1:] #remove first nan
+diff_cleanemg_calib = cleanemg_calib["relative time"].diff() #to see what is the sampling rate
+diff_cleanemg_calib = diff_cleanemg_calib[400:] #remove points
 freq_cleanemg_calib = 1/diff_cleanemg_calib
 print("the maximum frequency is in Hz : ", max(freq_cleanemg_calib))
+print("the mean frequency is in Hz : ", freq_cleanemg_calib.mean())
 #plt.plot(freq_cleanemg_calib)
 
 butt_calib = myfct.butterworth_filter(cleanemg_calib)
