@@ -1,9 +1,9 @@
-from emg_utils import *
-from tps_utils import * 
+from modules.emg_utils import *
+from modules.tps_utils import * 
 
-data_dir = '../emg_recordings/13-02-2023/1/'
+data_dir = 'exp_data/170423/1/1/'
 path_to_tps = data_dir + 'TPS_calibrated.csv'
-path_to_mydata = data_dir + 'emg/task/mydata.csv'
+path_to_mydata = data_dir + 'emg_data_task.csv'
 
 emg_placement = 'Protocol'
 
@@ -35,7 +35,7 @@ print("Lowest Values time : \n", lowest_values_time)
 # WARNING : abs time in emg is in seconds, abs time in tps is in ms -> NEED TO FIX in recorder
 start_time = get_starting_time(cleantpsDF)
 
-# cleanemgDF = clean_emg(path_to_mydata, emg_placement)   
-# plot_emgDF(cleanemgDF)
+cleanemgDF = clean_emg(path_to_mydata, emg_placement)   
+plot_emgDF(cleanemgDF)
 # print(f"Recording duration : {cleanemgDF['relative time'].iloc[-1]:.2f} s" )
 plot_emgDF(cleanemgDF, title_str='Interpolated EMG', time_for_plot='absolute time', nb_rec_channels=4, plot_from_time=start_time)

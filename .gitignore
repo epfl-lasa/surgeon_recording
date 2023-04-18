@@ -20,3 +20,4 @@ __pycache__/
 *.csv
 /source/surgeon_recording/surgeon_recording/emg_recordings/*
 /Recorder_2022/exp_data/*
+/Recorder_2023/config/FingerTPS_EPFL2-cal.txt

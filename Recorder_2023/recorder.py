@@ -40,12 +40,14 @@ class Recorder():
 
         self.copy_calibration_files()
 
-        self.gopro_thread()
-        
         self.stop_event = Event()
-        recording_thread_opti = Thread(target=self.optitrack_thread)
+        recording_thread_opti = Thread(target=self.gopro_thread)
         recording_thread_opti.start()
         self.lock = Lock()
+        # self.gopro_thread()
+        
+        recording_thread_opti = Thread(target=self.optitrack_thread)
+        recording_thread_opti.start()
 
         time.sleep(2)
         
