@@ -77,7 +77,7 @@ interpDF = abs(interpDF) # rectify
     
 # norm_calib = myfct.normalization(interp_calib, interp_calib) #just to verify
 normDF = myfct.normalization(interpDF, interp_calib)
-# myfct.plot_emgDF(normDF, title_str='Normalized EMG - Cécile',nb_rec_channels=4)
+# myfct.plot_emgDF(normDF, title_str='Normalized EMG - Cécile',nb_rec_channels=16)
 
 # PLOT EFFECT OF PRE FILTERS 
 # plt.plot(cleanemg_calib["relative time"], cleanemg_calib[label_studied], color= 'b', label = "cleanemg_calib", alpha = 0.5)
