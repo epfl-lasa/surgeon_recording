@@ -48,8 +48,6 @@ print("the maximum frequency is in Hz : ", max(freq_cleanemg_calib))
 print("the mean frequency is in Hz : ", freq_cleanemg_calib.mean())
 #plt.plot(freq_cleanemg_calib)
 
-# TODO : absolute time has not the same SR as the relative. Approximately: SR_relative = 1500Hz, SR_absolute = 15000Hz
-
 butt_calib = myfct.butterworth_filter(cleanemg_calib)
 butt = myfct.butterworth_filter(cleanemgDF)
 # myfct.plot_emgDF(butt_calib)
