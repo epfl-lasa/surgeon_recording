@@ -11,3 +11,5 @@ jupyterlab
 kaleido
 keyboard
 autopy
+pywavelets
+hampel

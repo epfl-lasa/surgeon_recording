@@ -9,6 +9,7 @@ from scipy.fft import fft
 import os
 from scipy import interpolate
 import time 
+from hampel import hampel
 
 
 def clean_tps(mydata_path):
@@ -33,8 +34,8 @@ def clean_tps(mydata_path):
         cleanDF[finger_list[i]] = rawmydataDF[column_name]
         i+=1
 
-    # Reset relativ etime to mathc aboslute 
-    cleanDF['relative time'] = (rawmydataDF[' absolute_time'] - rawmydataDF[' absolute_time'].iloc[0])* 1e-3
+    # Reset relative to 0 
+    cleanDF['relative time'] = (rawmydataDF[' relative_time'] - rawmydataDF[' relative_time'].iloc[0])* 1e-3
 
     # Copy absolute time
     cleanDF['absolute time'] = rawmydataDF[' absolute_time']
@@ -92,6 +93,28 @@ def interpolate_clean_tps(cleanDF, start_idx=0, sr=1500, nb_rec_channels=6):
 
     return interpDF
 
+
+def remove_outlier_hampel(tpsDF, window = 15, threshold = 10, nb_rec_channels=6):
+
+    # Create filtered DF
+    labels_list = tpsDF.columns.values.tolist()[2:nb_rec_channels+2]
+    column_names = ['relative time', 'absolute time']
+    column_names.extend(labels_list)
+    filteredDF = pd.DataFrame(columns=column_names)
+
+    # Copy time arrays
+    filteredDF['relative time'] = tpsDF['relative time']
+    filteredDF['absolute time'] = tpsDF['absolute time']
+
+    # Filter using hampel (moving window of size 2*window_size+1, removes points n times bigger than window median)
+    start_filter = time.time()
+    for label in labels_list: 
+        filteredDF[label] = hampel(tpsDF[label], window_size = window, n=threshold, imputation = True)
+        end_filter = time.time()
+        duration = end_filter - start_filter
+        print(f"Took {duration:.2f} seconds to filter {label} column.")
+
+    return filteredDF
 
 def plot_tps_csv(mydata_path, title_str='Calibrated TPS', nb_rec_channels=6 ):
     # Plots raw data from mydata.csv 
