@@ -94,17 +94,16 @@ def interpolate_clean_tps(cleanDF, start_idx=0, sr=1500, nb_rec_channels=6):
     return interpDF
 
 
-def remove_outlier_hampel(tpsDF, window = 15, threshold = 10, nb_rec_channels=6):
+def remove_outlier_hampel(tpsDF, labels_to_filter=False, window=20, threshold=5, nb_rec_channels=6):
 
     # Create filtered DF
-    labels_list = tpsDF.columns.values.tolist()[2:nb_rec_channels+2]
-    column_names = ['relative time', 'absolute time']
-    column_names.extend(labels_list)
-    filteredDF = pd.DataFrame(columns=column_names)
+    if labels_to_filter == False :
+        labels_list = tpsDF.columns.values.tolist()[2:nb_rec_channels+2]
+    else :
+        labels_list = labels_to_filter
 
-    # Copy time arrays
-    filteredDF['relative time'] = tpsDF['relative time']
-    filteredDF['absolute time'] = tpsDF['absolute time']
+    # Copy dataframe
+    filteredDF = tpsDF.copy()
 
     # Filter using hampel (moving window of size 2*window_size+1, removes points n times bigger than window median)
     start_filter = time.time()
@@ -113,6 +112,9 @@ def remove_outlier_hampel(tpsDF, window = 15, threshold = 10, nb_rec_channels=6)
         end_filter = time.time()
         duration = end_filter - start_filter
         print(f"Took {duration:.2f} seconds to filter {label} column.")
+
+    # filter only left thumb - SPECIAL CASE
+    # filteredDF['Left Thumb'] = hampel(tpsDF['Left Thumb'], window_size = window, n=threshold, imputation = True)
 
     return filteredDF
 
@@ -177,10 +179,68 @@ def plot_tpsDF(DF, time_for_plot='relative time', title_str='Clean TPS', nb_rec_
           
     if show_plot : plt.show()
 
+def plot_tps_emg(tpsDF, emgDF, labels_tps, labels_emg, time_to_plot=[0,100], title_str='TPS + EMG activation', show_plot = True):
+    # Plot specific TPS and EMG channels on same plot
+    # time to plot = relativ e time to plot in seconds
+
+    # Get labels
+    nb_subplots = len(labels_tps) + len (labels_emg)
+
+    # get indices of time to plot forrom TPS 
+    idx_time_start_tps= ((tpsDF['relative time'] - time_to_plot[0]).abs()).idxmin()
+    idx_time_end_tps = ((tpsDF['relative time'] - time_to_plot[1]).abs()).idxmin()
+    print("idx tps : ", idx_time_start_tps, idx_time_end_tps)
+    # Get idx of start time for EMG
+    # abs_start_time = tpsDF['absolute time'].iloc[idx_time_start_tps]*1e-3
+    abs_start_time = tpsDF['absolute time'].iloc[0]*1e-3 + time_to_plot[0]
+    idx_time_start_emg = ((emgDF['absolute time'] - abs_start_time).abs()).idxmin()
+    abs_end_time = abs_start_time + time_to_plot[1]
+    idx_time_end_emg = ((emgDF['absolute time'] - abs_end_time).abs()).idxmin()
+
+    # Time offset between emg and TPS, to remove from emg time for axis to be synched
+    abs_start_time_tps = tpsDF['absolute time'].iloc[0]*1e-3
+    idx_time_offset_emg = ((emgDF['absolute time'] - abs_start_time_tps).abs()).idxmin()
+    time_offset = emgDF['relative time'].iloc[idx_time_offset_emg]
+
+    print("idx emg : ", idx_time_start_emg, idx_time_end_emg)
+
+
+    fig, ax = plt.subplots(nb_subplots,1, sharex=True,figsize=(30,20))
+    
+    fig.suptitle(title_str)
+    fig.supylabel('TPS [N]')
+    plt.subplots_adjust(top=0.93,
+                        bottom=0.04,
+                        left=0.055,
+                        right=0.995,
+                        hspace=0.4,
+                        wspace=0.2)
+    plt.xlim([tpsDF['relative time'].to_numpy()[idx_time_start_tps], tpsDF['relative time'].to_numpy()[idx_time_end_tps]])
+    plt.xlabel('time [s]')
+    
+    i = 0    
+    for label in labels_tps : 
+        ax[i].plot(tpsDF['relative time'].to_numpy()[idx_time_start_tps:idx_time_end_tps], tpsDF[label].to_numpy()[idx_time_start_tps:idx_time_end_tps])
+        ax[i].set_title(label, fontsize = 6)
+        ax[i].tick_params(axis='x', labelsize=6)
+        ax[i].tick_params(axis='y', labelsize=6)
+        i +=1
+
+    for label in labels_emg:
+        # ax[i].set_ylabel('ch' + str(i+1))
+        ax[i].plot(emgDF['relative time'].to_numpy()[idx_time_start_emg:idx_time_end_emg]-time_offset, emgDF[label].to_numpy()[idx_time_start_emg:idx_time_end_emg])
+        ax[i].set_title(label, fontsize = 6)
+        ax[i].tick_params(axis='x', labelsize=6)
+        ax[i].tick_params(axis='y', labelsize=6)
+        i +=1
+          
+    if show_plot : plt.show()
+
+
 def channel_to_finger_label():
     # Returns corresponding fingers for plot labels
     finger_list = [
-    'Left index finger',
+    'Left Index',
     'Left middle finger',
     'Left Thumb',
     'Right Index',

@@ -15,7 +15,7 @@ import pywt
 import plotly.io as pio
 pio.renderers.default='browser'
 
-def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
+def clean_emg(mydata_path, emg_placement='Jarque-Bou', nb_rec_channels=16,clip_upper = 3000):
     # Input : raw EMG signal
     # Output : Format mydata to structured panda DataFrame 
 
@@ -189,7 +189,7 @@ def plot_emgDF(emgDF, time_for_plot='relative time', title_str='Clean EMG', ytit
           
     if show_plot : plt.show()
 
-def channel_to_muscle_label(emg_placement):
+def channel_to_muscle_label(emg_placement='Jarque-Bou'):
     # Returns corresponding muscle for plot label depending on emg placement
 
     if emg_placement == 'Protocol':
