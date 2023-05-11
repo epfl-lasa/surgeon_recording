@@ -3,6 +3,7 @@ import os
 from os.path import join
 import time
 import keyboard
+import json
 from subprocess import Popen, PIPE, check_output, run
 from shutil import copyfile
 
@@ -18,13 +19,18 @@ from sensor_handlers.gopro_handler import GoProHandler
 class Recorder():
     def __init__(self):
 
-        # TODO : read this from file instead of input every time 
-        self.folder_input = input('Name of folder : ')
-        self.subject_nb = input('subject nb : ')
-        self.task_input = input('run nb (ex 1) : ')
-
-        self.folder = join("/Users/LASA/Documents/Recordings/surgeon_recording/exp_data", self.folder_input, self.subject_nb, self.task_input)
+        # Read data structure info from json file 
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        f = open(join(filepath, 'config', 'data_dir_info.json'))
+        data_dir_info = json.load(f)
+        self.folder_input = str(data_dir_info["folder_name"])
+        self.subject_nb = str(data_dir_info["subject_nb"])
+        self.task_input = str(data_dir_info["run_nb"])
      
+        self.folder = join(filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
+
+        print("Data folder for this recording is : \n", self.folder)
+
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
         self.csv_path_optitrack1 = join(self.folder, "optitrack_stats.csv")
@@ -38,26 +44,26 @@ class Recorder():
     
     def start_threads(self):
 
-        self.copy_calibration_files()
+        # self.copy_calibration_files()
+
+        time.sleep(1)
 
         self.stop_event = Event()
-        recording_thread_gopro = Thread(target=self.gopro_thread)
-        recording_thread_gopro.start()
+        # recording_thread_gopro = Thread(target=self.gopro_thread)
+        # recording_thread_gopro.start()
         self.lock = Lock()
         
-        recording_thread_opti = Thread(target=self.optitrack_thread)
-        recording_thread_opti.start()
+        # recording_thread_opti = Thread(target=self.optitrack_thread)
+        # recording_thread_opti.start()
 
-        time.sleep(2)
-        
-        recording_thread_emg = Thread(target=self.emg_thread)
-        recording_thread_emg.start()
-
-        time.sleep(5)
-
+        # time.sleep(2)        
         recording_thread_tps = Thread(target=self.tps_thread)
         recording_thread_tps.start()
 
+        time.sleep(8)
+
+        recording_thread_emg = Thread(target=self.emg_thread)
+        recording_thread_emg.start()
 
 
     def gopro_thread(self):
@@ -82,7 +88,7 @@ class Recorder():
         is_looping = True
         while is_looping is True:
             if keyboard.is_pressed('q'):
-                print('goodbye gopro ')
+                print('Goodbye gopro ')
                 is_looping = False
                 gp_handler.shutdown_gopro()
 
@@ -108,7 +114,7 @@ class Recorder():
             # Wait for closing signal
             
             if keyboard.is_pressed('q'):
-                print('goodbye emg')
+                print('Goodbye emg')
                 is_looping_emg = False
                 handler_emg.shutdown_emg()
 
@@ -124,41 +130,9 @@ class Recorder():
     def tps_thread(self):
         # Start WatchCapture to record TPS
         filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"
-
-        # Old method, requires inputting folder path a second time 
         run([filename])
 
-        # TODO : below closes TPS process for some reason -> WTF
-        # proc = Popen([filename], stdin = PIPE, text=True)
-
-        # stdout_data, stdout_err =  proc.communicate(input=self.folder_input+"\n"+ self.subject_nb+"\n" +self.task_input+"\n" + "2\n", timeout = None)
-        # print(stdout_data)
-        
-        # proc.wait(timeout=300)
-
-        # # Pass folder path to WatchCapture.exe
-        # proc.stdin.write(self.folder_input+"\n")
-        # proc.stdin.flush()
-        # proc.stdin.write(self.subject_nb+"\n")
-        # proc.stdin.flush()      
-        # proc.stdin.write(self.task_input+"\n")
-        # proc.stdin.flush()
-
-        # # Pass configuration file number -> always 2
-        # proc.stdin.write("2\n")
-        # proc.stdin.flush()
-        # proc.stdin.close()
-
-        # proc.wait()
-        # is_looping = True
-        # while is_looping is True:
-        #     if keyboard.is_pressed('q'):
-        #         print('goodbye tps ')
-        #         is_looping = False
-        #         proc.kill()
-
         if os.path.exists(self.csv_path_tps_raw):
-            # proc.kill()
             calib_tps = TPScalibration(folder_path = self.folder, csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
 
         else:
@@ -195,8 +169,6 @@ class Recorder():
         else:
             print("WARNING: calibration file " + calibration_file + " not copied in data folder, too old")
 
-    
-
 def main():
     recorder = Recorder()
 
@@ -206,6 +178,11 @@ def main():
         recorder.emg_calib()
     else :
         print("Skipped EMG calibration. \n")
+    
+    # TODO : Add start_test which will : 
+    # start tps+emg+optitrack for 1 min
+    # then plot everything when user press q (same as start_threads)
+
 
     print("\n Make sure you are connected to the GOPRO's wifi !! \n")
     input("Do the TPS calibration using Chameleon software now ! \n Then press Enter to continue. \n")

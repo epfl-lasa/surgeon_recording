@@ -1,6 +1,6 @@
 from modules.tps_utils import * 
 
-data_dir = 'exp_data/200423/1/4/'
+data_dir = 'exp_data/50523/1/2/'
 path_to_opti = data_dir + 'optitrack.csv'
 
 optiDF = pd.read_csv(path_to_opti, header=0)

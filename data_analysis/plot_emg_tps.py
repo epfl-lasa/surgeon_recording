@@ -1,7 +1,7 @@
 from modules.emg_utils import *
 from modules.tps_utils import * 
 
-data_dir = 'exp_data/170423/1/1/'
+data_dir = 'exp_data/110523/1/1/'
 path_to_tps = data_dir + 'TPS_calibrated.csv'
 path_to_emg = data_dir + 'emg_data_task.csv'
 path_to_emg_calib = data_dir + 'emg_data_calibration.csv'
