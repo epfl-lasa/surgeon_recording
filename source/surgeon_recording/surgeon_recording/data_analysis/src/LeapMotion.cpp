@@ -1,6 +1,6 @@
 /*path = cd Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/  */
 
-#include "LeapMotion.h"
+#include "./include/LeapMotion.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
