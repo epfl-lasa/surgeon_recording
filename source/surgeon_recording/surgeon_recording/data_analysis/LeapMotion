@@ -1,0 +1,7732 @@
+# 0 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+# 1 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis//"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 0 "<command-line>" 2
+# 1 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+# 1 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.h" 1
+
+
+
+# 1 "/usr/include/LeapC.h" 1 3 4
+# 42 "/usr/include/LeapC.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h" 1 3 4
+# 9 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h" 3 4
+# 1 "/usr/include/stdint.h" 1 3 4
+# 26 "/usr/include/stdint.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 33 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 3 4
+# 1 "/usr/include/features.h" 1 3 4
+# 392 "/usr/include/features.h" 3 4
+# 1 "/usr/include/features-time64.h" 1 3 4
+# 20 "/usr/include/features-time64.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 21 "/usr/include/features-time64.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 1 3 4
+# 19 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 20 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 2 3 4
+# 22 "/usr/include/features-time64.h" 2 3 4
+# 393 "/usr/include/features.h" 2 3 4
+# 486 "/usr/include/features.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 1 3 4
+# 559 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 560 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/long-double.h" 1 3 4
+# 561 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 2 3 4
+# 487 "/usr/include/features.h" 2 3 4
+# 510 "/usr/include/features.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/gnu/stubs-64.h" 1 3 4
+# 11 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 2 3 4
+# 511 "/usr/include/features.h" 2 3 4
+# 34 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 2 3 4
+# 27 "/usr/include/stdint.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 1 3 4
+# 19 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 20 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 2 3 4
+# 29 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+
+
+
+# 31 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+typedef unsigned char __u_char;
+typedef unsigned short int __u_short;
+typedef unsigned int __u_int;
+typedef unsigned long int __u_long;
+
+
+typedef signed char __int8_t;
+typedef unsigned char __uint8_t;
+typedef signed short int __int16_t;
+typedef unsigned short int __uint16_t;
+typedef signed int __int32_t;
+typedef unsigned int __uint32_t;
+
+typedef signed long int __int64_t;
+typedef unsigned long int __uint64_t;
+
+
+
+
+
+
+typedef __int8_t __int_least8_t;
+typedef __uint8_t __uint_least8_t;
+typedef __int16_t __int_least16_t;
+typedef __uint16_t __uint_least16_t;
+typedef __int32_t __int_least32_t;
+typedef __uint32_t __uint_least32_t;
+typedef __int64_t __int_least64_t;
+typedef __uint64_t __uint_least64_t;
+
+
+
+typedef long int __quad_t;
+typedef unsigned long int __u_quad_t;
+
+
+
+
+
+
+
+typedef long int __intmax_t;
+typedef unsigned long int __uintmax_t;
+# 141 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/typesizes.h" 1 3 4
+# 142 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/time64.h" 1 3 4
+# 143 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+
+
+typedef unsigned long int __dev_t;
+typedef unsigned int __uid_t;
+typedef unsigned int __gid_t;
+typedef unsigned long int __ino_t;
+typedef unsigned long int __ino64_t;
+typedef unsigned int __mode_t;
+typedef unsigned long int __nlink_t;
+typedef long int __off_t;
+typedef long int __off64_t;
+typedef int __pid_t;
+typedef struct { int __val[2]; } __fsid_t;
+typedef long int __clock_t;
+typedef unsigned long int __rlim_t;
+typedef unsigned long int __rlim64_t;
+typedef unsigned int __id_t;
+typedef long int __time_t;
+typedef unsigned int __useconds_t;
+typedef long int __suseconds_t;
+typedef long int __suseconds64_t;
+
+typedef int __daddr_t;
+typedef int __key_t;
+
+
+typedef int __clockid_t;
+
+
+typedef void * __timer_t;
+
+
+typedef long int __blksize_t;
+
+
+
+
+typedef long int __blkcnt_t;
+typedef long int __blkcnt64_t;
+
+
+typedef unsigned long int __fsblkcnt_t;
+typedef unsigned long int __fsblkcnt64_t;
+
+
+typedef unsigned long int __fsfilcnt_t;
+typedef unsigned long int __fsfilcnt64_t;
+
+
+typedef long int __fsword_t;
+
+typedef long int __ssize_t;
+
+
+typedef long int __syscall_slong_t;
+
+typedef unsigned long int __syscall_ulong_t;
+
+
+
+typedef __off64_t __loff_t;
+typedef char *__caddr_t;
+
+
+typedef long int __intptr_t;
+
+
+typedef unsigned int __socklen_t;
+
+
+
+
+typedef int __sig_atomic_t;
+# 28 "/usr/include/stdint.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wchar.h" 1 3 4
+# 29 "/usr/include/stdint.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 30 "/usr/include/stdint.h" 2 3 4
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h" 3 4
+typedef __int8_t int8_t;
+typedef __int16_t int16_t;
+typedef __int32_t int32_t;
+typedef __int64_t int64_t;
+# 35 "/usr/include/stdint.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h" 3 4
+typedef __uint8_t uint8_t;
+typedef __uint16_t uint16_t;
+typedef __uint32_t uint32_t;
+typedef __uint64_t uint64_t;
+# 38 "/usr/include/stdint.h" 2 3 4
+
+
+
+
+
+typedef __int_least8_t int_least8_t;
+typedef __int_least16_t int_least16_t;
+typedef __int_least32_t int_least32_t;
+typedef __int_least64_t int_least64_t;
+
+
+typedef __uint_least8_t uint_least8_t;
+typedef __uint_least16_t uint_least16_t;
+typedef __uint_least32_t uint_least32_t;
+typedef __uint_least64_t uint_least64_t;
+
+
+
+
+
+typedef signed char int_fast8_t;
+
+typedef long int int_fast16_t;
+typedef long int int_fast32_t;
+typedef long int int_fast64_t;
+# 71 "/usr/include/stdint.h" 3 4
+typedef unsigned char uint_fast8_t;
+
+typedef unsigned long int uint_fast16_t;
+typedef unsigned long int uint_fast32_t;
+typedef unsigned long int uint_fast64_t;
+# 87 "/usr/include/stdint.h" 3 4
+typedef long int intptr_t;
+
+
+typedef unsigned long int uintptr_t;
+# 101 "/usr/include/stdint.h" 3 4
+typedef __intmax_t intmax_t;
+typedef __uintmax_t uintmax_t;
+# 10 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h" 2 3 4
+# 43 "/usr/include/LeapC.h" 2 3 4
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h" 1 3 4
+# 46 "/usr/include/LeapC.h" 2 3 4
+
+#pragma pack(1)
+
+
+extern "C" {
+# 65 "/usr/include/LeapC.h" 3 4
+typedef enum _eLeapRS {
+
+
+
+  eLeapRS_Success = 0x00000000,
+
+
+
+
+
+
+
+  eLeapRS_UnknownError = 0xE2010000,
+
+
+
+
+
+  eLeapRS_InvalidArgument = 0xE2010001,
+
+
+
+
+
+  eLeapRS_InsufficientResources = 0xE2010002,
+
+
+
+
+
+  eLeapRS_InsufficientBuffer = 0xE2010003,
+
+
+
+
+
+  eLeapRS_Timeout = 0xE2010004,
+
+
+
+
+
+  eLeapRS_NotConnected = 0xE2010005,
+
+
+
+
+
+  eLeapRS_HandshakeIncomplete = 0xE2010006,
+
+
+
+
+
+  eLeapRS_BufferSizeOverflow = 0xE2010007,
+
+
+
+
+
+  eLeapRS_ProtocolError = 0xE2010008,
+
+
+
+
+
+  eLeapRS_InvalidClientID = 0xE2010009,
+
+
+
+
+
+
+  eLeapRS_UnexpectedClosed = 0xE201000A,
+# 148 "/usr/include/LeapC.h" 3 4
+  eLeapRS_UnknownImageFrameRequest = 0xE201000B,
+# 158 "/usr/include/LeapC.h" 3 4
+  eLeapRS_UnknownTrackingFrameID = 0xE201000C,
+# 167 "/usr/include/LeapC.h" 3 4
+  eLeapRS_RoutineIsNotSeer = 0xE201000D,
+# 176 "/usr/include/LeapC.h" 3 4
+  eLeapRS_TimestampTooEarly = 0xE201000E,
+
+
+
+
+
+  eLeapRS_ConcurrentPoll = 0xE201000F,
+
+
+
+
+
+  eLeapRS_NotAvailable = 0xE7010002,
+
+
+
+
+
+  eLeapRS_NotStreaming = 0xE7010004,
+
+
+
+
+
+
+  eLeapRS_CannotOpenDevice = 0xE7010005,
+
+
+
+
+
+  eLeapRS_Unsupported = 0xE7010006,
+} eLeapRS;
+static_assert(sizeof(eLeapRS) == 4, "Incorrect enum size");
+
+
+
+
+typedef enum _eLeapTrackingMode {
+
+  eLeapTrackingMode_Desktop = 0,
+
+
+  eLeapTrackingMode_HMD = 1,
+
+
+  eLeapTrackingMode_ScreenTop = 2,
+
+
+  eLeapTrackingMode_Unknown = 3
+} eLeapTrackingMode;
+static_assert(sizeof(eLeapTrackingMode) == 4, "Incorrect enum size");
+# 247 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_CONNECTION *LEAP_CONNECTION;
+
+
+
+
+
+
+
+typedef struct _LEAP_DEVICE *LEAP_DEVICE;
+
+
+
+
+
+
+typedef struct _LEAP_CALIBRATION *LEAP_CALIBRATION;
+# 271 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_DEVICE_REF {
+
+  void* handle;
+
+  uint32_t id;
+} LEAP_DEVICE_REF;
+
+typedef enum _eLeapConnectionConfig {
+
+
+
+
+  eLeapConnectionConfig_MultiDeviceAware = 0x00000001,
+} eLeapConnectionConfig;
+static_assert(sizeof(eLeapConnectionConfig) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef struct _LEAP_CONNECTION_CONFIG {
+
+  uint32_t size;
+
+
+
+
+
+  uint32_t flags;
+# 311 "/usr/include/LeapC.h" 3 4
+  const char* server_namespace;
+} LEAP_CONNECTION_CONFIG;
+
+
+
+
+
+typedef enum _eLeapAllocatorType {
+
+  eLeapAllocatorType_Int8 = 0,
+
+  eLeapAllocatorType_Uint8 = 1,
+
+  eLeapAllocatorType_Int16 = 2,
+
+  eLeapAllocatorType_UInt16 = 3,
+
+  eLeapAllocatorType_Int32 = 4,
+
+  eLeapAllocatorType_UInt32 = 5,
+
+  eLeapAllocatorType_Float = 6,
+
+  eLeapAllocatorType_Int64 = 8,
+
+  eLeapAllocatorType_UInt64 = 9,
+
+  eLeapAllocatorType_Double = 10,
+} eLeapAllocatorType;
+static_assert(sizeof(eLeapAllocatorType) == 4, "Incorrect enum size");
+
+
+
+
+
+
+typedef struct LEAP_ALLOCATOR {
+# 356 "/usr/include/LeapC.h" 3 4
+  void* (*allocate)(uint32_t size, eLeapAllocatorType typeHint, void* state);
+# 366 "/usr/include/LeapC.h" 3 4
+  void (*deallocate)(void* ptr, void* state);
+
+
+
+
+  void* state;
+} LEAP_ALLOCATOR;
+# 383 "/usr/include/LeapC.h" 3 4
+ int64_t LeapGetNow(void);
+# 398 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapCreateConnection(const LEAP_CONNECTION_CONFIG* pConfig, LEAP_CONNECTION* phConnection);
+# 410 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapOpenConnection(LEAP_CONNECTION hConnection);
+
+typedef enum _eLeapServiceDisposition {
+
+
+
+
+  eLeapServiceState_LowFpsDetected = 0x00000001,
+
+
+
+
+
+  eLeapServiceState_PoorPerformancePause = 0x00000002,
+
+
+
+
+
+  eLeapServiceState_TrackingErrorUnknown = 0x00000004,
+
+
+
+
+  eLeapServiceState_ALL = eLeapServiceState_LowFpsDetected
+    | eLeapServiceState_PoorPerformancePause
+    | eLeapServiceState_TrackingErrorUnknown
+} eLeapServiceDisposition;
+static_assert(sizeof(eLeapServiceDisposition) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef struct _LEAP_CONNECTION_EVENT {
+
+  uint32_t flags;
+} LEAP_CONNECTION_EVENT;
+# 458 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_CONNECTION_LOST_EVENT {
+
+  uint32_t flags;
+} LEAP_CONNECTION_LOST_EVENT;
+
+
+
+
+
+
+
+typedef enum _eLeapConnectionStatus {
+
+
+
+
+
+  eLeapConnectionStatus_NotConnected = 0,
+
+
+
+
+
+  eLeapConnectionStatus_Connected,
+
+
+
+
+
+  eLeapConnectionStatus_HandshakeIncomplete,
+
+
+
+
+
+
+  eLeapConnectionStatus_NotRunning = 0xE7030004
+} eLeapConnectionStatus;
+static_assert(sizeof(eLeapConnectionStatus) == 4, "Incorrect enum size");
+# 506 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_CONNECTION_INFO {
+
+  uint32_t size;
+
+
+  eLeapConnectionStatus status;
+} LEAP_CONNECTION_INFO;
+# 529 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetConnectionInfo(LEAP_CONNECTION hConnection, LEAP_CONNECTION_INFO* pInfo);
+
+
+
+
+
+typedef enum _eLeapPolicyFlag {
+
+  eLeapPolicyFlag_BackgroundFrames = 0x00000001,
+
+
+  eLeapPolicyFlag_Images = 0x00000002,
+
+
+  eLeapPolicyFlag_OptimizeHMD = 0x00000004,
+
+
+  eLeapPolicyFlag_AllowPauseResume = 0x00000008,
+
+
+  eLeapPolicyFlag_MapPoints = 0x00000080,
+
+
+  eLeapPolicyFlag_OptimizeScreenTop = 0x00000100,
+} eLeapPolicyFlag;
+static_assert(sizeof(eLeapPolicyFlag) == 4, "Incorrect enum size");
+
+
+
+
+
+
+typedef struct _LEAP_POLICY_EVENT {
+
+  uint32_t reserved;
+
+
+
+
+
+  uint32_t current_policy;
+} LEAP_POLICY_EVENT;
+
+
+
+
+
+
+
+typedef struct _LEAP_TRACKING_MODE_EVENT {
+
+  uint32_t reserved;
+
+
+
+
+
+  eLeapTrackingMode current_tracking_mode;
+} LEAP_TRACKING_MODE_EVENT;
+# 609 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetPolicyFlags(LEAP_CONNECTION hConnection, uint64_t set, uint64_t clear);
+# 632 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetPolicyFlagsEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, uint64_t set, uint64_t clear);
+# 648 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetTrackingMode(LEAP_CONNECTION hConnection, eLeapTrackingMode mode);
+# 666 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetTrackingModeEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapTrackingMode mode);
+# 682 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetTrackingMode(LEAP_CONNECTION hConnection);
+# 699 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetTrackingModeEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice);
+# 715 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetPause(LEAP_CONNECTION hConnection, bool pause);
+# 728 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetAllocator(LEAP_CONNECTION hConnection, const LEAP_ALLOCATOR* allocator);
+
+
+
+
+
+typedef enum _eLeapValueType {
+
+  eLeapValueType_Unknown,
+
+  eLeapValueType_Boolean,
+
+  eLeapValueType_Int32,
+
+  eLeapValueType_Float,
+
+  eLeapValueType_String,
+  FORCE_DWORD = 0x7FFFFFFF
+} eLeapValueType;
+static_assert(sizeof(eLeapValueType) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef struct _LEAP_VARIANT {
+
+  eLeapValueType type;
+  union {
+
+    bool boolValue;
+
+    int32_t iValue;
+
+    float fValue;
+
+    const char* strValue;
+  };
+} LEAP_VARIANT;
+# 776 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_CONFIG_RESPONSE_EVENT {
+
+  uint32_t requestID;
+
+
+
+
+
+
+  LEAP_VARIANT value;
+} LEAP_CONFIG_RESPONSE_EVENT;
+# 798 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_CONFIG_CHANGE_EVENT {
+
+  uint32_t requestID;
+
+
+  bool status;
+} LEAP_CONFIG_CHANGE_EVENT;
+# 820 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSaveConfigValue(LEAP_CONNECTION hConnection, const char* key, const LEAP_VARIANT* value, uint32_t* pRequestID);
+# 834 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRequestConfigValue(LEAP_CONNECTION hConnection, const char* key, uint32_t* pRequestID);
+# 853 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetDeviceList(LEAP_CONNECTION hConnection, LEAP_DEVICE_REF* pArray, uint32_t* pnArray);
+# 867 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapOpenDevice(LEAP_DEVICE_REF rDevice, LEAP_DEVICE* phDevice);
+# 897 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSetPrimaryDevice(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, bool unsubscribeOthers);
+# 913 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapSubscribeEvents(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice);
+# 927 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapUnsubscribeEvents(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice);
+
+
+
+
+enum eLeapDeviceCaps {
+
+  eLeapDeviceCaps_Color = 0x00000001,
+};
+
+
+
+
+typedef enum _eLeapDevicePID {
+
+  eLeapDevicePID_Unknown = 0x0000,
+
+
+  eLeapDevicePID_Peripheral = 0x0003,
+
+
+  eLeapDevicePID_Dragonfly = 0x1102,
+
+
+  eLeapDevicePID_Nightcrawler = 0x1201,
+
+
+  eLeapDevicePID_Rigel = 0x1202,
+
+
+  eLeapDevicePID_SIR170 = 0x1203,
+
+
+  eLeapDevicePID_3Di = 0x1204,
+
+
+  eLeapDevicePID_Invalid = 0xFFFFFFFF
+} eLeapDevicePID;
+static_assert(sizeof(eLeapDevicePID) == 4, "Incorrect enum size");
+
+
+
+
+
+
+
+typedef struct _LEAP_DEVICE_INFO {
+
+  uint32_t size;
+
+
+  uint32_t status;
+
+
+  uint32_t caps;
+
+
+  eLeapDevicePID pid;
+# 993 "/usr/include/LeapC.h" 3 4
+  uint32_t baseline;
+
+
+  uint32_t serial_length;
+
+
+  char* serial;
+
+
+  float h_fov;
+
+
+  float v_fov;
+
+
+  uint32_t range;
+} LEAP_DEVICE_INFO;
+# 1026 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetDeviceInfo(LEAP_DEVICE hDevice, LEAP_DEVICE_INFO* info);
+# 1060 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetDeviceTransform(LEAP_DEVICE hDevice, float* transform);
+# 1070 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_DEVICE_EVENT {
+
+  uint32_t flags;
+
+
+  LEAP_DEVICE_REF device;
+
+
+  uint32_t status;
+} LEAP_DEVICE_EVENT;
+
+
+
+
+
+typedef enum _eLeapDeviceStatus {
+
+  eLeapDeviceStatus_Streaming = 0x00000001,
+
+
+  eLeapDeviceStatus_Paused = 0x00000002,
+
+
+
+
+
+  eLeapDeviceStatus_Robust = 0x00000004,
+
+
+  eLeapDeviceStatus_Smudged = 0x00000008,
+
+
+  eLeapDeviceStatus_LowResource = 0x00000010,
+
+
+  eLeapDeviceStatus_UnknownFailure = 0xE8010000,
+
+
+  eLeapDeviceStatus_BadCalibration = 0xE8010001,
+
+
+  eLeapDeviceStatus_BadFirmware = 0xE8010002,
+
+
+  eLeapDeviceStatus_BadTransport = 0xE8010003,
+
+
+  eLeapDeviceStatus_BadControl = 0xE8010004,
+} eLeapDeviceStatus;
+static_assert(sizeof(eLeapDeviceStatus) == 4, "Incorrect enum size");
+# 1129 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_DEVICE_FAILURE_EVENT {
+
+  eLeapDeviceStatus status;
+
+
+
+
+
+
+
+  LEAP_DEVICE hDevice;
+} LEAP_DEVICE_FAILURE_EVENT;
+
+
+
+
+typedef struct _LEAP_FRAME_HEADER {
+
+  void* reserved;
+# 1159 "/usr/include/LeapC.h" 3 4
+  int64_t frame_id;
+
+
+
+
+
+  int64_t timestamp;
+} LEAP_FRAME_HEADER;
+
+
+
+
+typedef enum _eLeapImageType {
+
+  eLeapImageType_UNKNOWN = 0,
+
+
+  eLeapImageType_Default,
+
+
+  eLeapImageType_Raw
+} eLeapImageType;
+static_assert(sizeof(eLeapImageType) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef enum _eLeapImageFormat {
+
+  eLeapImageFormat_UNKNOWN = 0,
+
+
+  eLeapImageFormat_IR = 0x317249,
+
+
+  eLeapImageFormat_RGBIr_Bayer = 0x49425247,
+} eLeapImageFormat;
+static_assert(sizeof(eLeapImageFormat) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef enum _eLeapPerspectiveType {
+
+  eLeapPerspectiveType_invalid = 0,
+
+
+  eLeapPerspectiveType_stereo_left = 1,
+
+
+  eLeapPerspectiveType_stereo_right = 2,
+
+
+  eLeapPerspectiveType_mono = 3,
+} eLeapPerspectiveType;
+static_assert(sizeof(eLeapPerspectiveType) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef enum _eLeapCameraCalibrationType {
+
+  eLeapCameraCalibrationType_infrared = 0,
+
+
+  eLeapCameraCalibrationType_visual = 1,
+} eLeapCameraCalibrationType;
+static_assert(sizeof(eLeapCameraCalibrationType) == 4, "Incorrect enum size");
+
+
+
+
+
+typedef struct _LEAP_IMAGE_PROPERTIES {
+
+  eLeapImageType type;
+
+
+  eLeapImageFormat format;
+
+
+  uint32_t bpp;
+
+
+  uint32_t width;
+
+
+  uint32_t height;
+
+
+  float x_scale;
+
+  float y_scale;
+
+
+  float x_offset;
+
+  float y_offset;
+} LEAP_IMAGE_PROPERTIES;
+# 1275 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_DISTORTION_MATRIX {
+
+  struct {
+
+    float x;
+
+    float y;
+  }
+
+  matrix[64][64];
+} LEAP_DISTORTION_MATRIX;
+
+
+
+
+
+
+typedef struct _LEAP_IMAGE_FRAME_DESCRIPTION {
+
+
+
+  int64_t frame_id;
+
+
+
+
+  eLeapImageType type;
+
+
+
+
+
+  uint64_t buffer_len;
+
+
+
+
+
+
+  void* pBuffer;
+} LEAP_IMAGE_FRAME_DESCRIPTION;
+
+
+
+
+
+typedef struct _LEAP_VECTOR {
+
+  union {
+
+    float v[3];
+    struct {
+
+      float x;
+
+      float y;
+
+      float z;
+    };
+  };
+} LEAP_VECTOR;
+
+typedef struct _LEAP_MATRIX_3x3 {
+  LEAP_VECTOR m[3];
+} LEAP_MATRIX_3x3;
+
+
+
+
+typedef struct _LEAP_QUATERNION {
+  union {
+
+    float v[4];
+
+    struct {
+
+      float x;
+
+      float y;
+
+      float z;
+
+      float w;
+    };
+  };
+} LEAP_QUATERNION;
+
+
+
+
+
+
+
+typedef struct _LEAP_BONE {
+
+  LEAP_VECTOR prev_joint;
+
+
+  LEAP_VECTOR next_joint;
+
+
+  float width;
+
+
+
+
+
+  LEAP_QUATERNION rotation;
+} LEAP_BONE;
+
+
+
+
+
+
+typedef struct _LEAP_DIGIT {
+
+  int32_t finger_id;
+
+  union {
+
+    LEAP_BONE bones[4];
+
+    struct {
+# 1408 "/usr/include/LeapC.h" 3 4
+      LEAP_BONE metacarpal;
+
+
+      LEAP_BONE proximal;
+
+
+      LEAP_BONE intermediate;
+
+
+      LEAP_BONE distal;
+    };
+  };
+
+
+  uint32_t is_extended;
+} LEAP_DIGIT;
+
+
+
+
+
+
+typedef struct _LEAP_PALM {
+
+
+
+
+  LEAP_VECTOR position;
+# 1446 "/usr/include/LeapC.h" 3 4
+  LEAP_VECTOR stabilized_position;
+
+
+
+
+
+  LEAP_VECTOR velocity;
+
+
+
+
+
+
+  LEAP_VECTOR normal;
+
+
+
+
+
+  float width;
+
+
+
+
+
+  LEAP_VECTOR direction;
+
+
+
+
+
+
+  LEAP_QUATERNION orientation;
+} LEAP_PALM;
+
+
+
+
+
+
+typedef enum _eLeapHandType {
+
+  eLeapHandType_Left,
+
+
+  eLeapHandType_Right
+} eLeapHandType;
+static_assert(sizeof(eLeapHandType) == 4, "Incorrect enum size");
+
+
+
+
+typedef struct _LEAP_HAND {
+
+
+
+
+
+
+  uint32_t id;
+
+
+
+
+  uint32_t flags;
+
+
+
+
+  eLeapHandType type;
+
+
+
+
+
+  float confidence;
+
+
+
+
+
+  uint64_t visible_time;
+
+
+
+
+  float pinch_distance;
+
+
+
+
+  float grab_angle;
+
+
+
+
+
+
+  float pinch_strength;
+
+
+
+
+
+
+  float grab_strength;
+
+
+
+
+  LEAP_PALM palm;
+
+
+  union {
+    struct {
+
+      LEAP_DIGIT thumb;
+
+      LEAP_DIGIT index;
+
+      LEAP_DIGIT middle;
+
+      LEAP_DIGIT ring;
+
+      LEAP_DIGIT pinky;
+    };
+
+    LEAP_DIGIT digits[5];
+  };
+
+
+
+
+
+
+  LEAP_BONE arm;
+} LEAP_HAND;
+
+
+
+
+
+
+typedef struct _LEAP_TRACKING_EVENT {
+
+  LEAP_FRAME_HEADER info;
+# 1601 "/usr/include/LeapC.h" 3 4
+  int64_t tracking_frame_id;
+
+
+
+
+
+  uint32_t nHands;
+
+
+
+
+
+  LEAP_HAND* pHands;
+# 1631 "/usr/include/LeapC.h" 3 4
+  float framerate;
+} LEAP_TRACKING_EVENT;
+
+
+
+
+typedef enum _eLeapLogSeverity {
+
+  eLeapLogSeverity_Unknown = 0,
+
+  eLeapLogSeverity_Critical,
+
+  eLeapLogSeverity_Warning,
+
+  eLeapLogSeverity_Information
+} eLeapLogSeverity;
+static_assert(sizeof(eLeapLogSeverity) == 4, "Incorrect enum size");
+
+
+
+
+typedef struct _LEAP_LOG_EVENT {
+
+  eLeapLogSeverity severity;
+
+
+
+
+
+
+  int64_t timestamp;
+
+
+
+
+  const char* message;
+} LEAP_LOG_EVENT;
+
+typedef struct _LEAP_LOG_EVENTS {
+
+
+
+  uint32_t nEvents;
+
+
+
+
+  LEAP_LOG_EVENT* events;
+} LEAP_LOG_EVENTS;
+
+
+
+
+
+
+typedef struct _LEAP_DEVICE_STATUS_CHANGE_EVENT {
+
+  LEAP_DEVICE_REF device;
+
+
+  uint32_t last_status;
+
+
+  uint32_t status;
+} LEAP_DEVICE_STATUS_CHANGE_EVENT;
+
+typedef enum _eLeapDroppedFrameType {
+  eLeapDroppedFrameType_PreprocessingQueue,
+  eLeapDroppedFrameType_TrackingQueue,
+  eLeapDroppedFrameType_Other
+} eLeapDroppedFrameType;
+static_assert(sizeof(eLeapDroppedFrameType) == 4, "Incorrect enum size");
+
+typedef struct _LEAP_DROPPED_FRAME_EVENT {
+  int64_t frame_id;
+  eLeapDroppedFrameType type;
+} LEAP_DROPPED_FRAME_EVENT;
+
+
+
+
+
+typedef struct _LEAP_IMAGE {
+
+  LEAP_IMAGE_PROPERTIES properties;
+# 1731 "/usr/include/LeapC.h" 3 4
+  uint64_t matrix_version;
+
+
+  LEAP_DISTORTION_MATRIX* distortion_matrix;
+
+
+  void* data;
+
+
+  uint32_t offset;
+} LEAP_IMAGE;
+
+typedef struct _LEAP_POINT_MAPPING_CHANGE_EVENT {
+
+  int64_t frame_id;
+
+  int64_t timestamp;
+
+  uint32_t nPoints;
+} LEAP_POINT_MAPPING_CHANGE_EVENT;
+
+typedef struct _LEAP_POINT_MAPPING {
+
+  int64_t frame_id;
+
+  int64_t timestamp;
+
+  uint32_t nPoints;
+
+  LEAP_VECTOR* pPoints;
+
+  uint32_t* pIDs;
+} LEAP_POINT_MAPPING;
+
+typedef struct _LEAP_HEAD_POSE_EVENT {
+
+
+
+
+  int64_t timestamp;
+
+
+
+
+  LEAP_VECTOR head_position;
+  LEAP_QUATERNION head_orientation;
+
+
+
+
+  LEAP_VECTOR head_linear_velocity;
+  LEAP_VECTOR head_angular_velocity;
+} LEAP_HEAD_POSE_EVENT;
+
+typedef struct _LEAP_EYE_EVENT {
+
+
+
+
+
+
+  int64_t frame_id;
+
+
+
+
+
+
+  int64_t timestamp;
+
+
+
+
+
+  LEAP_VECTOR left_eye_position;
+
+
+
+
+
+  LEAP_VECTOR right_eye_position;
+
+
+
+
+
+
+
+  float left_eye_estimated_error;
+
+
+
+
+
+
+
+  float right_eye_estimated_error;
+
+} LEAP_EYE_EVENT;
+
+typedef enum _eLeapIMUFlag {
+
+  eLeapIMUFlag_HasAccelerometer = 0x00000001,
+
+  eLeapIMUFlag_HasGyroscope = 0x00000002,
+
+  eLeapIMUFlag_HasTemperature = 0x00000004,
+} eLeapIMUFlag;
+static_assert(sizeof(eLeapIMUFlag) == 4, "Incorrect enum size");
+
+typedef struct _LEAP_IMU_EVENT {
+
+
+
+
+
+  int64_t timestamp;
+
+
+
+
+
+
+  int64_t timestamp_hw;
+
+
+
+
+
+  uint32_t flags;
+
+
+
+
+
+  LEAP_VECTOR accelerometer;
+
+
+
+
+
+  LEAP_VECTOR gyroscope;
+
+
+
+
+
+  float temperature;
+} LEAP_IMU_EVENT;
+# 1890 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_IMAGE_EVENT {
+
+  LEAP_FRAME_HEADER info;
+
+
+  LEAP_IMAGE image[2];
+
+
+  LEAP_CALIBRATION calib;
+} LEAP_IMAGE_EVENT;
+
+
+
+
+
+typedef enum _eLeapEventType {
+
+
+
+
+  eLeapEventType_None = 0,
+
+
+
+
+
+  eLeapEventType_Connection,
+
+
+
+
+
+  eLeapEventType_ConnectionLost,
+# 1931 "/usr/include/LeapC.h" 3 4
+  eLeapEventType_Device,
+# 1940 "/usr/include/LeapC.h" 3 4
+  eLeapEventType_DeviceFailure,
+# 1949 "/usr/include/LeapC.h" 3 4
+  eLeapEventType_Policy,
+
+
+
+
+
+  eLeapEventType_Tracking = 0x100,
+
+
+
+
+
+
+
+  eLeapEventType_ImageRequestError,
+
+
+
+
+
+
+
+  eLeapEventType_ImageComplete,
+
+
+
+
+  eLeapEventType_LogEvent,
+# 1987 "/usr/include/LeapC.h" 3 4
+  eLeapEventType_DeviceLost,
+
+
+
+
+
+
+  eLeapEventType_ConfigResponse,
+
+
+
+
+
+
+  eLeapEventType_ConfigChange,
+
+
+
+
+
+
+  eLeapEventType_DeviceStatusChange,
+  eLeapEventType_DroppedFrame,
+
+
+
+
+
+
+  eLeapEventType_Image,
+
+
+
+
+
+
+  eLeapEventType_PointMappingChange,
+
+
+
+
+
+
+
+  eLeapEventType_TrackingMode,
+
+
+
+
+  eLeapEventType_LogEvents,
+
+
+
+
+
+  eLeapEventType_HeadPose,
+
+
+
+
+  eLeapEventType_Eyes,
+
+
+
+
+  eLeapEventType_IMU
+} eLeapEventType;
+static_assert(sizeof(eLeapEventType) == 4, "Incorrect enum size");
+
+
+
+
+
+
+typedef struct _LEAP_CONNECTION_MESSAGE {
+
+
+
+  uint32_t size;
+
+
+
+
+  eLeapEventType type;
+
+
+
+
+  union {
+
+    const void* pointer;
+
+    const LEAP_CONNECTION_EVENT* connection_event;
+
+    const LEAP_CONNECTION_LOST_EVENT* connection_lost_event;
+
+    const LEAP_DEVICE_EVENT* device_event;
+
+    const LEAP_DEVICE_STATUS_CHANGE_EVENT* device_status_change_event;
+
+    const LEAP_POLICY_EVENT* policy_event;
+
+    const LEAP_DEVICE_FAILURE_EVENT* device_failure_event;
+
+    const LEAP_TRACKING_EVENT* tracking_event;
+
+    const LEAP_TRACKING_MODE_EVENT* tracking_mode_event;
+
+    const LEAP_LOG_EVENT* log_event;
+
+    const LEAP_LOG_EVENTS* log_events;
+
+    const LEAP_CONFIG_RESPONSE_EVENT* config_response_event;
+
+    const LEAP_CONFIG_CHANGE_EVENT* config_change_event;
+    const LEAP_DROPPED_FRAME_EVENT* dropped_frame_event;
+
+    const LEAP_IMAGE_EVENT* image_event;
+
+    const LEAP_POINT_MAPPING_CHANGE_EVENT* point_mapping_change_event;
+
+    const LEAP_HEAD_POSE_EVENT* head_pose_event;
+
+    const LEAP_EYE_EVENT* eye_event;
+
+    const LEAP_IMU_EVENT* imu_event;
+  };
+
+
+
+
+
+
+  uint32_t device_id;
+} LEAP_CONNECTION_MESSAGE;
+# 2145 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapPollConnection(LEAP_CONNECTION hConnection, uint32_t timeout, LEAP_CONNECTION_MESSAGE* evt);
+# 2158 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetFrameSize(LEAP_CONNECTION hConnection, int64_t timestamp, uint64_t* pncbEvent);
+# 2173 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetFrameSizeEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, int64_t timestamp, uint64_t* pncbEvent);
+# 2193 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapInterpolateFrame(LEAP_CONNECTION hConnection, int64_t timestamp, LEAP_TRACKING_EVENT* pEvent, uint64_t ncbEvent);
+# 2214 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapInterpolateFrameEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, int64_t timestamp, LEAP_TRACKING_EVENT* pEvent, uint64_t ncbEvent);
+# 2237 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapInterpolateFrameFromTime(LEAP_CONNECTION hConnection, int64_t timestamp, int64_t sourceTimestamp, LEAP_TRACKING_EVENT* pEvent, uint64_t ncbEvent);
+# 2260 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapInterpolateFrameFromTimeEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, int64_t timestamp, int64_t sourceTimestamp, LEAP_TRACKING_EVENT* pEvent, uint64_t ncbEvent);
+# 2271 "/usr/include/LeapC.h" 3 4
+ void LeapCloseDevice(LEAP_DEVICE hDevice);
+# 2283 "/usr/include/LeapC.h" 3 4
+ void LeapCloseConnection(LEAP_CONNECTION hConnection);
+# 2298 "/usr/include/LeapC.h" 3 4
+ void LeapDestroyConnection(LEAP_CONNECTION hConnection);
+
+
+
+
+
+typedef struct _LEAP_CLOCK_REBASER *LEAP_CLOCK_REBASER;
+# 2316 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapCreateClockRebaser(LEAP_CLOCK_REBASER* phClockRebaser);
+# 2336 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapUpdateRebase(LEAP_CLOCK_REBASER hClockRebaser, int64_t userClock, int64_t leapClock);
+# 2351 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRebaseClock(LEAP_CLOCK_REBASER hClockRebaser, int64_t userClock, int64_t* pLeapClock);
+# 2361 "/usr/include/LeapC.h" 3 4
+ void LeapDestroyClockRebaser(LEAP_CLOCK_REBASER hClockRebaser);
+# 2382 "/usr/include/LeapC.h" 3 4
+ LEAP_VECTOR LeapPixelToRectilinear(LEAP_CONNECTION hConnection, eLeapPerspectiveType camera, LEAP_VECTOR pixel);
+# 2405 "/usr/include/LeapC.h" 3 4
+ LEAP_VECTOR LeapPixelToRectilinearEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapPerspectiveType camera, LEAP_VECTOR pixel);
+# 2433 "/usr/include/LeapC.h" 3 4
+ LEAP_VECTOR LeapRectilinearToPixel(LEAP_CONNECTION hConnection, eLeapPerspectiveType camera, LEAP_VECTOR rectilinear);
+# 2460 "/usr/include/LeapC.h" 3 4
+ LEAP_VECTOR LeapRectilinearToPixelEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapPerspectiveType camera, LEAP_VECTOR rectilinear);
+# 2469 "/usr/include/LeapC.h" 3 4
+ void LeapCameraMatrix(LEAP_CONNECTION hConnection, eLeapPerspectiveType camera, float* dest);
+# 2479 "/usr/include/LeapC.h" 3 4
+ void LeapCameraMatrixEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapPerspectiveType camera, float* dest);
+# 2490 "/usr/include/LeapC.h" 3 4
+ void LeapExtrinsicCameraMatrix(LEAP_CONNECTION hConnection, eLeapPerspectiveType camera, float* dest);
+# 2510 "/usr/include/LeapC.h" 3 4
+ void LeapExtrinsicCameraMatrixEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapPerspectiveType camera, float* dest);
+# 2523 "/usr/include/LeapC.h" 3 4
+ void LeapDistortionCoeffs(LEAP_CONNECTION hConnection, eLeapPerspectiveType camera, float* dest);
+# 2537 "/usr/include/LeapC.h" 3 4
+ void LeapDistortionCoeffsEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapPerspectiveType camera, float* dest);
+# 2549 "/usr/include/LeapC.h" 3 4
+ const char* LeapDevicePIDToString(eLeapDevicePID pid);
+
+
+
+
+
+
+
+typedef enum _eLeapRecordingFlags {
+  eLeapRecordingFlags_Error = 0x00000000,
+  eLeapRecordingFlags_Reading = 0x00000001,
+  eLeapRecordingFlags_Writing = 0x00000002,
+  eLeapRecordingFlags_Flushing = 0x00000004,
+  eLeapRecordingFlags_Compressed = 0x00000008
+} eLeapRecordingFlags;
+static_assert(sizeof(eLeapRecordingFlags) == 4, "Incorrect enum size");
+
+
+
+
+
+
+typedef struct _LEAP_RECORDING *LEAP_RECORDING;
+
+
+
+
+
+typedef struct _LEAP_RECORDING_PARAMETERS {
+
+  uint32_t mode;
+} LEAP_RECORDING_PARAMETERS;
+
+
+
+
+
+
+typedef struct _LEAP_RECORDING_STATUS {
+
+  uint32_t mode;
+} LEAP_RECORDING_STATUS;
+# 2605 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRecordingOpen(LEAP_RECORDING* ppRecording, const char* filePath, LEAP_RECORDING_PARAMETERS params);
+# 2614 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRecordingClose(LEAP_RECORDING* ppRecording);
+# 2626 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRecordingGetStatus(LEAP_RECORDING pRecording, LEAP_RECORDING_STATUS* pstatus);
+# 2639 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRecordingReadSize(LEAP_RECORDING pRecording, uint64_t* pncbEvent);
+# 2653 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRecordingRead(LEAP_RECORDING pRecording, LEAP_TRACKING_EVENT* pEvent, uint64_t ncbEvent);
+# 2664 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapRecordingWrite(LEAP_RECORDING pRecording, LEAP_TRACKING_EVENT* pEvent, uint64_t* pnBytesWritten);
+# 2678 "/usr/include/LeapC.h" 3 4
+ void LeapScaleOffsetMatrix(LEAP_CONNECTION hConnection, eLeapPerspectiveType camera, float* dest);
+# 2713 "/usr/include/LeapC.h" 3 4
+ void LeapScaleOffsetMatrixEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, eLeapPerspectiveType camera, float* dest);
+
+
+
+
+
+typedef enum _eLeapVersionPart {
+
+
+
+
+  eLeapVersionPart_ClientLibrary = 0,
+
+
+
+
+
+  eLeapVersionPart_ClientProtocol = 1,
+
+
+
+
+
+  eLeapVersionPart_ServerLibrary = 2,
+
+
+
+
+
+  eLeapVersionPart_ServerProtocol = 3,
+} eLeapVersionPart;
+static_assert(sizeof(eLeapVersionPart) == 4, "Incorrect enum size");
+# 2756 "/usr/include/LeapC.h" 3 4
+typedef struct _LEAP_VERSION {
+
+
+
+
+  int32_t major;
+
+
+
+
+
+  int32_t minor;
+
+
+
+
+
+  int32_t patch;
+
+} LEAP_VERSION;
+# 2789 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetVersion(LEAP_CONNECTION hConnection, eLeapVersionPart versionPart, LEAP_VERSION* pVersion);
+# 2798 "/usr/include/LeapC.h" 3 4
+ eLeapRS LeapGetPointMappingSize(LEAP_CONNECTION hConnection, uint64_t* pSize);
+ eLeapRS LeapGetPointMapping(LEAP_CONNECTION hConnection, LEAP_POINT_MAPPING* pointMapping, uint64_t* pSize);
+
+typedef struct _LEAP_TELEMETRY_DATA {
+  uint32_t thread_id;
+  uint64_t start_time;
+  uint64_t end_time;
+  uint32_t zone_depth;
+  const char* file_name;
+  uint32_t line_number;
+  const char* zone_name;
+} LEAP_TELEMETRY_DATA;
+
+ eLeapRS LeapTelemetryProfiling(LEAP_CONNECTION hConnection, const LEAP_TELEMETRY_DATA* telemetryData);
+ uint64_t LeapTelemetryGetNow();
+
+ eLeapRS LeapInterpolateHeadPose(LEAP_CONNECTION hConnection, int64_t timestamp, LEAP_HEAD_POSE_EVENT* pEvent);
+ eLeapRS LeapInterpolateHeadPoseEx(LEAP_CONNECTION hConnection, LEAP_DEVICE hDevice, int64_t timestamp, LEAP_HEAD_POSE_EVENT* pEvent);
+ eLeapRS LeapInterpolateEyePositions(LEAP_CONNECTION hConnection, int64_t timestamp, LEAP_EYE_EVENT* pEvent);
+
+
+}
+
+
+#pragma pack()
+# 5 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.h" 2
+
+
+
+# 7 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.h"
+LEAP_CONNECTION* OpenConnection();
+void CloseConnection();
+void CloseConnectionHandle(LEAP_CONNECTION* connectionHandle);
+LEAP_TRACKING_EVENT* GetFrame();
+LEAP_DEVICE_INFO* GetDeviceProperties();
+const char* ResultString(eLeapRS r);
+
+
+extern bool IsConnected;
+
+
+typedef void (*connection_callback) ();
+typedef void (*device_callback) (const LEAP_DEVICE_INFO *device);
+typedef void (*device_lost_callback) ();
+typedef void (*device_failure_callback) (const eLeapDeviceStatus failure_code,
+                                         const LEAP_DEVICE failed_device);
+typedef void (*policy_callback) (const uint32_t current_policies);
+typedef void (*tracking_callback) (const LEAP_TRACKING_EVENT *tracking_event);
+typedef void (*image_callback) (const LEAP_IMAGE_COMPLETE_EVENT *image_complete_event);
+typedef void (*image_error_callback) (const LEAP_IMAGE_FRAME_REQUEST_ERROR_EVENT *image_error_event);
+typedef void (*log_callback) (const eLeapLogSeverity severity,
+                                         const int64_t timestamp,
+                                         const char* message);
+typedef void (*config_change_callback) (const uint32_t requestID, const bool success);
+typedef void (*config_response_callback)(const uint32_t requestID, LEAP_VARIANT value);
+
+struct Callbacks{
+  connection_callback on_connection;
+  connection_callback on_connection_lost;
+  device_callback on_device_found;
+  device_lost_callback on_device_lost;
+  device_failure_callback on_device_failure;
+  policy_callback on_policy;
+  tracking_callback on_frame;
+  image_callback on_image_complete;
+  image_error_callback on_image_request_error;
+  log_callback on_log_message;
+  config_change_callback on_config_change;
+  config_response_callback on_config_response;
+};
+extern struct Callbacks ConnectionCallbacks;
+extern void millisleep(int milliseconds);
+# 2 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 2
+# 1 "/usr/include/c++/11/stdlib.h" 1 3
+# 36 "/usr/include/c++/11/stdlib.h" 3
+# 1 "/usr/include/c++/11/cstdlib" 1 3
+# 39 "/usr/include/c++/11/cstdlib" 3
+       
+# 40 "/usr/include/c++/11/cstdlib" 3
+
+# 1 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 1 3
+# 278 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 3
+
+# 278 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 3
+namespace std
+{
+  typedef long unsigned int size_t;
+  typedef long int ptrdiff_t;
+
+
+  typedef decltype(nullptr) nullptr_t;
+
+}
+# 300 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 3
+namespace std
+{
+  inline namespace __cxx11 __attribute__((__abi_tag__ ("cxx11"))) { }
+}
+namespace __gnu_cxx
+{
+  inline namespace __cxx11 __attribute__((__abi_tag__ ("cxx11"))) { }
+}
+# 586 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 3
+# 1 "/usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h" 1 3
+# 587 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 2 3
+
+
+# 1 "/usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h" 1 3
+# 590 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 2 3
+# 777 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 3
+# 1 "/usr/include/c++/11/pstl/pstl_config.h" 1 3
+# 778 "/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h" 2 3
+# 42 "/usr/include/c++/11/cstdlib" 2 3
+# 75 "/usr/include/c++/11/cstdlib" 3
+# 1 "/usr/include/stdlib.h" 1 3 4
+# 26 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 27 "/usr/include/stdlib.h" 2 3 4
+
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 209 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 3 4
+typedef long unsigned int size_t;
+# 33 "/usr/include/stdlib.h" 2 3 4
+
+extern "C" {
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/waitflags.h" 1 3 4
+# 41 "/usr/include/stdlib.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/waitstatus.h" 1 3 4
+# 42 "/usr/include/stdlib.h" 2 3 4
+# 56 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 1 3 4
+# 74 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 3 4
+typedef _Complex float __cfloat128 __attribute__ ((__mode__ (__TC__)));
+# 86 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 3 4
+typedef __float128 _Float128;
+# 119 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/long-double.h" 1 3 4
+# 25 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 2 3 4
+# 214 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef float _Float32;
+# 251 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef double _Float64;
+# 268 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef double _Float32x;
+# 285 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef long double _Float64x;
+# 120 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 2 3 4
+# 57 "/usr/include/stdlib.h" 2 3 4
+
+
+typedef struct
+  {
+    int quot;
+    int rem;
+  } div_t;
+
+
+
+typedef struct
+  {
+    long int quot;
+    long int rem;
+  } ldiv_t;
+
+
+
+
+
+__extension__ typedef struct
+  {
+    long long int quot;
+    long long int rem;
+  } lldiv_t;
+# 98 "/usr/include/stdlib.h" 3 4
+extern size_t __ctype_get_mb_cur_max (void) noexcept (true) ;
+
+
+
+extern double atof (const char *__nptr)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+extern int atoi (const char *__nptr)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+extern long int atol (const char *__nptr)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+__extension__ extern long long int atoll (const char *__nptr)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+extern double strtod (const char *__restrict __nptr,
+        char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern float strtof (const char *__restrict __nptr,
+       char **__restrict __endptr) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+extern long double strtold (const char *__restrict __nptr,
+       char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 141 "/usr/include/stdlib.h" 3 4
+extern _Float32 strtof32 (const char *__restrict __nptr,
+     char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern _Float64 strtof64 (const char *__restrict __nptr,
+     char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern _Float128 strtof128 (const char *__restrict __nptr,
+       char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern _Float32x strtof32x (const char *__restrict __nptr,
+       char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern _Float64x strtof64x (const char *__restrict __nptr,
+       char **__restrict __endptr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 177 "/usr/include/stdlib.h" 3 4
+extern long int strtol (const char *__restrict __nptr,
+   char **__restrict __endptr, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+extern unsigned long int strtoul (const char *__restrict __nptr,
+      char **__restrict __endptr, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+__extension__
+extern long long int strtoq (const char *__restrict __nptr,
+        char **__restrict __endptr, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+__extension__
+extern unsigned long long int strtouq (const char *__restrict __nptr,
+           char **__restrict __endptr, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+__extension__
+extern long long int strtoll (const char *__restrict __nptr,
+         char **__restrict __endptr, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+__extension__
+extern unsigned long long int strtoull (const char *__restrict __nptr,
+     char **__restrict __endptr, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern int strfromd (char *__dest, size_t __size, const char *__format,
+       double __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+extern int strfromf (char *__dest, size_t __size, const char *__format,
+       float __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+extern int strfroml (char *__dest, size_t __size, const char *__format,
+       long double __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+# 233 "/usr/include/stdlib.h" 3 4
+extern int strfromf32 (char *__dest, size_t __size, const char * __format,
+         _Float32 __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+
+
+extern int strfromf64 (char *__dest, size_t __size, const char * __format,
+         _Float64 __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+
+
+extern int strfromf128 (char *__dest, size_t __size, const char * __format,
+   _Float128 __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+
+
+extern int strfromf32x (char *__dest, size_t __size, const char * __format,
+   _Float32x __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+
+
+extern int strfromf64x (char *__dest, size_t __size, const char * __format,
+   _Float64x __f)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+# 273 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/locale_t.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/types/locale_t.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h" 3 4
+struct __locale_struct
+{
+
+  struct __locale_data *__locales[13];
+
+
+  const unsigned short int *__ctype_b;
+  const int *__ctype_tolower;
+  const int *__ctype_toupper;
+
+
+  const char *__names[13];
+};
+
+typedef struct __locale_struct *__locale_t;
+# 23 "/usr/include/x86_64-linux-gnu/bits/types/locale_t.h" 2 3 4
+
+typedef __locale_t locale_t;
+# 274 "/usr/include/stdlib.h" 2 3 4
+
+extern long int strtol_l (const char *__restrict __nptr,
+     char **__restrict __endptr, int __base,
+     locale_t __loc) noexcept (true) __attribute__ ((__nonnull__ (1, 4)));
+
+extern unsigned long int strtoul_l (const char *__restrict __nptr,
+        char **__restrict __endptr,
+        int __base, locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 4)));
+
+__extension__
+extern long long int strtoll_l (const char *__restrict __nptr,
+    char **__restrict __endptr, int __base,
+    locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 4)));
+
+__extension__
+extern unsigned long long int strtoull_l (const char *__restrict __nptr,
+       char **__restrict __endptr,
+       int __base, locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 4)));
+
+extern double strtod_l (const char *__restrict __nptr,
+   char **__restrict __endptr, locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+extern float strtof_l (const char *__restrict __nptr,
+         char **__restrict __endptr, locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+extern long double strtold_l (const char *__restrict __nptr,
+         char **__restrict __endptr,
+         locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+# 317 "/usr/include/stdlib.h" 3 4
+extern _Float32 strtof32_l (const char *__restrict __nptr,
+       char **__restrict __endptr,
+       locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+extern _Float64 strtof64_l (const char *__restrict __nptr,
+       char **__restrict __endptr,
+       locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+extern _Float128 strtof128_l (const char *__restrict __nptr,
+         char **__restrict __endptr,
+         locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+extern _Float32x strtof32x_l (const char *__restrict __nptr,
+         char **__restrict __endptr,
+         locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+extern _Float64x strtof64x_l (const char *__restrict __nptr,
+         char **__restrict __endptr,
+         locale_t __loc)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+# 386 "/usr/include/stdlib.h" 3 4
+extern char *l64a (long int __n) noexcept (true) ;
+
+
+extern long int a64l (const char *__s)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/sys/types.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
+extern "C" {
+
+
+
+
+
+typedef __u_char u_char;
+typedef __u_short u_short;
+typedef __u_int u_int;
+typedef __u_long u_long;
+typedef __quad_t quad_t;
+typedef __u_quad_t u_quad_t;
+typedef __fsid_t fsid_t;
+
+
+typedef __loff_t loff_t;
+
+
+
+
+typedef __ino_t ino_t;
+
+
+
+
+
+
+typedef __ino64_t ino64_t;
+
+
+
+
+typedef __dev_t dev_t;
+
+
+
+
+typedef __gid_t gid_t;
+
+
+
+
+typedef __mode_t mode_t;
+
+
+
+
+typedef __nlink_t nlink_t;
+
+
+
+
+typedef __uid_t uid_t;
+
+
+
+
+
+typedef __off_t off_t;
+
+
+
+
+
+
+typedef __off64_t off64_t;
+
+
+
+
+typedef __pid_t pid_t;
+
+
+
+
+
+typedef __id_t id_t;
+
+
+
+
+typedef __ssize_t ssize_t;
+
+
+
+
+
+typedef __daddr_t daddr_t;
+typedef __caddr_t caddr_t;
+
+
+
+
+
+typedef __key_t key_t;
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/clock_t.h" 1 3 4
+
+
+
+
+
+
+typedef __clock_t clock_t;
+# 127 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h" 1 3 4
+
+
+
+
+
+
+typedef __clockid_t clockid_t;
+# 129 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/time_t.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/bits/types/time_t.h" 3 4
+typedef __time_t time_t;
+# 130 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/timer_t.h" 1 3 4
+
+
+
+
+
+
+typedef __timer_t timer_t;
+# 131 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+
+
+
+typedef __useconds_t useconds_t;
+
+
+
+typedef __suseconds_t suseconds_t;
+
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 145 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+
+
+
+typedef unsigned long int ulong;
+typedef unsigned short int ushort;
+typedef unsigned int uint;
+
+
+
+
+
+
+
+typedef __uint8_t u_int8_t;
+typedef __uint16_t u_int16_t;
+typedef __uint32_t u_int32_t;
+typedef __uint64_t u_int64_t;
+
+
+typedef int register_t __attribute__ ((__mode__ (__word__)));
+# 176 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
+# 1 "/usr/include/endian.h" 1 3 4
+# 24 "/usr/include/endian.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/endian.h" 1 3 4
+# 35 "/usr/include/x86_64-linux-gnu/bits/endian.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/endianness.h" 1 3 4
+# 36 "/usr/include/x86_64-linux-gnu/bits/endian.h" 2 3 4
+# 25 "/usr/include/endian.h" 2 3 4
+# 35 "/usr/include/endian.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/byteswap.h" 1 3 4
+# 33 "/usr/include/x86_64-linux-gnu/bits/byteswap.h" 3 4
+static __inline __uint16_t
+__bswap_16 (__uint16_t __bsx)
+{
+
+  return __builtin_bswap16 (__bsx);
+
+
+
+}
+
+
+
+
+
+
+static __inline __uint32_t
+__bswap_32 (__uint32_t __bsx)
+{
+
+  return __builtin_bswap32 (__bsx);
+
+
+
+}
+# 69 "/usr/include/x86_64-linux-gnu/bits/byteswap.h" 3 4
+__extension__ static __inline __uint64_t
+__bswap_64 (__uint64_t __bsx)
+{
+
+  return __builtin_bswap64 (__bsx);
+
+
+
+}
+# 36 "/usr/include/endian.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h" 1 3 4
+# 32 "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h" 3 4
+static __inline __uint16_t
+__uint16_identity (__uint16_t __x)
+{
+  return __x;
+}
+
+static __inline __uint32_t
+__uint32_identity (__uint32_t __x)
+{
+  return __x;
+}
+
+static __inline __uint64_t
+__uint64_identity (__uint64_t __x)
+{
+  return __x;
+}
+# 37 "/usr/include/endian.h" 2 3 4
+# 177 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/sys/select.h" 1 3 4
+# 30 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/select.h" 1 3 4
+# 31 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h" 1 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h" 1 3 4
+
+
+
+
+typedef struct
+{
+  unsigned long int __val[(1024 / (8 * sizeof (unsigned long int)))];
+} __sigset_t;
+# 5 "/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h" 2 3 4
+
+
+typedef __sigset_t sigset_t;
+# 34 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h" 1 3 4
+
+
+
+
+
+
+
+struct timeval
+{
+
+
+
+
+  __time_t tv_sec;
+  __suseconds_t tv_usec;
+
+};
+# 38 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 1 3 4
+# 11 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 3 4
+struct timespec
+{
+
+
+
+  __time_t tv_sec;
+
+
+
+
+  __syscall_slong_t tv_nsec;
+# 31 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 3 4
+};
+# 40 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
+# 49 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+typedef long int __fd_mask;
+# 59 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+typedef struct
+  {
+
+
+
+    __fd_mask fds_bits[1024 / (8 * (int) sizeof (__fd_mask))];
+
+
+
+
+
+  } fd_set;
+
+
+
+
+
+
+typedef __fd_mask fd_mask;
+# 91 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+extern "C" {
+# 102 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+extern int select (int __nfds, fd_set *__restrict __readfds,
+     fd_set *__restrict __writefds,
+     fd_set *__restrict __exceptfds,
+     struct timeval *__restrict __timeout);
+# 127 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+extern int pselect (int __nfds, fd_set *__restrict __readfds,
+      fd_set *__restrict __writefds,
+      fd_set *__restrict __exceptfds,
+      const struct timespec *__restrict __timeout,
+      const __sigset_t *__restrict __sigmask);
+# 153 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+}
+# 180 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+
+
+
+
+
+typedef __blksize_t blksize_t;
+
+
+
+
+
+
+typedef __blkcnt_t blkcnt_t;
+
+
+
+typedef __fsblkcnt_t fsblkcnt_t;
+
+
+
+typedef __fsfilcnt_t fsfilcnt_t;
+# 219 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
+typedef __blkcnt64_t blkcnt64_t;
+typedef __fsblkcnt64_t fsblkcnt64_t;
+typedef __fsfilcnt64_t fsfilcnt64_t;
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 1 3 4
+# 44 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h" 1 3 4
+# 21 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h" 2 3 4
+# 45 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h" 1 3 4
+# 25 "/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h" 3 4
+typedef union
+{
+  __extension__ unsigned long long int __value64;
+  struct
+  {
+    unsigned int __low;
+    unsigned int __high;
+  } __value32;
+} __atomic_wide_counter;
+# 47 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+
+
+
+
+typedef struct __pthread_internal_list
+{
+  struct __pthread_internal_list *__prev;
+  struct __pthread_internal_list *__next;
+} __pthread_list_t;
+
+typedef struct __pthread_internal_slist
+{
+  struct __pthread_internal_slist *__next;
+} __pthread_slist_t;
+# 76 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h" 3 4
+struct __pthread_mutex_s
+{
+  int __lock;
+  unsigned int __count;
+  int __owner;
+
+  unsigned int __nusers;
+
+
+
+  int __kind;
+
+  short __spins;
+  short __elision;
+  __pthread_list_t __list;
+# 53 "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h" 3 4
+};
+# 77 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+# 89 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h" 3 4
+struct __pthread_rwlock_arch_t
+{
+  unsigned int __readers;
+  unsigned int __writers;
+  unsigned int __wrphase_futex;
+  unsigned int __writers_futex;
+  unsigned int __pad3;
+  unsigned int __pad4;
+
+  int __cur_writer;
+  int __shared;
+  signed char __rwelision;
+
+
+
+
+  unsigned char __pad1[7];
+
+
+  unsigned long int __pad2;
+
+
+  unsigned int __flags;
+# 55 "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h" 3 4
+};
+# 90 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+
+
+
+
+struct __pthread_cond_s
+{
+  __atomic_wide_counter __wseq;
+  __atomic_wide_counter __g1_start;
+  unsigned int __g_refs[2] ;
+  unsigned int __g_size[2];
+  unsigned int __g1_orig_size;
+  unsigned int __wrefs;
+  unsigned int __g_signals[2];
+};
+
+typedef unsigned int __tss_t;
+typedef unsigned long int __thrd_t;
+
+typedef struct
+{
+  int __data ;
+} __once_flag;
+# 24 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h" 2 3 4
+
+
+
+typedef unsigned long int pthread_t;
+
+
+
+
+typedef union
+{
+  char __size[4];
+  int __align;
+} pthread_mutexattr_t;
+
+
+
+
+typedef union
+{
+  char __size[4];
+  int __align;
+} pthread_condattr_t;
+
+
+
+typedef unsigned int pthread_key_t;
+
+
+
+typedef int pthread_once_t;
+
+
+union pthread_attr_t
+{
+  char __size[56];
+  long int __align;
+};
+
+typedef union pthread_attr_t pthread_attr_t;
+
+
+
+
+typedef union
+{
+  struct __pthread_mutex_s __data;
+  char __size[40];
+  long int __align;
+} pthread_mutex_t;
+
+
+typedef union
+{
+  struct __pthread_cond_s __data;
+  char __size[48];
+  __extension__ long long int __align;
+} pthread_cond_t;
+
+
+
+
+
+typedef union
+{
+  struct __pthread_rwlock_arch_t __data;
+  char __size[56];
+  long int __align;
+} pthread_rwlock_t;
+
+typedef union
+{
+  char __size[8];
+  long int __align;
+} pthread_rwlockattr_t;
+
+
+
+
+
+typedef volatile int pthread_spinlock_t;
+
+
+
+
+typedef union
+{
+  char __size[32];
+  long int __align;
+} pthread_barrier_t;
+
+typedef union
+{
+  char __size[4];
+  int __align;
+} pthread_barrierattr_t;
+# 228 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+
+
+}
+# 396 "/usr/include/stdlib.h" 2 3 4
+
+
+
+
+
+
+extern long int random (void) noexcept (true);
+
+
+extern void srandom (unsigned int __seed) noexcept (true);
+
+
+
+
+
+extern char *initstate (unsigned int __seed, char *__statebuf,
+   size_t __statelen) noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+
+extern char *setstate (char *__statebuf) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+struct random_data
+  {
+    int32_t *fptr;
+    int32_t *rptr;
+    int32_t *state;
+    int rand_type;
+    int rand_deg;
+    int rand_sep;
+    int32_t *end_ptr;
+  };
+
+extern int random_r (struct random_data *__restrict __buf,
+       int32_t *__restrict __result) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+extern int srandom_r (unsigned int __seed, struct random_data *__buf)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+extern int initstate_r (unsigned int __seed, char *__restrict __statebuf,
+   size_t __statelen,
+   struct random_data *__restrict __buf)
+     noexcept (true) __attribute__ ((__nonnull__ (2, 4)));
+
+extern int setstate_r (char *__restrict __statebuf,
+         struct random_data *__restrict __buf)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern int rand (void) noexcept (true);
+
+extern void srand (unsigned int __seed) noexcept (true);
+
+
+
+extern int rand_r (unsigned int *__seed) noexcept (true);
+
+
+
+
+
+
+
+extern double drand48 (void) noexcept (true);
+extern double erand48 (unsigned short int __xsubi[3]) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern long int lrand48 (void) noexcept (true);
+extern long int nrand48 (unsigned short int __xsubi[3])
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern long int mrand48 (void) noexcept (true);
+extern long int jrand48 (unsigned short int __xsubi[3])
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern void srand48 (long int __seedval) noexcept (true);
+extern unsigned short int *seed48 (unsigned short int __seed16v[3])
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+extern void lcong48 (unsigned short int __param[7]) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+struct drand48_data
+  {
+    unsigned short int __x[3];
+    unsigned short int __old_x[3];
+    unsigned short int __c;
+    unsigned short int __init;
+    __extension__ unsigned long long int __a;
+
+  };
+
+
+extern int drand48_r (struct drand48_data *__restrict __buffer,
+        double *__restrict __result) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+extern int erand48_r (unsigned short int __xsubi[3],
+        struct drand48_data *__restrict __buffer,
+        double *__restrict __result) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int lrand48_r (struct drand48_data *__restrict __buffer,
+        long int *__restrict __result)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+extern int nrand48_r (unsigned short int __xsubi[3],
+        struct drand48_data *__restrict __buffer,
+        long int *__restrict __result)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int mrand48_r (struct drand48_data *__restrict __buffer,
+        long int *__restrict __result)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+extern int jrand48_r (unsigned short int __xsubi[3],
+        struct drand48_data *__restrict __buffer,
+        long int *__restrict __result)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int srand48_r (long int __seedval, struct drand48_data *__buffer)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+extern int seed48_r (unsigned short int __seed16v[3],
+       struct drand48_data *__buffer) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+extern int lcong48_r (unsigned short int __param[7],
+        struct drand48_data *__buffer)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern void *malloc (size_t __size) noexcept (true) __attribute__ ((__malloc__))
+     __attribute__ ((__alloc_size__ (1))) ;
+
+extern void *calloc (size_t __nmemb, size_t __size)
+     noexcept (true) __attribute__ ((__malloc__)) __attribute__ ((__alloc_size__ (1, 2))) ;
+
+
+
+
+
+
+extern void *realloc (void *__ptr, size_t __size)
+     noexcept (true) __attribute__ ((__warn_unused_result__)) __attribute__ ((__alloc_size__ (2)));
+
+
+extern void free (void *__ptr) noexcept (true);
+
+
+
+
+
+
+
+extern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)
+     noexcept (true) __attribute__ ((__warn_unused_result__))
+     __attribute__ ((__alloc_size__ (2, 3)))
+    __attribute__ ((__malloc__ (__builtin_free, 1)));
+
+
+extern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)
+     noexcept (true) __attribute__ ((__malloc__ (reallocarray, 1)));
+
+
+
+# 1 "/usr/include/alloca.h" 1 3 4
+# 24 "/usr/include/alloca.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 25 "/usr/include/alloca.h" 2 3 4
+
+extern "C" {
+
+
+
+
+
+extern void *alloca (size_t __size) noexcept (true);
+
+
+
+
+
+}
+# 575 "/usr/include/stdlib.h" 2 3 4
+
+
+
+
+
+extern void *valloc (size_t __size) noexcept (true) __attribute__ ((__malloc__))
+     __attribute__ ((__alloc_size__ (1))) ;
+
+
+
+
+extern int posix_memalign (void **__memptr, size_t __alignment, size_t __size)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+extern void *aligned_alloc (size_t __alignment, size_t __size)
+     noexcept (true) __attribute__ ((__malloc__)) __attribute__ ((__alloc_align__ (1)))
+     __attribute__ ((__alloc_size__ (2))) ;
+
+
+
+extern void abort (void) noexcept (true) __attribute__ ((__noreturn__));
+
+
+
+extern int atexit (void (*__func) (void)) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern "C++" int at_quick_exit (void (*__func) (void))
+     noexcept (true) __asm ("at_quick_exit") __attribute__ ((__nonnull__ (1)));
+# 617 "/usr/include/stdlib.h" 3 4
+extern int on_exit (void (*__func) (int __status, void *__arg), void *__arg)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern void exit (int __status) noexcept (true) __attribute__ ((__noreturn__));
+
+
+
+
+
+extern void quick_exit (int __status) noexcept (true) __attribute__ ((__noreturn__));
+
+
+
+
+
+extern void _Exit (int __status) noexcept (true) __attribute__ ((__noreturn__));
+
+
+
+
+extern char *getenv (const char *__name) noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+extern char *secure_getenv (const char *__name)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+
+
+extern int putenv (char *__string) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern int setenv (const char *__name, const char *__value, int __replace)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+extern int unsetenv (const char *__name) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern int clearenv (void) noexcept (true);
+# 682 "/usr/include/stdlib.h" 3 4
+extern char *mktemp (char *__template) noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 695 "/usr/include/stdlib.h" 3 4
+extern int mkstemp (char *__template) __attribute__ ((__nonnull__ (1))) ;
+# 705 "/usr/include/stdlib.h" 3 4
+extern int mkstemp64 (char *__template) __attribute__ ((__nonnull__ (1))) ;
+# 717 "/usr/include/stdlib.h" 3 4
+extern int mkstemps (char *__template, int __suffixlen) __attribute__ ((__nonnull__ (1))) ;
+# 727 "/usr/include/stdlib.h" 3 4
+extern int mkstemps64 (char *__template, int __suffixlen)
+     __attribute__ ((__nonnull__ (1))) ;
+# 738 "/usr/include/stdlib.h" 3 4
+extern char *mkdtemp (char *__template) noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+# 749 "/usr/include/stdlib.h" 3 4
+extern int mkostemp (char *__template, int __flags) __attribute__ ((__nonnull__ (1))) ;
+# 759 "/usr/include/stdlib.h" 3 4
+extern int mkostemp64 (char *__template, int __flags) __attribute__ ((__nonnull__ (1))) ;
+# 769 "/usr/include/stdlib.h" 3 4
+extern int mkostemps (char *__template, int __suffixlen, int __flags)
+     __attribute__ ((__nonnull__ (1))) ;
+# 781 "/usr/include/stdlib.h" 3 4
+extern int mkostemps64 (char *__template, int __suffixlen, int __flags)
+     __attribute__ ((__nonnull__ (1))) ;
+# 791 "/usr/include/stdlib.h" 3 4
+extern int system (const char *__command) ;
+
+
+
+
+
+extern char *canonicalize_file_name (const char *__name)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) __attribute__ ((__malloc__))
+     __attribute__ ((__malloc__ (__builtin_free, 1))) ;
+# 808 "/usr/include/stdlib.h" 3 4
+extern char *realpath (const char *__restrict __name,
+         char *__restrict __resolved) noexcept (true) ;
+
+
+
+
+
+
+typedef int (*__compar_fn_t) (const void *, const void *);
+
+
+typedef __compar_fn_t comparison_fn_t;
+
+
+
+typedef int (*__compar_d_fn_t) (const void *, const void *, void *);
+
+
+
+
+extern void *bsearch (const void *__key, const void *__base,
+        size_t __nmemb, size_t __size, __compar_fn_t __compar)
+     __attribute__ ((__nonnull__ (1, 2, 5))) ;
+
+
+
+
+
+
+
+extern void qsort (void *__base, size_t __nmemb, size_t __size,
+     __compar_fn_t __compar) __attribute__ ((__nonnull__ (1, 4)));
+
+extern void qsort_r (void *__base, size_t __nmemb, size_t __size,
+       __compar_d_fn_t __compar, void *__arg)
+  __attribute__ ((__nonnull__ (1, 4)));
+
+
+
+
+extern int abs (int __x) noexcept (true) __attribute__ ((__const__)) ;
+extern long int labs (long int __x) noexcept (true) __attribute__ ((__const__)) ;
+
+
+__extension__ extern long long int llabs (long long int __x)
+     noexcept (true) __attribute__ ((__const__)) ;
+
+
+
+
+
+
+extern div_t div (int __numer, int __denom)
+     noexcept (true) __attribute__ ((__const__)) ;
+extern ldiv_t ldiv (long int __numer, long int __denom)
+     noexcept (true) __attribute__ ((__const__)) ;
+
+
+__extension__ extern lldiv_t lldiv (long long int __numer,
+        long long int __denom)
+     noexcept (true) __attribute__ ((__const__)) ;
+# 880 "/usr/include/stdlib.h" 3 4
+extern char *ecvt (double __value, int __ndigit, int *__restrict __decpt,
+     int *__restrict __sign) noexcept (true) __attribute__ ((__nonnull__ (3, 4))) ;
+
+
+
+
+extern char *fcvt (double __value, int __ndigit, int *__restrict __decpt,
+     int *__restrict __sign) noexcept (true) __attribute__ ((__nonnull__ (3, 4))) ;
+
+
+
+
+extern char *gcvt (double __value, int __ndigit, char *__buf)
+     noexcept (true) __attribute__ ((__nonnull__ (3))) ;
+
+
+
+
+extern char *qecvt (long double __value, int __ndigit,
+      int *__restrict __decpt, int *__restrict __sign)
+     noexcept (true) __attribute__ ((__nonnull__ (3, 4))) ;
+extern char *qfcvt (long double __value, int __ndigit,
+      int *__restrict __decpt, int *__restrict __sign)
+     noexcept (true) __attribute__ ((__nonnull__ (3, 4))) ;
+extern char *qgcvt (long double __value, int __ndigit, char *__buf)
+     noexcept (true) __attribute__ ((__nonnull__ (3))) ;
+
+
+
+
+extern int ecvt_r (double __value, int __ndigit, int *__restrict __decpt,
+     int *__restrict __sign, char *__restrict __buf,
+     size_t __len) noexcept (true) __attribute__ ((__nonnull__ (3, 4, 5)));
+extern int fcvt_r (double __value, int __ndigit, int *__restrict __decpt,
+     int *__restrict __sign, char *__restrict __buf,
+     size_t __len) noexcept (true) __attribute__ ((__nonnull__ (3, 4, 5)));
+
+extern int qecvt_r (long double __value, int __ndigit,
+      int *__restrict __decpt, int *__restrict __sign,
+      char *__restrict __buf, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (3, 4, 5)));
+extern int qfcvt_r (long double __value, int __ndigit,
+      int *__restrict __decpt, int *__restrict __sign,
+      char *__restrict __buf, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (3, 4, 5)));
+
+
+
+
+
+extern int mblen (const char *__s, size_t __n) noexcept (true);
+
+
+extern int mbtowc (wchar_t *__restrict __pwc,
+     const char *__restrict __s, size_t __n) noexcept (true);
+
+
+extern int wctomb (char *__s, wchar_t __wchar) noexcept (true);
+
+
+
+extern size_t mbstowcs (wchar_t *__restrict __pwcs,
+   const char *__restrict __s, size_t __n) noexcept (true)
+    __attribute__ ((__access__ (__read_only__, 2)));
+
+extern size_t wcstombs (char *__restrict __s,
+   const wchar_t *__restrict __pwcs, size_t __n)
+     noexcept (true)
+  __attribute__ ((__access__ (__write_only__, 1, 3)))
+  __attribute__ ((__access__ (__read_only__, 2)));
+
+
+
+
+
+
+extern int rpmatch (const char *__response) noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+# 967 "/usr/include/stdlib.h" 3 4
+extern int getsubopt (char **__restrict __optionp,
+        char *const *__restrict __tokens,
+        char **__restrict __valuep)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2, 3))) ;
+
+
+
+
+
+
+
+extern int posix_openpt (int __oflag) ;
+
+
+
+
+
+
+
+extern int grantpt (int __fd) noexcept (true);
+
+
+
+extern int unlockpt (int __fd) noexcept (true);
+
+
+
+
+extern char *ptsname (int __fd) noexcept (true) ;
+
+
+
+
+
+
+extern int ptsname_r (int __fd, char *__buf, size_t __buflen)
+     noexcept (true) __attribute__ ((__nonnull__ (2))) __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+extern int getpt (void);
+
+
+
+
+
+
+extern int getloadavg (double __loadavg[], int __nelem)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 1023 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdlib-float.h" 1 3 4
+# 1024 "/usr/include/stdlib.h" 2 3 4
+# 1035 "/usr/include/stdlib.h" 3 4
+}
+# 76 "/usr/include/c++/11/cstdlib" 2 3
+
+# 1 "/usr/include/c++/11/bits/std_abs.h" 1 3
+# 33 "/usr/include/c++/11/bits/std_abs.h" 3
+       
+# 34 "/usr/include/c++/11/bits/std_abs.h" 3
+# 46 "/usr/include/c++/11/bits/std_abs.h" 3
+extern "C++"
+{
+namespace std __attribute__ ((__visibility__ ("default")))
+{
+
+
+  using ::abs;
+
+
+  inline long
+  abs(long __i) { return __builtin_labs(__i); }
+
+
+
+  inline long long
+  abs(long long __x) { return __builtin_llabs (__x); }
+# 70 "/usr/include/c++/11/bits/std_abs.h" 3
+  inline constexpr double
+  abs(double __x)
+  { return __builtin_fabs(__x); }
+
+  inline constexpr float
+  abs(float __x)
+  { return __builtin_fabsf(__x); }
+
+  inline constexpr long double
+  abs(long double __x)
+  { return __builtin_fabsl(__x); }
+
+
+
+  inline constexpr __int128
+  abs(__int128 __x) { return __x >= 0 ? __x : -__x; }
+# 101 "/usr/include/c++/11/bits/std_abs.h" 3
+  inline constexpr
+  __float128
+  abs(__float128 __x)
+  { return __x < 0 ? -__x : __x; }
+
+
+
+}
+}
+# 78 "/usr/include/c++/11/cstdlib" 2 3
+# 121 "/usr/include/c++/11/cstdlib" 3
+extern "C++"
+{
+namespace std __attribute__ ((__visibility__ ("default")))
+{
+
+
+  using ::div_t;
+  using ::ldiv_t;
+
+  using ::abort;
+
+  using ::aligned_alloc;
+
+  using ::atexit;
+
+
+  using ::at_quick_exit;
+
+
+  using ::atof;
+  using ::atoi;
+  using ::atol;
+  using ::bsearch;
+  using ::calloc;
+  using ::div;
+  using ::exit;
+  using ::free;
+  using ::getenv;
+  using ::labs;
+  using ::ldiv;
+  using ::malloc;
+
+  using ::mblen;
+  using ::mbstowcs;
+  using ::mbtowc;
+
+  using ::qsort;
+
+
+  using ::quick_exit;
+
+
+  using ::rand;
+  using ::realloc;
+  using ::srand;
+  using ::strtod;
+  using ::strtol;
+  using ::strtoul;
+  using ::system;
+
+  using ::wcstombs;
+  using ::wctomb;
+
+
+
+  inline ldiv_t
+  div(long __i, long __j) { return ldiv(__i, __j); }
+
+
+
+
+}
+# 195 "/usr/include/c++/11/cstdlib" 3
+namespace __gnu_cxx __attribute__ ((__visibility__ ("default")))
+{
+
+
+
+  using ::lldiv_t;
+
+
+
+
+
+  using ::_Exit;
+
+
+
+  using ::llabs;
+
+  inline lldiv_t
+  div(long long __n, long long __d)
+  { lldiv_t __q; __q.quot = __n / __d; __q.rem = __n % __d; return __q; }
+
+  using ::lldiv;
+# 227 "/usr/include/c++/11/cstdlib" 3
+  using ::atoll;
+  using ::strtoll;
+  using ::strtoull;
+
+  using ::strtof;
+  using ::strtold;
+
+
+}
+
+namespace std
+{
+
+  using ::__gnu_cxx::lldiv_t;
+
+  using ::__gnu_cxx::_Exit;
+
+  using ::__gnu_cxx::llabs;
+  using ::__gnu_cxx::div;
+  using ::__gnu_cxx::lldiv;
+
+  using ::__gnu_cxx::atoll;
+  using ::__gnu_cxx::strtof;
+  using ::__gnu_cxx::strtoll;
+  using ::__gnu_cxx::strtoull;
+  using ::__gnu_cxx::strtold;
+}
+
+
+
+}
+# 37 "/usr/include/c++/11/stdlib.h" 2 3
+
+using std::abort;
+using std::atexit;
+using std::exit;
+
+
+  using std::at_quick_exit;
+
+
+  using std::quick_exit;
+
+
+
+
+using std::div_t;
+using std::ldiv_t;
+
+using std::abs;
+using std::atof;
+using std::atoi;
+using std::atol;
+using std::bsearch;
+using std::calloc;
+using std::div;
+using std::free;
+using std::getenv;
+using std::labs;
+using std::ldiv;
+using std::malloc;
+
+using std::mblen;
+using std::mbstowcs;
+using std::mbtowc;
+
+using std::qsort;
+using std::rand;
+using std::realloc;
+using std::srand;
+using std::strtod;
+using std::strtol;
+using std::strtoul;
+using std::system;
+
+using std::wcstombs;
+using std::wctomb;
+# 3 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 2
+# 1 "/usr/include/stdio.h" 1 3 4
+# 27 "/usr/include/stdio.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 28 "/usr/include/stdio.h" 2 3 4
+
+extern "C" {
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 34 "/usr/include/stdio.h" 2 3 4
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h" 1 3 4
+# 40 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h" 3 4
+typedef __builtin_va_list __gnuc_va_list;
+# 37 "/usr/include/stdio.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h" 1 3 4
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h" 1 3 4
+# 13 "/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h" 3 4
+typedef struct
+{
+  int __count;
+  union
+  {
+    unsigned int __wch;
+    char __wchb[4];
+  } __value;
+} __mbstate_t;
+# 6 "/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h" 2 3 4
+
+
+
+
+typedef struct _G_fpos_t
+{
+  __off_t __pos;
+  __mbstate_t __state;
+} __fpos_t;
+# 40 "/usr/include/stdio.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h" 3 4
+typedef struct _G_fpos64_t
+{
+  __off64_t __pos;
+  __mbstate_t __state;
+} __fpos64_t;
+# 41 "/usr/include/stdio.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__FILE.h" 1 3 4
+
+
+
+struct _IO_FILE;
+typedef struct _IO_FILE __FILE;
+# 42 "/usr/include/stdio.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/FILE.h" 1 3 4
+
+
+
+struct _IO_FILE;
+
+
+typedef struct _IO_FILE FILE;
+# 43 "/usr/include/stdio.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h" 1 3 4
+# 35 "/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h" 3 4
+struct _IO_FILE;
+struct _IO_marker;
+struct _IO_codecvt;
+struct _IO_wide_data;
+
+
+
+
+typedef void _IO_lock_t;
+
+
+
+
+
+struct _IO_FILE
+{
+  int _flags;
+
+
+  char *_IO_read_ptr;
+  char *_IO_read_end;
+  char *_IO_read_base;
+  char *_IO_write_base;
+  char *_IO_write_ptr;
+  char *_IO_write_end;
+  char *_IO_buf_base;
+  char *_IO_buf_end;
+
+
+  char *_IO_save_base;
+  char *_IO_backup_base;
+  char *_IO_save_end;
+
+  struct _IO_marker *_markers;
+
+  struct _IO_FILE *_chain;
+
+  int _fileno;
+  int _flags2;
+  __off_t _old_offset;
+
+
+  unsigned short _cur_column;
+  signed char _vtable_offset;
+  char _shortbuf[1];
+
+  _IO_lock_t *_lock;
+
+
+
+
+
+
+
+  __off64_t _offset;
+
+  struct _IO_codecvt *_codecvt;
+  struct _IO_wide_data *_wide_data;
+  struct _IO_FILE *_freeres_list;
+  void *_freeres_buf;
+  size_t __pad5;
+  int _mode;
+
+  char _unused2[15 * sizeof (int) - 4 * sizeof (void *) - sizeof (size_t)];
+};
+# 44 "/usr/include/stdio.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h" 3 4
+typedef __ssize_t cookie_read_function_t (void *__cookie, char *__buf,
+                                          size_t __nbytes);
+
+
+
+
+
+
+
+typedef __ssize_t cookie_write_function_t (void *__cookie, const char *__buf,
+                                           size_t __nbytes);
+
+
+
+
+
+
+
+typedef int cookie_seek_function_t (void *__cookie, __off64_t *__pos, int __w);
+
+
+typedef int cookie_close_function_t (void *__cookie);
+
+
+
+
+
+
+typedef struct _IO_cookie_io_functions_t
+{
+  cookie_read_function_t *read;
+  cookie_write_function_t *write;
+  cookie_seek_function_t *seek;
+  cookie_close_function_t *close;
+} cookie_io_functions_t;
+# 47 "/usr/include/stdio.h" 2 3 4
+
+
+
+
+
+typedef __gnuc_va_list va_list;
+# 84 "/usr/include/stdio.h" 3 4
+typedef __fpos_t fpos_t;
+
+
+
+
+typedef __fpos64_t fpos64_t;
+# 133 "/usr/include/stdio.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdio_lim.h" 1 3 4
+# 134 "/usr/include/stdio.h" 2 3 4
+# 143 "/usr/include/stdio.h" 3 4
+extern FILE *stdin;
+extern FILE *stdout;
+extern FILE *stderr;
+
+
+
+
+
+
+extern int remove (const char *__filename) noexcept (true);
+
+extern int rename (const char *__old, const char *__new) noexcept (true);
+
+
+
+extern int renameat (int __oldfd, const char *__old, int __newfd,
+       const char *__new) noexcept (true);
+# 170 "/usr/include/stdio.h" 3 4
+extern int renameat2 (int __oldfd, const char *__old, int __newfd,
+        const char *__new, unsigned int __flags) noexcept (true);
+
+
+
+
+
+
+extern int fclose (FILE *__stream);
+# 188 "/usr/include/stdio.h" 3 4
+extern FILE *tmpfile (void)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+# 200 "/usr/include/stdio.h" 3 4
+extern FILE *tmpfile64 (void)
+   __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+
+
+
+extern char *tmpnam (char[20]) noexcept (true) ;
+
+
+
+
+extern char *tmpnam_r (char __s[20]) noexcept (true) ;
+# 222 "/usr/include/stdio.h" 3 4
+extern char *tempnam (const char *__dir, const char *__pfx)
+   noexcept (true) __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (__builtin_free, 1)));
+
+
+
+
+
+
+extern int fflush (FILE *__stream);
+# 239 "/usr/include/stdio.h" 3 4
+extern int fflush_unlocked (FILE *__stream);
+# 249 "/usr/include/stdio.h" 3 4
+extern int fcloseall (void);
+# 258 "/usr/include/stdio.h" 3 4
+extern FILE *fopen (const char *__restrict __filename,
+      const char *__restrict __modes)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+
+
+
+
+extern FILE *freopen (const char *__restrict __filename,
+        const char *__restrict __modes,
+        FILE *__restrict __stream) ;
+# 283 "/usr/include/stdio.h" 3 4
+extern FILE *fopen64 (const char *__restrict __filename,
+        const char *__restrict __modes)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+extern FILE *freopen64 (const char *__restrict __filename,
+   const char *__restrict __modes,
+   FILE *__restrict __stream) ;
+
+
+
+
+extern FILE *fdopen (int __fd, const char *__modes) noexcept (true)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+
+
+
+
+
+extern FILE *fopencookie (void *__restrict __magic_cookie,
+     const char *__restrict __modes,
+     cookie_io_functions_t __io_funcs) noexcept (true)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+
+
+
+
+extern FILE *fmemopen (void *__s, size_t __len, const char *__modes)
+  noexcept (true) __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+
+
+
+
+extern FILE *open_memstream (char **__bufloc, size_t *__sizeloc) noexcept (true)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (fclose, 1))) ;
+# 328 "/usr/include/stdio.h" 3 4
+extern void setbuf (FILE *__restrict __stream, char *__restrict __buf) noexcept (true);
+
+
+
+extern int setvbuf (FILE *__restrict __stream, char *__restrict __buf,
+      int __modes, size_t __n) noexcept (true);
+
+
+
+
+extern void setbuffer (FILE *__restrict __stream, char *__restrict __buf,
+         size_t __size) noexcept (true);
+
+
+extern void setlinebuf (FILE *__stream) noexcept (true);
+
+
+
+
+
+
+
+extern int fprintf (FILE *__restrict __stream,
+      const char *__restrict __format, ...);
+
+
+
+
+extern int printf (const char *__restrict __format, ...);
+
+extern int sprintf (char *__restrict __s,
+      const char *__restrict __format, ...) noexcept (true);
+
+
+
+
+
+extern int vfprintf (FILE *__restrict __s, const char *__restrict __format,
+       __gnuc_va_list __arg);
+
+
+
+
+extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
+
+extern int vsprintf (char *__restrict __s, const char *__restrict __format,
+       __gnuc_va_list __arg) noexcept (true);
+
+
+
+extern int snprintf (char *__restrict __s, size_t __maxlen,
+       const char *__restrict __format, ...)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 3, 4)));
+
+extern int vsnprintf (char *__restrict __s, size_t __maxlen,
+        const char *__restrict __format, __gnuc_va_list __arg)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 3, 0)));
+
+
+
+
+
+extern int vasprintf (char **__restrict __ptr, const char *__restrict __f,
+        __gnuc_va_list __arg)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 2, 0))) ;
+extern int __asprintf (char **__restrict __ptr,
+         const char *__restrict __fmt, ...)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 2, 3))) ;
+extern int asprintf (char **__restrict __ptr,
+       const char *__restrict __fmt, ...)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 2, 3))) ;
+
+
+
+
+extern int vdprintf (int __fd, const char *__restrict __fmt,
+       __gnuc_va_list __arg)
+     __attribute__ ((__format__ (__printf__, 2, 0)));
+extern int dprintf (int __fd, const char *__restrict __fmt, ...)
+     __attribute__ ((__format__ (__printf__, 2, 3)));
+
+
+
+
+
+
+
+extern int fscanf (FILE *__restrict __stream,
+     const char *__restrict __format, ...) ;
+
+
+
+
+extern int scanf (const char *__restrict __format, ...) ;
+
+extern int sscanf (const char *__restrict __s,
+     const char *__restrict __format, ...) noexcept (true);
+# 434 "/usr/include/stdio.h" 3 4
+extern int fscanf (FILE *__restrict __stream, const char *__restrict __format, ...) __asm__ ("" "__isoc99_fscanf")
+
+                               ;
+extern int scanf (const char *__restrict __format, ...) __asm__ ("" "__isoc99_scanf")
+                              ;
+extern int sscanf (const char *__restrict __s, const char *__restrict __format, ...) noexcept (true) __asm__ ("" "__isoc99_sscanf")
+
+                      ;
+# 459 "/usr/include/stdio.h" 3 4
+extern int vfscanf (FILE *__restrict __s, const char *__restrict __format,
+      __gnuc_va_list __arg)
+     __attribute__ ((__format__ (__scanf__, 2, 0))) ;
+
+
+
+
+
+extern int vscanf (const char *__restrict __format, __gnuc_va_list __arg)
+     __attribute__ ((__format__ (__scanf__, 1, 0))) ;
+
+
+extern int vsscanf (const char *__restrict __s,
+      const char *__restrict __format, __gnuc_va_list __arg)
+     noexcept (true) __attribute__ ((__format__ (__scanf__, 2, 0)));
+
+
+
+
+
+extern int vfscanf (FILE *__restrict __s, const char *__restrict __format, __gnuc_va_list __arg) __asm__ ("" "__isoc99_vfscanf")
+
+
+
+     __attribute__ ((__format__ (__scanf__, 2, 0))) ;
+extern int vscanf (const char *__restrict __format, __gnuc_va_list __arg) __asm__ ("" "__isoc99_vscanf")
+
+     __attribute__ ((__format__ (__scanf__, 1, 0))) ;
+extern int vsscanf (const char *__restrict __s, const char *__restrict __format, __gnuc_va_list __arg) noexcept (true) __asm__ ("" "__isoc99_vsscanf")
+
+
+
+     __attribute__ ((__format__ (__scanf__, 2, 0)));
+# 513 "/usr/include/stdio.h" 3 4
+extern int fgetc (FILE *__stream);
+extern int getc (FILE *__stream);
+
+
+
+
+
+extern int getchar (void);
+
+
+
+
+
+
+extern int getc_unlocked (FILE *__stream);
+extern int getchar_unlocked (void);
+# 538 "/usr/include/stdio.h" 3 4
+extern int fgetc_unlocked (FILE *__stream);
+# 549 "/usr/include/stdio.h" 3 4
+extern int fputc (int __c, FILE *__stream);
+extern int putc (int __c, FILE *__stream);
+
+
+
+
+
+extern int putchar (int __c);
+# 565 "/usr/include/stdio.h" 3 4
+extern int fputc_unlocked (int __c, FILE *__stream);
+
+
+
+
+
+
+
+extern int putc_unlocked (int __c, FILE *__stream);
+extern int putchar_unlocked (int __c);
+
+
+
+
+
+
+extern int getw (FILE *__stream);
+
+
+extern int putw (int __w, FILE *__stream);
+
+
+
+
+
+
+
+extern char *fgets (char *__restrict __s, int __n, FILE *__restrict __stream)
+     __attribute__ ((__access__ (__write_only__, 1, 2)));
+# 615 "/usr/include/stdio.h" 3 4
+extern char *fgets_unlocked (char *__restrict __s, int __n,
+        FILE *__restrict __stream)
+    __attribute__ ((__access__ (__write_only__, 1, 2)));
+# 632 "/usr/include/stdio.h" 3 4
+extern __ssize_t __getdelim (char **__restrict __lineptr,
+                             size_t *__restrict __n, int __delimiter,
+                             FILE *__restrict __stream) ;
+extern __ssize_t getdelim (char **__restrict __lineptr,
+                           size_t *__restrict __n, int __delimiter,
+                           FILE *__restrict __stream) ;
+
+
+
+
+
+
+
+extern __ssize_t getline (char **__restrict __lineptr,
+                          size_t *__restrict __n,
+                          FILE *__restrict __stream) ;
+
+
+
+
+
+
+
+extern int fputs (const char *__restrict __s, FILE *__restrict __stream);
+
+
+
+
+
+extern int puts (const char *__s);
+
+
+
+
+
+
+extern int ungetc (int __c, FILE *__stream);
+
+
+
+
+
+
+extern size_t fread (void *__restrict __ptr, size_t __size,
+       size_t __n, FILE *__restrict __stream) ;
+
+
+
+
+extern size_t fwrite (const void *__restrict __ptr, size_t __size,
+        size_t __n, FILE *__restrict __s);
+# 691 "/usr/include/stdio.h" 3 4
+extern int fputs_unlocked (const char *__restrict __s,
+      FILE *__restrict __stream);
+# 702 "/usr/include/stdio.h" 3 4
+extern size_t fread_unlocked (void *__restrict __ptr, size_t __size,
+         size_t __n, FILE *__restrict __stream) ;
+extern size_t fwrite_unlocked (const void *__restrict __ptr, size_t __size,
+          size_t __n, FILE *__restrict __stream);
+
+
+
+
+
+
+
+extern int fseek (FILE *__stream, long int __off, int __whence);
+
+
+
+
+extern long int ftell (FILE *__stream) ;
+
+
+
+
+extern void rewind (FILE *__stream);
+# 736 "/usr/include/stdio.h" 3 4
+extern int fseeko (FILE *__stream, __off_t __off, int __whence);
+
+
+
+
+extern __off_t ftello (FILE *__stream) ;
+# 760 "/usr/include/stdio.h" 3 4
+extern int fgetpos (FILE *__restrict __stream, fpos_t *__restrict __pos);
+
+
+
+
+extern int fsetpos (FILE *__stream, const fpos_t *__pos);
+# 779 "/usr/include/stdio.h" 3 4
+extern int fseeko64 (FILE *__stream, __off64_t __off, int __whence);
+extern __off64_t ftello64 (FILE *__stream) ;
+extern int fgetpos64 (FILE *__restrict __stream, fpos64_t *__restrict __pos);
+extern int fsetpos64 (FILE *__stream, const fpos64_t *__pos);
+
+
+
+extern void clearerr (FILE *__stream) noexcept (true);
+
+extern int feof (FILE *__stream) noexcept (true) ;
+
+extern int ferror (FILE *__stream) noexcept (true) ;
+
+
+
+extern void clearerr_unlocked (FILE *__stream) noexcept (true);
+extern int feof_unlocked (FILE *__stream) noexcept (true) ;
+extern int ferror_unlocked (FILE *__stream) noexcept (true) ;
+
+
+
+
+
+
+
+extern void perror (const char *__s);
+
+
+
+
+extern int fileno (FILE *__stream) noexcept (true) ;
+
+
+
+
+extern int fileno_unlocked (FILE *__stream) noexcept (true) ;
+# 823 "/usr/include/stdio.h" 3 4
+extern int pclose (FILE *__stream);
+
+
+
+
+
+extern FILE *popen (const char *__command, const char *__modes)
+  __attribute__ ((__malloc__)) __attribute__ ((__malloc__ (pclose, 1))) ;
+
+
+
+
+
+
+extern char *ctermid (char *__s) noexcept (true)
+  __attribute__ ((__access__ (__write_only__, 1)));
+
+
+
+
+
+extern char *cuserid (char *__s)
+  __attribute__ ((__access__ (__write_only__, 1)));
+
+
+
+
+struct obstack;
+
+
+extern int obstack_printf (struct obstack *__restrict __obstack,
+      const char *__restrict __format, ...)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 2, 3)));
+extern int obstack_vprintf (struct obstack *__restrict __obstack,
+       const char *__restrict __format,
+       __gnuc_va_list __args)
+     noexcept (true) __attribute__ ((__format__ (__printf__, 2, 0)));
+
+
+
+
+
+
+
+extern void flockfile (FILE *__stream) noexcept (true);
+
+
+
+extern int ftrylockfile (FILE *__stream) noexcept (true) ;
+
+
+extern void funlockfile (FILE *__stream) noexcept (true);
+# 885 "/usr/include/stdio.h" 3 4
+extern int __uflow (FILE *);
+extern int __overflow (FILE *, int);
+# 902 "/usr/include/stdio.h" 3 4
+}
+# 4 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 2
+# 1 "/usr/include/string.h" 1 3 4
+# 26 "/usr/include/string.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 27 "/usr/include/string.h" 2 3 4
+
+extern "C" {
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 34 "/usr/include/string.h" 2 3 4
+# 43 "/usr/include/string.h" 3 4
+extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
+       size_t __n) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void *memmove (void *__dest, const void *__src, size_t __n)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern void *memccpy (void *__restrict __dest, const void *__restrict __src,
+        int __c, size_t __n)
+    noexcept (true) __attribute__ ((__nonnull__ (1, 2))) __attribute__ ((__access__ (__write_only__, 1, 4)));
+
+
+
+
+extern void *memset (void *__s, int __c, size_t __n) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int memcmp (const void *__s1, const void *__s2, size_t __n)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 80 "/usr/include/string.h" 3 4
+extern int __memcmpeq (const void *__s1, const void *__s2, size_t __n)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern "C++"
+{
+extern void *memchr (void *__s, int __c, size_t __n)
+      noexcept (true) __asm ("memchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const void *memchr (const void *__s, int __c, size_t __n)
+      noexcept (true) __asm ("memchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 105 "/usr/include/string.h" 3 4
+}
+# 115 "/usr/include/string.h" 3 4
+extern "C++" void *rawmemchr (void *__s, int __c)
+     noexcept (true) __asm ("rawmemchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern "C++" const void *rawmemchr (const void *__s, int __c)
+     noexcept (true) __asm ("rawmemchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+extern "C++" void *memrchr (void *__s, int __c, size_t __n)
+      noexcept (true) __asm ("memrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)))
+      __attribute__ ((__access__ (__read_only__, 1, 3)));
+extern "C++" const void *memrchr (const void *__s, int __c, size_t __n)
+      noexcept (true) __asm ("memrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)))
+      __attribute__ ((__access__ (__read_only__, 1, 3)));
+# 141 "/usr/include/string.h" 3 4
+extern char *strcpy (char *__restrict __dest, const char *__restrict __src)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncat (char *__restrict __dest, const char *__restrict __src,
+        size_t __n) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcmp (const char *__s1, const char *__s2)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern int strncmp (const char *__s1, const char *__s2, size_t __n)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcoll (const char *__s1, const char *__s2)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern size_t strxfrm (char *__restrict __dest,
+         const char *__restrict __src, size_t __n)
+    noexcept (true) __attribute__ ((__nonnull__ (2))) __attribute__ ((__access__ (__write_only__, 1, 3)));
+
+
+
+
+
+
+extern int strcoll_l (const char *__s1, const char *__s2, locale_t __l)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+
+extern size_t strxfrm_l (char *__dest, const char *__src, size_t __n,
+    locale_t __l) noexcept (true) __attribute__ ((__nonnull__ (2, 4)))
+     __attribute__ ((__access__ (__write_only__, 1, 3)));
+
+
+
+
+
+extern char *strdup (const char *__s)
+     noexcept (true) __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern char *strndup (const char *__string, size_t __n)
+     noexcept (true) __attribute__ ((__malloc__)) __attribute__ ((__nonnull__ (1)));
+# 224 "/usr/include/string.h" 3 4
+extern "C++"
+{
+extern char *strchr (char *__s, int __c)
+     noexcept (true) __asm ("strchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *strchr (const char *__s, int __c)
+     noexcept (true) __asm ("strchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 244 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+extern "C++"
+{
+extern char *strrchr (char *__s, int __c)
+     noexcept (true) __asm ("strrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *strrchr (const char *__s, int __c)
+     noexcept (true) __asm ("strrchr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 271 "/usr/include/string.h" 3 4
+}
+# 281 "/usr/include/string.h" 3 4
+extern "C++" char *strchrnul (char *__s, int __c)
+     noexcept (true) __asm ("strchrnul") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern "C++" const char *strchrnul (const char *__s, int __c)
+     noexcept (true) __asm ("strchrnul") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 293 "/usr/include/string.h" 3 4
+extern size_t strcspn (const char *__s, const char *__reject)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern size_t strspn (const char *__s, const char *__accept)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern "C++"
+{
+extern char *strpbrk (char *__s, const char *__accept)
+     noexcept (true) __asm ("strpbrk") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+extern const char *strpbrk (const char *__s, const char *__accept)
+     noexcept (true) __asm ("strpbrk") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 321 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+extern "C++"
+{
+extern char *strstr (char *__haystack, const char *__needle)
+     noexcept (true) __asm ("strstr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+extern const char *strstr (const char *__haystack, const char *__needle)
+     noexcept (true) __asm ("strstr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 348 "/usr/include/string.h" 3 4
+}
+
+
+
+
+
+
+
+extern char *strtok (char *__restrict __s, const char *__restrict __delim)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+
+extern char *__strtok_r (char *__restrict __s,
+    const char *__restrict __delim,
+    char **__restrict __save_ptr)
+     noexcept (true) __attribute__ ((__nonnull__ (2, 3)));
+
+extern char *strtok_r (char *__restrict __s, const char *__restrict __delim,
+         char **__restrict __save_ptr)
+     noexcept (true) __attribute__ ((__nonnull__ (2, 3)));
+
+
+
+
+
+extern "C++" char *strcasestr (char *__haystack, const char *__needle)
+     noexcept (true) __asm ("strcasestr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+extern "C++" const char *strcasestr (const char *__haystack,
+         const char *__needle)
+     noexcept (true) __asm ("strcasestr") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 389 "/usr/include/string.h" 3 4
+extern void *memmem (const void *__haystack, size_t __haystacklen,
+       const void *__needle, size_t __needlelen)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 3)))
+    __attribute__ ((__access__ (__read_only__, 1, 2)))
+    __attribute__ ((__access__ (__read_only__, 3, 4)));
+
+
+
+extern void *__mempcpy (void *__restrict __dest,
+   const void *__restrict __src, size_t __n)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+extern void *mempcpy (void *__restrict __dest,
+        const void *__restrict __src, size_t __n)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern size_t strlen (const char *__s)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern size_t strnlen (const char *__string, size_t __maxlen)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern char *strerror (int __errnum) noexcept (true);
+# 444 "/usr/include/string.h" 3 4
+extern char *strerror_r (int __errnum, char *__buf, size_t __buflen)
+     noexcept (true) __attribute__ ((__nonnull__ (2))) __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+
+extern const char *strerrordesc_np (int __err) noexcept (true);
+
+extern const char *strerrorname_np (int __err) noexcept (true);
+
+
+
+
+
+extern char *strerror_l (int __errnum, locale_t __l) noexcept (true);
+
+
+
+# 1 "/usr/include/strings.h" 1 3 4
+# 23 "/usr/include/strings.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 24 "/usr/include/strings.h" 2 3 4
+
+
+
+
+
+
+extern "C" {
+
+
+
+extern int bcmp (const void *__s1, const void *__s2, size_t __n)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void bcopy (const void *__src, void *__dest, size_t __n)
+  noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void bzero (void *__s, size_t __n) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern "C++"
+{
+extern char *index (char *__s, int __c)
+     noexcept (true) __asm ("index") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *index (const char *__s, int __c)
+     noexcept (true) __asm ("index") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 66 "/usr/include/strings.h" 3 4
+}
+
+
+
+
+
+
+
+extern "C++"
+{
+extern char *rindex (char *__s, int __c)
+     noexcept (true) __asm ("rindex") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+extern const char *rindex (const char *__s, int __c)
+     noexcept (true) __asm ("rindex") __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 94 "/usr/include/strings.h" 3 4
+}
+# 104 "/usr/include/strings.h" 3 4
+extern int ffs (int __i) noexcept (true) __attribute__ ((__const__));
+
+
+
+
+
+extern int ffsl (long int __l) noexcept (true) __attribute__ ((__const__));
+__extension__ extern int ffsll (long long int __ll)
+     noexcept (true) __attribute__ ((__const__));
+
+
+
+extern int strcasecmp (const char *__s1, const char *__s2)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strncasecmp (const char *__s1, const char *__s2, size_t __n)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+
+extern int strcasecmp_l (const char *__s1, const char *__s2, locale_t __loc)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+
+
+extern int strncasecmp_l (const char *__s1, const char *__s2,
+     size_t __n, locale_t __loc)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2, 4)));
+
+
+}
+# 463 "/usr/include/string.h" 2 3 4
+
+
+
+extern void explicit_bzero (void *__s, size_t __n) noexcept (true) __attribute__ ((__nonnull__ (1)))
+    __attribute__ ((__access__ (__write_only__, 1, 2)));
+
+
+
+extern char *strsep (char **__restrict __stringp,
+       const char *__restrict __delim)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern char *strsignal (int __sig) noexcept (true);
+
+
+
+extern const char *sigabbrev_np (int __sig) noexcept (true);
+
+
+extern const char *sigdescr_np (int __sig) noexcept (true);
+
+
+
+extern char *__stpcpy (char *__restrict __dest, const char *__restrict __src)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+extern char *stpcpy (char *__restrict __dest, const char *__restrict __src)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern char *__stpncpy (char *__restrict __dest,
+   const char *__restrict __src, size_t __n)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+extern char *stpncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int strverscmp (const char *__s1, const char *__s2)
+     noexcept (true) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strfry (char *__string) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern void *memfrob (void *__s, size_t __n) noexcept (true) __attribute__ ((__nonnull__ (1)))
+    __attribute__ ((__access__ (__read_write__, 1, 2)));
+
+
+
+
+
+
+
+extern "C++" char *basename (char *__filename)
+     noexcept (true) __asm ("basename") __attribute__ ((__nonnull__ (1)));
+extern "C++" const char *basename (const char *__filename)
+     noexcept (true) __asm ("basename") __attribute__ ((__nonnull__ (1)));
+# 539 "/usr/include/string.h" 3 4
+}
+# 5 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 2
+
+
+
+
+
+
+
+# 1 "/usr/include/unistd.h" 1 3 4
+# 27 "/usr/include/unistd.h" 3 4
+extern "C" {
+# 202 "/usr/include/unistd.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/posix_opt.h" 1 3 4
+# 203 "/usr/include/unistd.h" 2 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/environments.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/environments.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/environments.h" 2 3 4
+# 207 "/usr/include/unistd.h" 2 3 4
+# 226 "/usr/include/unistd.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 227 "/usr/include/unistd.h" 2 3 4
+# 274 "/usr/include/unistd.h" 3 4
+typedef __socklen_t socklen_t;
+# 287 "/usr/include/unistd.h" 3 4
+extern int access (const char *__name, int __type) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern int euidaccess (const char *__name, int __type)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int eaccess (const char *__name, int __type)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int execveat (int __fd, const char *__path, char *const __argv[],
+                     char *const __envp[], int __flags)
+    noexcept (true) __attribute__ ((__nonnull__ (2, 3)));
+
+
+
+
+
+
+extern int faccessat (int __fd, const char *__file, int __type, int __flag)
+     noexcept (true) __attribute__ ((__nonnull__ (2))) ;
+# 339 "/usr/include/unistd.h" 3 4
+extern __off_t lseek (int __fd, __off_t __offset, int __whence) noexcept (true);
+# 350 "/usr/include/unistd.h" 3 4
+extern __off64_t lseek64 (int __fd, __off64_t __offset, int __whence)
+     noexcept (true);
+
+
+
+
+
+
+extern int close (int __fd);
+
+
+
+
+extern void closefrom (int __lowfd) noexcept (true);
+
+
+
+
+
+
+
+extern ssize_t read (int __fd, void *__buf, size_t __nbytes)
+    __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+
+
+extern ssize_t write (int __fd, const void *__buf, size_t __n)
+    __attribute__ ((__access__ (__read_only__, 2, 3)));
+# 389 "/usr/include/unistd.h" 3 4
+extern ssize_t pread (int __fd, void *__buf, size_t __nbytes,
+        __off_t __offset)
+    __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+
+
+
+extern ssize_t pwrite (int __fd, const void *__buf, size_t __n,
+         __off_t __offset)
+    __attribute__ ((__access__ (__read_only__, 2, 3)));
+# 422 "/usr/include/unistd.h" 3 4
+extern ssize_t pread64 (int __fd, void *__buf, size_t __nbytes,
+   __off64_t __offset)
+    __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+extern ssize_t pwrite64 (int __fd, const void *__buf, size_t __n,
+    __off64_t __offset)
+    __attribute__ ((__access__ (__read_only__, 2, 3)));
+
+
+
+
+
+
+
+extern int pipe (int __pipedes[2]) noexcept (true) ;
+
+
+
+
+extern int pipe2 (int __pipedes[2], int __flags) noexcept (true) ;
+# 452 "/usr/include/unistd.h" 3 4
+extern unsigned int alarm (unsigned int __seconds) noexcept (true);
+# 464 "/usr/include/unistd.h" 3 4
+extern unsigned int sleep (unsigned int __seconds);
+
+
+
+
+
+
+
+extern __useconds_t ualarm (__useconds_t __value, __useconds_t __interval)
+     noexcept (true);
+
+
+
+
+
+
+extern int usleep (__useconds_t __useconds);
+# 489 "/usr/include/unistd.h" 3 4
+extern int pause (void);
+
+
+
+extern int chown (const char *__file, __uid_t __owner, __gid_t __group)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+extern int fchown (int __fd, __uid_t __owner, __gid_t __group) noexcept (true) ;
+
+
+
+
+extern int lchown (const char *__file, __uid_t __owner, __gid_t __group)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+
+
+extern int fchownat (int __fd, const char *__file, __uid_t __owner,
+       __gid_t __group, int __flag)
+     noexcept (true) __attribute__ ((__nonnull__ (2))) ;
+
+
+
+extern int chdir (const char *__path) noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+extern int fchdir (int __fd) noexcept (true) ;
+# 531 "/usr/include/unistd.h" 3 4
+extern char *getcwd (char *__buf, size_t __size) noexcept (true) ;
+
+
+
+
+
+extern char *get_current_dir_name (void) noexcept (true);
+
+
+
+
+
+
+
+extern char *getwd (char *__buf)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) __attribute__ ((__deprecated__))
+    __attribute__ ((__access__ (__write_only__, 1)));
+
+
+
+
+extern int dup (int __fd) noexcept (true) ;
+
+
+extern int dup2 (int __fd, int __fd2) noexcept (true);
+
+
+
+
+extern int dup3 (int __fd, int __fd2, int __flags) noexcept (true);
+
+
+
+extern char **__environ;
+
+extern char **environ;
+
+
+
+
+
+extern int execve (const char *__path, char *const __argv[],
+     char *const __envp[]) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int fexecve (int __fd, char *const __argv[], char *const __envp[])
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern int execv (const char *__path, char *const __argv[])
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern int execle (const char *__path, const char *__arg, ...)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern int execl (const char *__path, const char *__arg, ...)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern int execvp (const char *__file, char *const __argv[])
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int execlp (const char *__file, const char *__arg, ...)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int execvpe (const char *__file, char *const __argv[],
+      char *const __envp[])
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+extern int nice (int __inc) noexcept (true) ;
+
+
+
+
+extern void _exit (int __status) __attribute__ ((__noreturn__));
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/confname.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/confname.h" 3 4
+enum
+  {
+    _PC_LINK_MAX,
+
+    _PC_MAX_CANON,
+
+    _PC_MAX_INPUT,
+
+    _PC_NAME_MAX,
+
+    _PC_PATH_MAX,
+
+    _PC_PIPE_BUF,
+
+    _PC_CHOWN_RESTRICTED,
+
+    _PC_NO_TRUNC,
+
+    _PC_VDISABLE,
+
+    _PC_SYNC_IO,
+
+    _PC_ASYNC_IO,
+
+    _PC_PRIO_IO,
+
+    _PC_SOCK_MAXBUF,
+
+    _PC_FILESIZEBITS,
+
+    _PC_REC_INCR_XFER_SIZE,
+
+    _PC_REC_MAX_XFER_SIZE,
+
+    _PC_REC_MIN_XFER_SIZE,
+
+    _PC_REC_XFER_ALIGN,
+
+    _PC_ALLOC_SIZE_MIN,
+
+    _PC_SYMLINK_MAX,
+
+    _PC_2_SYMLINKS
+
+  };
+
+
+enum
+  {
+    _SC_ARG_MAX,
+
+    _SC_CHILD_MAX,
+
+    _SC_CLK_TCK,
+
+    _SC_NGROUPS_MAX,
+
+    _SC_OPEN_MAX,
+
+    _SC_STREAM_MAX,
+
+    _SC_TZNAME_MAX,
+
+    _SC_JOB_CONTROL,
+
+    _SC_SAVED_IDS,
+
+    _SC_REALTIME_SIGNALS,
+
+    _SC_PRIORITY_SCHEDULING,
+
+    _SC_TIMERS,
+
+    _SC_ASYNCHRONOUS_IO,
+
+    _SC_PRIORITIZED_IO,
+
+    _SC_SYNCHRONIZED_IO,
+
+    _SC_FSYNC,
+
+    _SC_MAPPED_FILES,
+
+    _SC_MEMLOCK,
+
+    _SC_MEMLOCK_RANGE,
+
+    _SC_MEMORY_PROTECTION,
+
+    _SC_MESSAGE_PASSING,
+
+    _SC_SEMAPHORES,
+
+    _SC_SHARED_MEMORY_OBJECTS,
+
+    _SC_AIO_LISTIO_MAX,
+
+    _SC_AIO_MAX,
+
+    _SC_AIO_PRIO_DELTA_MAX,
+
+    _SC_DELAYTIMER_MAX,
+
+    _SC_MQ_OPEN_MAX,
+
+    _SC_MQ_PRIO_MAX,
+
+    _SC_VERSION,
+
+    _SC_PAGESIZE,
+
+
+    _SC_RTSIG_MAX,
+
+    _SC_SEM_NSEMS_MAX,
+
+    _SC_SEM_VALUE_MAX,
+
+    _SC_SIGQUEUE_MAX,
+
+    _SC_TIMER_MAX,
+
+
+
+
+    _SC_BC_BASE_MAX,
+
+    _SC_BC_DIM_MAX,
+
+    _SC_BC_SCALE_MAX,
+
+    _SC_BC_STRING_MAX,
+
+    _SC_COLL_WEIGHTS_MAX,
+
+    _SC_EQUIV_CLASS_MAX,
+
+    _SC_EXPR_NEST_MAX,
+
+    _SC_LINE_MAX,
+
+    _SC_RE_DUP_MAX,
+
+    _SC_CHARCLASS_NAME_MAX,
+
+
+    _SC_2_VERSION,
+
+    _SC_2_C_BIND,
+
+    _SC_2_C_DEV,
+
+    _SC_2_FORT_DEV,
+
+    _SC_2_FORT_RUN,
+
+    _SC_2_SW_DEV,
+
+    _SC_2_LOCALEDEF,
+
+
+    _SC_PII,
+
+    _SC_PII_XTI,
+
+    _SC_PII_SOCKET,
+
+    _SC_PII_INTERNET,
+
+    _SC_PII_OSI,
+
+    _SC_POLL,
+
+    _SC_SELECT,
+
+    _SC_UIO_MAXIOV,
+
+    _SC_IOV_MAX = _SC_UIO_MAXIOV,
+
+    _SC_PII_INTERNET_STREAM,
+
+    _SC_PII_INTERNET_DGRAM,
+
+    _SC_PII_OSI_COTS,
+
+    _SC_PII_OSI_CLTS,
+
+    _SC_PII_OSI_M,
+
+    _SC_T_IOV_MAX,
+
+
+
+    _SC_THREADS,
+
+    _SC_THREAD_SAFE_FUNCTIONS,
+
+    _SC_GETGR_R_SIZE_MAX,
+
+    _SC_GETPW_R_SIZE_MAX,
+
+    _SC_LOGIN_NAME_MAX,
+
+    _SC_TTY_NAME_MAX,
+
+    _SC_THREAD_DESTRUCTOR_ITERATIONS,
+
+    _SC_THREAD_KEYS_MAX,
+
+    _SC_THREAD_STACK_MIN,
+
+    _SC_THREAD_THREADS_MAX,
+
+    _SC_THREAD_ATTR_STACKADDR,
+
+    _SC_THREAD_ATTR_STACKSIZE,
+
+    _SC_THREAD_PRIORITY_SCHEDULING,
+
+    _SC_THREAD_PRIO_INHERIT,
+
+    _SC_THREAD_PRIO_PROTECT,
+
+    _SC_THREAD_PROCESS_SHARED,
+
+
+    _SC_NPROCESSORS_CONF,
+
+    _SC_NPROCESSORS_ONLN,
+
+    _SC_PHYS_PAGES,
+
+    _SC_AVPHYS_PAGES,
+
+    _SC_ATEXIT_MAX,
+
+    _SC_PASS_MAX,
+
+
+    _SC_XOPEN_VERSION,
+
+    _SC_XOPEN_XCU_VERSION,
+
+    _SC_XOPEN_UNIX,
+
+    _SC_XOPEN_CRYPT,
+
+    _SC_XOPEN_ENH_I18N,
+
+    _SC_XOPEN_SHM,
+
+
+    _SC_2_CHAR_TERM,
+
+    _SC_2_C_VERSION,
+
+    _SC_2_UPE,
+
+
+    _SC_XOPEN_XPG2,
+
+    _SC_XOPEN_XPG3,
+
+    _SC_XOPEN_XPG4,
+
+
+    _SC_CHAR_BIT,
+
+    _SC_CHAR_MAX,
+
+    _SC_CHAR_MIN,
+
+    _SC_INT_MAX,
+
+    _SC_INT_MIN,
+
+    _SC_LONG_BIT,
+
+    _SC_WORD_BIT,
+
+    _SC_MB_LEN_MAX,
+
+    _SC_NZERO,
+
+    _SC_SSIZE_MAX,
+
+    _SC_SCHAR_MAX,
+
+    _SC_SCHAR_MIN,
+
+    _SC_SHRT_MAX,
+
+    _SC_SHRT_MIN,
+
+    _SC_UCHAR_MAX,
+
+    _SC_UINT_MAX,
+
+    _SC_ULONG_MAX,
+
+    _SC_USHRT_MAX,
+
+
+    _SC_NL_ARGMAX,
+
+    _SC_NL_LANGMAX,
+
+    _SC_NL_MSGMAX,
+
+    _SC_NL_NMAX,
+
+    _SC_NL_SETMAX,
+
+    _SC_NL_TEXTMAX,
+
+
+    _SC_XBS5_ILP32_OFF32,
+
+    _SC_XBS5_ILP32_OFFBIG,
+
+    _SC_XBS5_LP64_OFF64,
+
+    _SC_XBS5_LPBIG_OFFBIG,
+
+
+    _SC_XOPEN_LEGACY,
+
+    _SC_XOPEN_REALTIME,
+
+    _SC_XOPEN_REALTIME_THREADS,
+
+
+    _SC_ADVISORY_INFO,
+
+    _SC_BARRIERS,
+
+    _SC_BASE,
+
+    _SC_C_LANG_SUPPORT,
+
+    _SC_C_LANG_SUPPORT_R,
+
+    _SC_CLOCK_SELECTION,
+
+    _SC_CPUTIME,
+
+    _SC_THREAD_CPUTIME,
+
+    _SC_DEVICE_IO,
+
+    _SC_DEVICE_SPECIFIC,
+
+    _SC_DEVICE_SPECIFIC_R,
+
+    _SC_FD_MGMT,
+
+    _SC_FIFO,
+
+    _SC_PIPE,
+
+    _SC_FILE_ATTRIBUTES,
+
+    _SC_FILE_LOCKING,
+
+    _SC_FILE_SYSTEM,
+
+    _SC_MONOTONIC_CLOCK,
+
+    _SC_MULTI_PROCESS,
+
+    _SC_SINGLE_PROCESS,
+
+    _SC_NETWORKING,
+
+    _SC_READER_WRITER_LOCKS,
+
+    _SC_SPIN_LOCKS,
+
+    _SC_REGEXP,
+
+    _SC_REGEX_VERSION,
+
+    _SC_SHELL,
+
+    _SC_SIGNALS,
+
+    _SC_SPAWN,
+
+    _SC_SPORADIC_SERVER,
+
+    _SC_THREAD_SPORADIC_SERVER,
+
+    _SC_SYSTEM_DATABASE,
+
+    _SC_SYSTEM_DATABASE_R,
+
+    _SC_TIMEOUTS,
+
+    _SC_TYPED_MEMORY_OBJECTS,
+
+    _SC_USER_GROUPS,
+
+    _SC_USER_GROUPS_R,
+
+    _SC_2_PBS,
+
+    _SC_2_PBS_ACCOUNTING,
+
+    _SC_2_PBS_LOCATE,
+
+    _SC_2_PBS_MESSAGE,
+
+    _SC_2_PBS_TRACK,
+
+    _SC_SYMLOOP_MAX,
+
+    _SC_STREAMS,
+
+    _SC_2_PBS_CHECKPOINT,
+
+
+    _SC_V6_ILP32_OFF32,
+
+    _SC_V6_ILP32_OFFBIG,
+
+    _SC_V6_LP64_OFF64,
+
+    _SC_V6_LPBIG_OFFBIG,
+
+
+    _SC_HOST_NAME_MAX,
+
+    _SC_TRACE,
+
+    _SC_TRACE_EVENT_FILTER,
+
+    _SC_TRACE_INHERIT,
+
+    _SC_TRACE_LOG,
+
+
+    _SC_LEVEL1_ICACHE_SIZE,
+
+    _SC_LEVEL1_ICACHE_ASSOC,
+
+    _SC_LEVEL1_ICACHE_LINESIZE,
+
+    _SC_LEVEL1_DCACHE_SIZE,
+
+    _SC_LEVEL1_DCACHE_ASSOC,
+
+    _SC_LEVEL1_DCACHE_LINESIZE,
+
+    _SC_LEVEL2_CACHE_SIZE,
+
+    _SC_LEVEL2_CACHE_ASSOC,
+
+    _SC_LEVEL2_CACHE_LINESIZE,
+
+    _SC_LEVEL3_CACHE_SIZE,
+
+    _SC_LEVEL3_CACHE_ASSOC,
+
+    _SC_LEVEL3_CACHE_LINESIZE,
+
+    _SC_LEVEL4_CACHE_SIZE,
+
+    _SC_LEVEL4_CACHE_ASSOC,
+
+    _SC_LEVEL4_CACHE_LINESIZE,
+
+
+
+    _SC_IPV6 = _SC_LEVEL1_ICACHE_SIZE + 50,
+
+    _SC_RAW_SOCKETS,
+
+
+    _SC_V7_ILP32_OFF32,
+
+    _SC_V7_ILP32_OFFBIG,
+
+    _SC_V7_LP64_OFF64,
+
+    _SC_V7_LPBIG_OFFBIG,
+
+
+    _SC_SS_REPL_MAX,
+
+
+    _SC_TRACE_EVENT_NAME_MAX,
+
+    _SC_TRACE_NAME_MAX,
+
+    _SC_TRACE_SYS_MAX,
+
+    _SC_TRACE_USER_EVENT_MAX,
+
+
+    _SC_XOPEN_STREAMS,
+
+
+    _SC_THREAD_ROBUST_PRIO_INHERIT,
+
+    _SC_THREAD_ROBUST_PRIO_PROTECT,
+
+
+    _SC_MINSIGSTKSZ,
+
+
+    _SC_SIGSTKSZ
+
+  };
+
+
+enum
+  {
+    _CS_PATH,
+
+
+    _CS_V6_WIDTH_RESTRICTED_ENVS,
+
+
+
+    _CS_GNU_LIBC_VERSION,
+
+    _CS_GNU_LIBPTHREAD_VERSION,
+
+
+    _CS_V5_WIDTH_RESTRICTED_ENVS,
+
+
+
+    _CS_V7_WIDTH_RESTRICTED_ENVS,
+
+
+
+    _CS_LFS_CFLAGS = 1000,
+
+    _CS_LFS_LDFLAGS,
+
+    _CS_LFS_LIBS,
+
+    _CS_LFS_LINTFLAGS,
+
+    _CS_LFS64_CFLAGS,
+
+    _CS_LFS64_LDFLAGS,
+
+    _CS_LFS64_LIBS,
+
+    _CS_LFS64_LINTFLAGS,
+
+
+    _CS_XBS5_ILP32_OFF32_CFLAGS = 1100,
+
+    _CS_XBS5_ILP32_OFF32_LDFLAGS,
+
+    _CS_XBS5_ILP32_OFF32_LIBS,
+
+    _CS_XBS5_ILP32_OFF32_LINTFLAGS,
+
+    _CS_XBS5_ILP32_OFFBIG_CFLAGS,
+
+    _CS_XBS5_ILP32_OFFBIG_LDFLAGS,
+
+    _CS_XBS5_ILP32_OFFBIG_LIBS,
+
+    _CS_XBS5_ILP32_OFFBIG_LINTFLAGS,
+
+    _CS_XBS5_LP64_OFF64_CFLAGS,
+
+    _CS_XBS5_LP64_OFF64_LDFLAGS,
+
+    _CS_XBS5_LP64_OFF64_LIBS,
+
+    _CS_XBS5_LP64_OFF64_LINTFLAGS,
+
+    _CS_XBS5_LPBIG_OFFBIG_CFLAGS,
+
+    _CS_XBS5_LPBIG_OFFBIG_LDFLAGS,
+
+    _CS_XBS5_LPBIG_OFFBIG_LIBS,
+
+    _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS,
+
+
+    _CS_POSIX_V6_ILP32_OFF32_CFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFF32_LDFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFF32_LIBS,
+
+    _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_LIBS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS,
+
+    _CS_POSIX_V6_LP64_OFF64_CFLAGS,
+
+    _CS_POSIX_V6_LP64_OFF64_LDFLAGS,
+
+    _CS_POSIX_V6_LP64_OFF64_LIBS,
+
+    _CS_POSIX_V6_LP64_OFF64_LINTFLAGS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_LIBS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS,
+
+
+    _CS_POSIX_V7_ILP32_OFF32_CFLAGS,
+
+    _CS_POSIX_V7_ILP32_OFF32_LDFLAGS,
+
+    _CS_POSIX_V7_ILP32_OFF32_LIBS,
+
+    _CS_POSIX_V7_ILP32_OFF32_LINTFLAGS,
+
+    _CS_POSIX_V7_ILP32_OFFBIG_CFLAGS,
+
+    _CS_POSIX_V7_ILP32_OFFBIG_LDFLAGS,
+
+    _CS_POSIX_V7_ILP32_OFFBIG_LIBS,
+
+    _CS_POSIX_V7_ILP32_OFFBIG_LINTFLAGS,
+
+    _CS_POSIX_V7_LP64_OFF64_CFLAGS,
+
+    _CS_POSIX_V7_LP64_OFF64_LDFLAGS,
+
+    _CS_POSIX_V7_LP64_OFF64_LIBS,
+
+    _CS_POSIX_V7_LP64_OFF64_LINTFLAGS,
+
+    _CS_POSIX_V7_LPBIG_OFFBIG_CFLAGS,
+
+    _CS_POSIX_V7_LPBIG_OFFBIG_LDFLAGS,
+
+    _CS_POSIX_V7_LPBIG_OFFBIG_LIBS,
+
+    _CS_POSIX_V7_LPBIG_OFFBIG_LINTFLAGS,
+
+
+    _CS_V6_ENV,
+
+    _CS_V7_ENV
+
+  };
+# 631 "/usr/include/unistd.h" 2 3 4
+
+
+extern long int pathconf (const char *__path, int __name)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern long int fpathconf (int __fd, int __name) noexcept (true);
+
+
+extern long int sysconf (int __name) noexcept (true);
+
+
+
+extern size_t confstr (int __name, char *__buf, size_t __len) noexcept (true)
+    __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+
+extern __pid_t getpid (void) noexcept (true);
+
+
+extern __pid_t getppid (void) noexcept (true);
+
+
+extern __pid_t getpgrp (void) noexcept (true);
+
+
+extern __pid_t __getpgid (__pid_t __pid) noexcept (true);
+
+extern __pid_t getpgid (__pid_t __pid) noexcept (true);
+
+
+
+
+
+
+extern int setpgid (__pid_t __pid, __pid_t __pgid) noexcept (true);
+# 682 "/usr/include/unistd.h" 3 4
+extern int setpgrp (void) noexcept (true);
+
+
+
+
+
+
+extern __pid_t setsid (void) noexcept (true);
+
+
+
+extern __pid_t getsid (__pid_t __pid) noexcept (true);
+
+
+
+extern __uid_t getuid (void) noexcept (true);
+
+
+extern __uid_t geteuid (void) noexcept (true);
+
+
+extern __gid_t getgid (void) noexcept (true);
+
+
+extern __gid_t getegid (void) noexcept (true);
+
+
+
+
+extern int getgroups (int __size, __gid_t __list[]) noexcept (true)
+    __attribute__ ((__access__ (__write_only__, 2, 1)));
+
+
+extern int group_member (__gid_t __gid) noexcept (true);
+
+
+
+
+
+
+extern int setuid (__uid_t __uid) noexcept (true) ;
+
+
+
+
+extern int setreuid (__uid_t __ruid, __uid_t __euid) noexcept (true) ;
+
+
+
+
+extern int seteuid (__uid_t __uid) noexcept (true) ;
+
+
+
+
+
+
+extern int setgid (__gid_t __gid) noexcept (true) ;
+
+
+
+
+extern int setregid (__gid_t __rgid, __gid_t __egid) noexcept (true) ;
+
+
+
+
+extern int setegid (__gid_t __gid) noexcept (true) ;
+
+
+
+
+
+extern int getresuid (__uid_t *__ruid, __uid_t *__euid, __uid_t *__suid)
+     noexcept (true);
+
+
+
+extern int getresgid (__gid_t *__rgid, __gid_t *__egid, __gid_t *__sgid)
+     noexcept (true);
+
+
+
+extern int setresuid (__uid_t __ruid, __uid_t __euid, __uid_t __suid)
+     noexcept (true) ;
+
+
+
+extern int setresgid (__gid_t __rgid, __gid_t __egid, __gid_t __sgid)
+     noexcept (true) ;
+
+
+
+
+
+
+extern __pid_t fork (void) noexcept (true);
+
+
+
+
+
+
+
+extern __pid_t vfork (void) noexcept (true);
+
+
+
+
+
+
+extern __pid_t _Fork (void) noexcept (true);
+
+
+
+
+
+extern char *ttyname (int __fd) noexcept (true);
+
+
+
+extern int ttyname_r (int __fd, char *__buf, size_t __buflen)
+     noexcept (true) __attribute__ ((__nonnull__ (2)))
+     __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+extern int isatty (int __fd) noexcept (true);
+
+
+
+
+extern int ttyslot (void) noexcept (true);
+
+
+
+
+extern int link (const char *__from, const char *__to)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2))) ;
+
+
+
+
+extern int linkat (int __fromfd, const char *__from, int __tofd,
+     const char *__to, int __flags)
+     noexcept (true) __attribute__ ((__nonnull__ (2, 4))) ;
+
+
+
+
+extern int symlink (const char *__from, const char *__to)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2))) ;
+
+
+
+
+extern ssize_t readlink (const char *__restrict __path,
+    char *__restrict __buf, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)))
+     __attribute__ ((__access__ (__write_only__, 2, 3)));
+
+
+
+
+
+extern int symlinkat (const char *__from, int __tofd,
+        const char *__to) noexcept (true) __attribute__ ((__nonnull__ (1, 3))) ;
+
+
+extern ssize_t readlinkat (int __fd, const char *__restrict __path,
+      char *__restrict __buf, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (2, 3)))
+     __attribute__ ((__access__ (__write_only__, 3, 4)));
+
+
+
+extern int unlink (const char *__name) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int unlinkat (int __fd, const char *__name, int __flag)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+
+extern int rmdir (const char *__path) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern __pid_t tcgetpgrp (int __fd) noexcept (true);
+
+
+extern int tcsetpgrp (int __fd, __pid_t __pgrp_id) noexcept (true);
+
+
+
+
+
+
+extern char *getlogin (void);
+
+
+
+
+
+
+
+extern int getlogin_r (char *__name, size_t __name_len) __attribute__ ((__nonnull__ (1)))
+    __attribute__ ((__access__ (__write_only__, 1, 2)));
+
+
+
+
+extern int setlogin (const char *__name) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/getopt_posix.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/getopt_posix.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/getopt_core.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/getopt_core.h" 3 4
+extern "C" {
+
+
+
+
+
+
+
+extern char *optarg;
+# 50 "/usr/include/x86_64-linux-gnu/bits/getopt_core.h" 3 4
+extern int optind;
+
+
+
+
+extern int opterr;
+
+
+
+extern int optopt;
+# 91 "/usr/include/x86_64-linux-gnu/bits/getopt_core.h" 3 4
+extern int getopt (int ___argc, char *const *___argv, const char *__shortopts)
+       noexcept (true) __attribute__ ((__nonnull__ (2, 3)));
+
+}
+# 28 "/usr/include/x86_64-linux-gnu/bits/getopt_posix.h" 2 3 4
+
+extern "C" {
+# 49 "/usr/include/x86_64-linux-gnu/bits/getopt_posix.h" 3 4
+}
+# 904 "/usr/include/unistd.h" 2 3 4
+
+
+
+
+
+
+
+extern int gethostname (char *__name, size_t __len) noexcept (true) __attribute__ ((__nonnull__ (1)))
+    __attribute__ ((__access__ (__write_only__, 1, 2)));
+
+
+
+
+
+
+extern int sethostname (const char *__name, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) __attribute__ ((__access__ (__read_only__, 1, 2)));
+
+
+
+extern int sethostid (long int __id) noexcept (true) ;
+
+
+
+
+
+extern int getdomainname (char *__name, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (1)))
+     __attribute__ ((__access__ (__write_only__, 1, 2)));
+extern int setdomainname (const char *__name, size_t __len)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) __attribute__ ((__access__ (__read_only__, 1, 2)));
+
+
+
+
+extern int vhangup (void) noexcept (true);
+
+
+extern int revoke (const char *__file) noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+
+
+
+extern int profil (unsigned short int *__sample_buffer, size_t __size,
+     size_t __offset, unsigned int __scale)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern int acct (const char *__name) noexcept (true);
+
+
+
+extern char *getusershell (void) noexcept (true);
+extern void endusershell (void) noexcept (true);
+extern void setusershell (void) noexcept (true);
+
+
+
+
+
+extern int daemon (int __nochdir, int __noclose) noexcept (true) ;
+
+
+
+
+
+
+extern int chroot (const char *__path) noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+extern char *getpass (const char *__prompt) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+extern int fsync (int __fd);
+
+
+
+
+
+extern int syncfs (int __fd) noexcept (true);
+
+
+
+
+
+
+extern long int gethostid (void);
+
+
+extern void sync (void) noexcept (true);
+
+
+
+
+
+extern int getpagesize (void) noexcept (true) __attribute__ ((__const__));
+
+
+
+
+extern int getdtablesize (void) noexcept (true);
+# 1026 "/usr/include/unistd.h" 3 4
+extern int truncate (const char *__file, __off_t __length)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+# 1038 "/usr/include/unistd.h" 3 4
+extern int truncate64 (const char *__file, __off64_t __length)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) ;
+# 1049 "/usr/include/unistd.h" 3 4
+extern int ftruncate (int __fd, __off_t __length) noexcept (true) ;
+# 1059 "/usr/include/unistd.h" 3 4
+extern int ftruncate64 (int __fd, __off64_t __length) noexcept (true) ;
+# 1070 "/usr/include/unistd.h" 3 4
+extern int brk (void *__addr) noexcept (true) ;
+
+
+
+
+
+extern void *sbrk (intptr_t __delta) noexcept (true);
+# 1091 "/usr/include/unistd.h" 3 4
+extern long int syscall (long int __sysno, ...) noexcept (true);
+# 1114 "/usr/include/unistd.h" 3 4
+extern int lockf (int __fd, int __cmd, __off_t __len) ;
+# 1124 "/usr/include/unistd.h" 3 4
+extern int lockf64 (int __fd, int __cmd, __off64_t __len) ;
+# 1142 "/usr/include/unistd.h" 3 4
+ssize_t copy_file_range (int __infd, __off64_t *__pinoff,
+    int __outfd, __off64_t *__poutoff,
+    size_t __length, unsigned int __flags);
+
+
+
+
+
+extern int fdatasync (int __fildes);
+# 1159 "/usr/include/unistd.h" 3 4
+extern char *crypt (const char *__key, const char *__salt)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+
+
+
+extern void swab (const void *__restrict __from, void *__restrict __to,
+    ssize_t __n) noexcept (true) __attribute__ ((__nonnull__ (1, 2)))
+    __attribute__ ((__access__ (__read_only__, 1, 3)))
+    __attribute__ ((__access__ (__write_only__, 2, 3)));
+# 1198 "/usr/include/unistd.h" 3 4
+int getentropy (void *__buffer, size_t __length)
+    __attribute__ ((__access__ (__write_only__, 1, 2)));
+# 1208 "/usr/include/unistd.h" 3 4
+extern int close_range (unsigned int __fd, unsigned int __max_fd,
+   int __flags) noexcept (true);
+# 1218 "/usr/include/unistd.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/unistd_ext.h" 1 3 4
+# 34 "/usr/include/x86_64-linux-gnu/bits/unistd_ext.h" 3 4
+extern __pid_t gettid (void) noexcept (true);
+
+
+
+# 1 "/usr/include/linux/close_range.h" 1 3 4
+# 39 "/usr/include/x86_64-linux-gnu/bits/unistd_ext.h" 2 3 4
+# 1219 "/usr/include/unistd.h" 2 3 4
+
+}
+# 13 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 2
+# 1 "/usr/include/pthread.h" 1 3 4
+# 22 "/usr/include/pthread.h" 3 4
+# 1 "/usr/include/sched.h" 1 3 4
+# 29 "/usr/include/sched.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 30 "/usr/include/sched.h" 2 3 4
+# 43 "/usr/include/sched.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/sched.h" 1 3 4
+# 76 "/usr/include/x86_64-linux-gnu/bits/sched.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h" 3 4
+struct sched_param
+{
+  int sched_priority;
+};
+# 77 "/usr/include/x86_64-linux-gnu/bits/sched.h" 2 3 4
+
+extern "C" {
+
+
+
+extern int clone (int (*__fn) (void *__arg), void *__child_stack,
+    int __flags, void *__arg, ...) noexcept (true);
+
+
+extern int unshare (int __flags) noexcept (true);
+
+
+extern int sched_getcpu (void) noexcept (true);
+
+
+extern int getcpu (unsigned int *, unsigned int *) noexcept (true);
+
+
+extern int setns (int __fd, int __nstype) noexcept (true);
+
+
+}
+# 44 "/usr/include/sched.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/cpu-set.h" 1 3 4
+# 32 "/usr/include/x86_64-linux-gnu/bits/cpu-set.h" 3 4
+typedef unsigned long int __cpu_mask;
+
+
+
+
+
+
+typedef struct
+{
+  __cpu_mask __bits[1024 / (8 * sizeof (__cpu_mask))];
+} cpu_set_t;
+# 115 "/usr/include/x86_64-linux-gnu/bits/cpu-set.h" 3 4
+extern "C" {
+
+extern int __sched_cpucount (size_t __setsize, const cpu_set_t *__setp)
+     noexcept (true);
+extern cpu_set_t *__sched_cpualloc (size_t __count) noexcept (true) ;
+extern void __sched_cpufree (cpu_set_t *__set) noexcept (true);
+
+}
+# 45 "/usr/include/sched.h" 2 3 4
+
+
+
+
+
+
+extern "C" {
+
+
+extern int sched_setparam (__pid_t __pid, const struct sched_param *__param)
+     noexcept (true);
+
+
+extern int sched_getparam (__pid_t __pid, struct sched_param *__param) noexcept (true);
+
+
+extern int sched_setscheduler (__pid_t __pid, int __policy,
+          const struct sched_param *__param) noexcept (true);
+
+
+extern int sched_getscheduler (__pid_t __pid) noexcept (true);
+
+
+extern int sched_yield (void) noexcept (true);
+
+
+extern int sched_get_priority_max (int __algorithm) noexcept (true);
+
+
+extern int sched_get_priority_min (int __algorithm) noexcept (true);
+
+
+
+extern int sched_rr_get_interval (__pid_t __pid, struct timespec *__t) noexcept (true);
+# 130 "/usr/include/sched.h" 3 4
+extern int sched_setaffinity (__pid_t __pid, size_t __cpusetsize,
+         const cpu_set_t *__cpuset) noexcept (true);
+
+
+extern int sched_getaffinity (__pid_t __pid, size_t __cpusetsize,
+         cpu_set_t *__cpuset) noexcept (true);
+
+
+}
+# 23 "/usr/include/pthread.h" 2 3 4
+# 1 "/usr/include/time.h" 1 3 4
+# 29 "/usr/include/time.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h" 1 3 4
+# 30 "/usr/include/time.h" 2 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/time.h" 1 3 4
+# 73 "/usr/include/x86_64-linux-gnu/bits/time.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/timex.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/timex.h" 3 4
+struct timex
+{
+# 58 "/usr/include/x86_64-linux-gnu/bits/timex.h" 3 4
+  unsigned int modes;
+  __syscall_slong_t offset;
+  __syscall_slong_t freq;
+  __syscall_slong_t maxerror;
+  __syscall_slong_t esterror;
+  int status;
+  __syscall_slong_t constant;
+  __syscall_slong_t precision;
+  __syscall_slong_t tolerance;
+  struct timeval time;
+  __syscall_slong_t tick;
+  __syscall_slong_t ppsfreq;
+  __syscall_slong_t jitter;
+  int shift;
+  __syscall_slong_t stabil;
+  __syscall_slong_t jitcnt;
+  __syscall_slong_t calcnt;
+  __syscall_slong_t errcnt;
+  __syscall_slong_t stbcnt;
+
+  int tai;
+
+
+  int :32; int :32; int :32; int :32;
+  int :32; int :32; int :32; int :32;
+  int :32; int :32; int :32;
+
+};
+# 74 "/usr/include/x86_64-linux-gnu/bits/time.h" 2 3 4
+
+extern "C" {
+
+
+extern int clock_adjtime (__clockid_t __clock_id, struct timex *__utx) noexcept (true);
+# 90 "/usr/include/x86_64-linux-gnu/bits/time.h" 3 4
+}
+# 34 "/usr/include/time.h" 2 3 4
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h" 1 3 4
+
+
+
+
+
+
+struct tm
+{
+  int tm_sec;
+  int tm_min;
+  int tm_hour;
+  int tm_mday;
+  int tm_mon;
+  int tm_year;
+  int tm_wday;
+  int tm_yday;
+  int tm_isdst;
+
+
+  long int tm_gmtoff;
+  const char *tm_zone;
+
+
+
+
+};
+# 40 "/usr/include/time.h" 2 3 4
+# 48 "/usr/include/time.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h" 1 3 4
+
+
+
+
+
+
+
+struct itimerspec
+  {
+    struct timespec it_interval;
+    struct timespec it_value;
+  };
+# 49 "/usr/include/time.h" 2 3 4
+struct sigevent;
+# 68 "/usr/include/time.h" 3 4
+extern "C" {
+
+
+
+extern clock_t clock (void) noexcept (true);
+
+
+
+extern time_t time (time_t *__timer) noexcept (true);
+
+
+extern double difftime (time_t __time1, time_t __time0)
+     noexcept (true) __attribute__ ((__const__));
+
+
+extern time_t mktime (struct tm *__tp) noexcept (true);
+# 100 "/usr/include/time.h" 3 4
+extern size_t strftime (char *__restrict __s, size_t __maxsize,
+   const char *__restrict __format,
+   const struct tm *__restrict __tp) noexcept (true);
+
+
+
+
+extern char *strptime (const char *__restrict __s,
+         const char *__restrict __fmt, struct tm *__tp)
+     noexcept (true);
+
+
+
+
+
+
+extern size_t strftime_l (char *__restrict __s, size_t __maxsize,
+     const char *__restrict __format,
+     const struct tm *__restrict __tp,
+     locale_t __loc) noexcept (true);
+
+
+
+extern char *strptime_l (const char *__restrict __s,
+    const char *__restrict __fmt, struct tm *__tp,
+    locale_t __loc) noexcept (true);
+
+
+
+
+
+
+extern struct tm *gmtime (const time_t *__timer) noexcept (true);
+
+
+
+extern struct tm *localtime (const time_t *__timer) noexcept (true);
+# 154 "/usr/include/time.h" 3 4
+extern struct tm *gmtime_r (const time_t *__restrict __timer,
+       struct tm *__restrict __tp) noexcept (true);
+
+
+
+extern struct tm *localtime_r (const time_t *__restrict __timer,
+          struct tm *__restrict __tp) noexcept (true);
+# 179 "/usr/include/time.h" 3 4
+extern char *asctime (const struct tm *__tp) noexcept (true);
+
+
+
+extern char *ctime (const time_t *__timer) noexcept (true);
+# 197 "/usr/include/time.h" 3 4
+extern char *asctime_r (const struct tm *__restrict __tp,
+   char *__restrict __buf) noexcept (true);
+
+
+
+extern char *ctime_r (const time_t *__restrict __timer,
+        char *__restrict __buf) noexcept (true);
+# 217 "/usr/include/time.h" 3 4
+extern char *__tzname[2];
+extern int __daylight;
+extern long int __timezone;
+
+
+
+
+extern char *tzname[2];
+
+
+
+extern void tzset (void) noexcept (true);
+
+
+
+extern int daylight;
+extern long int timezone;
+# 249 "/usr/include/time.h" 3 4
+extern time_t timegm (struct tm *__tp) noexcept (true);
+
+extern time_t timelocal (struct tm *__tp) noexcept (true);
+# 262 "/usr/include/time.h" 3 4
+extern int dysize (int __year) noexcept (true) __attribute__ ((__const__));
+# 272 "/usr/include/time.h" 3 4
+extern int nanosleep (const struct timespec *__requested_time,
+        struct timespec *__remaining);
+
+
+extern int clock_getres (clockid_t __clock_id, struct timespec *__res) noexcept (true);
+
+
+extern int clock_gettime (clockid_t __clock_id, struct timespec *__tp) noexcept (true);
+
+
+extern int clock_settime (clockid_t __clock_id, const struct timespec *__tp)
+     noexcept (true);
+# 311 "/usr/include/time.h" 3 4
+extern int clock_nanosleep (clockid_t __clock_id, int __flags,
+       const struct timespec *__req,
+       struct timespec *__rem);
+# 326 "/usr/include/time.h" 3 4
+extern int clock_getcpuclockid (pid_t __pid, clockid_t *__clock_id) noexcept (true);
+
+
+
+
+extern int timer_create (clockid_t __clock_id,
+    struct sigevent *__restrict __evp,
+    timer_t *__restrict __timerid) noexcept (true);
+
+
+extern int timer_delete (timer_t __timerid) noexcept (true);
+
+
+
+extern int timer_settime (timer_t __timerid, int __flags,
+     const struct itimerspec *__restrict __value,
+     struct itimerspec *__restrict __ovalue) noexcept (true);
+
+
+extern int timer_gettime (timer_t __timerid, struct itimerspec *__value)
+     noexcept (true);
+# 364 "/usr/include/time.h" 3 4
+extern int timer_getoverrun (timer_t __timerid) noexcept (true);
+
+
+
+
+
+
+extern int timespec_get (struct timespec *__ts, int __base)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 387 "/usr/include/time.h" 3 4
+extern int timespec_getres (struct timespec *__ts, int __base)
+     noexcept (true);
+# 413 "/usr/include/time.h" 3 4
+extern int getdate_err;
+# 422 "/usr/include/time.h" 3 4
+extern struct tm *getdate (const char *__string);
+# 436 "/usr/include/time.h" 3 4
+extern int getdate_r (const char *__restrict __string,
+        struct tm *__restrict __resbufp);
+
+
+}
+# 24 "/usr/include/pthread.h" 2 3 4
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/setjmp.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/setjmp.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/setjmp.h" 2 3 4
+
+
+
+
+typedef long int __jmp_buf[8];
+# 28 "/usr/include/pthread.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 29 "/usr/include/pthread.h" 2 3 4
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h" 3 4
+struct __jmp_buf_tag
+  {
+
+
+
+
+    __jmp_buf __jmpbuf;
+    int __mask_was_saved;
+    __sigset_t __saved_mask;
+  };
+# 32 "/usr/include/pthread.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h" 3 4
+extern "C" {
+extern long int __sysconf (int __name) noexcept (true);
+}
+# 34 "/usr/include/pthread.h" 2 3 4
+
+
+
+enum
+{
+  PTHREAD_CREATE_JOINABLE,
+
+  PTHREAD_CREATE_DETACHED
+
+};
+
+
+
+enum
+{
+  PTHREAD_MUTEX_TIMED_NP,
+  PTHREAD_MUTEX_RECURSIVE_NP,
+  PTHREAD_MUTEX_ERRORCHECK_NP,
+  PTHREAD_MUTEX_ADAPTIVE_NP
+
+  ,
+  PTHREAD_MUTEX_NORMAL = PTHREAD_MUTEX_TIMED_NP,
+  PTHREAD_MUTEX_RECURSIVE = PTHREAD_MUTEX_RECURSIVE_NP,
+  PTHREAD_MUTEX_ERRORCHECK = PTHREAD_MUTEX_ERRORCHECK_NP,
+  PTHREAD_MUTEX_DEFAULT = PTHREAD_MUTEX_NORMAL
+
+
+
+  , PTHREAD_MUTEX_FAST_NP = PTHREAD_MUTEX_TIMED_NP
+
+};
+
+
+
+
+enum
+{
+  PTHREAD_MUTEX_STALLED,
+  PTHREAD_MUTEX_STALLED_NP = PTHREAD_MUTEX_STALLED,
+  PTHREAD_MUTEX_ROBUST,
+  PTHREAD_MUTEX_ROBUST_NP = PTHREAD_MUTEX_ROBUST
+};
+
+
+
+
+
+enum
+{
+  PTHREAD_PRIO_NONE,
+  PTHREAD_PRIO_INHERIT,
+  PTHREAD_PRIO_PROTECT
+};
+# 104 "/usr/include/pthread.h" 3 4
+enum
+{
+  PTHREAD_RWLOCK_PREFER_READER_NP,
+  PTHREAD_RWLOCK_PREFER_WRITER_NP,
+  PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP,
+  PTHREAD_RWLOCK_DEFAULT_NP = PTHREAD_RWLOCK_PREFER_READER_NP
+};
+# 124 "/usr/include/pthread.h" 3 4
+enum
+{
+  PTHREAD_INHERIT_SCHED,
+
+  PTHREAD_EXPLICIT_SCHED
+
+};
+
+
+
+enum
+{
+  PTHREAD_SCOPE_SYSTEM,
+
+  PTHREAD_SCOPE_PROCESS
+
+};
+
+
+
+enum
+{
+  PTHREAD_PROCESS_PRIVATE,
+
+  PTHREAD_PROCESS_SHARED
+
+};
+# 159 "/usr/include/pthread.h" 3 4
+struct _pthread_cleanup_buffer
+{
+  void (*__routine) (void *);
+  void *__arg;
+  int __canceltype;
+  struct _pthread_cleanup_buffer *__prev;
+};
+
+
+enum
+{
+  PTHREAD_CANCEL_ENABLE,
+
+  PTHREAD_CANCEL_DISABLE
+
+};
+enum
+{
+  PTHREAD_CANCEL_DEFERRED,
+
+  PTHREAD_CANCEL_ASYNCHRONOUS
+
+};
+# 197 "/usr/include/pthread.h" 3 4
+extern "C" {
+
+
+
+
+extern int pthread_create (pthread_t *__restrict __newthread,
+      const pthread_attr_t *__restrict __attr,
+      void *(*__start_routine) (void *),
+      void *__restrict __arg) noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+
+
+extern void pthread_exit (void *__retval) __attribute__ ((__noreturn__));
+
+
+
+
+
+
+
+extern int pthread_join (pthread_t __th, void **__thread_return);
+
+
+
+
+extern int pthread_tryjoin_np (pthread_t __th, void **__thread_return) noexcept (true);
+# 233 "/usr/include/pthread.h" 3 4
+extern int pthread_timedjoin_np (pthread_t __th, void **__thread_return,
+     const struct timespec *__abstime);
+# 243 "/usr/include/pthread.h" 3 4
+extern int pthread_clockjoin_np (pthread_t __th, void **__thread_return,
+                                 clockid_t __clockid,
+     const struct timespec *__abstime);
+# 269 "/usr/include/pthread.h" 3 4
+extern int pthread_detach (pthread_t __th) noexcept (true);
+
+
+
+extern pthread_t pthread_self (void) noexcept (true) __attribute__ ((__const__));
+
+
+extern int pthread_equal (pthread_t __thread1, pthread_t __thread2)
+  noexcept (true) __attribute__ ((__const__));
+
+
+
+
+
+
+
+extern int pthread_attr_init (pthread_attr_t *__attr) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_attr_destroy (pthread_attr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_attr_getdetachstate (const pthread_attr_t *__attr,
+     int *__detachstate)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_setdetachstate (pthread_attr_t *__attr,
+     int __detachstate)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_attr_getguardsize (const pthread_attr_t *__attr,
+          size_t *__guardsize)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_setguardsize (pthread_attr_t *__attr,
+          size_t __guardsize)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_attr_getschedparam (const pthread_attr_t *__restrict __attr,
+           struct sched_param *__restrict __param)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_setschedparam (pthread_attr_t *__restrict __attr,
+           const struct sched_param *__restrict
+           __param) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_getschedpolicy (const pthread_attr_t *__restrict
+     __attr, int *__restrict __policy)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_setschedpolicy (pthread_attr_t *__attr, int __policy)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_attr_getinheritsched (const pthread_attr_t *__restrict
+      __attr, int *__restrict __inherit)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_setinheritsched (pthread_attr_t *__attr,
+      int __inherit)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_attr_getscope (const pthread_attr_t *__restrict __attr,
+      int *__restrict __scope)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_attr_setscope (pthread_attr_t *__attr, int __scope)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_attr_getstackaddr (const pthread_attr_t *__restrict
+          __attr, void **__restrict __stackaddr)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2))) __attribute__ ((__deprecated__));
+
+
+
+
+
+extern int pthread_attr_setstackaddr (pthread_attr_t *__attr,
+          void *__stackaddr)
+     noexcept (true) __attribute__ ((__nonnull__ (1))) __attribute__ ((__deprecated__));
+
+
+extern int pthread_attr_getstacksize (const pthread_attr_t *__restrict
+          __attr, size_t *__restrict __stacksize)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int pthread_attr_setstacksize (pthread_attr_t *__attr,
+          size_t __stacksize)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_attr_getstack (const pthread_attr_t *__restrict __attr,
+      void **__restrict __stackaddr,
+      size_t *__restrict __stacksize)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2, 3)));
+
+
+
+
+extern int pthread_attr_setstack (pthread_attr_t *__attr, void *__stackaddr,
+      size_t __stacksize) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern int pthread_attr_setaffinity_np (pthread_attr_t *__attr,
+     size_t __cpusetsize,
+     const cpu_set_t *__cpuset)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+extern int pthread_attr_getaffinity_np (const pthread_attr_t *__attr,
+     size_t __cpusetsize,
+     cpu_set_t *__cpuset)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+extern int pthread_getattr_default_np (pthread_attr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_attr_setsigmask_np (pthread_attr_t *__attr,
+           const __sigset_t *sigmask);
+
+
+
+
+extern int pthread_attr_getsigmask_np (const pthread_attr_t *__attr,
+           __sigset_t *sigmask);
+
+
+
+
+
+
+
+extern int pthread_setattr_default_np (const pthread_attr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern int pthread_getattr_np (pthread_t __th, pthread_attr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+
+
+
+
+
+extern int pthread_setschedparam (pthread_t __target_thread, int __policy,
+      const struct sched_param *__param)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+
+extern int pthread_getschedparam (pthread_t __target_thread,
+      int *__restrict __policy,
+      struct sched_param *__restrict __param)
+     noexcept (true) __attribute__ ((__nonnull__ (2, 3)));
+
+
+extern int pthread_setschedprio (pthread_t __target_thread, int __prio)
+     noexcept (true);
+
+
+
+
+extern int pthread_getname_np (pthread_t __target_thread, char *__buf,
+          size_t __buflen)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+extern int pthread_setname_np (pthread_t __target_thread, const char *__name)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+
+
+
+
+
+extern int pthread_getconcurrency (void) noexcept (true);
+
+
+extern int pthread_setconcurrency (int __level) noexcept (true);
+
+
+
+extern int pthread_yield (void) noexcept (true);
+
+extern int pthread_yield (void) noexcept (true) __asm__ ("" "sched_yield")
+  __attribute__ ((__deprecated__ ("pthread_yield is deprecated, use sched_yield instead")))
+                                                      ;
+
+
+
+
+
+
+
+extern int pthread_setaffinity_np (pthread_t __th, size_t __cpusetsize,
+       const cpu_set_t *__cpuset)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+
+
+extern int pthread_getaffinity_np (pthread_t __th, size_t __cpusetsize,
+       cpu_set_t *__cpuset)
+     noexcept (true) __attribute__ ((__nonnull__ (3)));
+# 509 "/usr/include/pthread.h" 3 4
+extern int pthread_once (pthread_once_t *__once_control,
+    void (*__init_routine) (void)) __attribute__ ((__nonnull__ (1, 2)));
+# 521 "/usr/include/pthread.h" 3 4
+extern int pthread_setcancelstate (int __state, int *__oldstate);
+
+
+
+extern int pthread_setcanceltype (int __type, int *__oldtype);
+
+
+extern int pthread_cancel (pthread_t __th);
+
+
+
+
+extern void pthread_testcancel (void);
+
+
+
+
+struct __cancel_jmp_buf_tag
+{
+  __jmp_buf __cancel_jmp_buf;
+  int __mask_was_saved;
+};
+
+typedef struct
+{
+  struct __cancel_jmp_buf_tag __cancel_jmp_buf[1];
+  void *__pad[4];
+} __pthread_unwind_buf_t __attribute__ ((__aligned__));
+# 557 "/usr/include/pthread.h" 3 4
+struct __pthread_cleanup_frame
+{
+  void (*__cancel_routine) (void *);
+  void *__cancel_arg;
+  int __do_it;
+  int __cancel_type;
+};
+
+
+
+
+class __pthread_cleanup_class
+{
+  void (*__cancel_routine) (void *);
+  void *__cancel_arg;
+  int __do_it;
+  int __cancel_type;
+
+ public:
+  __pthread_cleanup_class (void (*__fct) (void *), void *__arg)
+    : __cancel_routine (__fct), __cancel_arg (__arg), __do_it (1) { }
+  ~__pthread_cleanup_class () { if (__do_it) __cancel_routine (__cancel_arg); }
+  void __setdoit (int __newval) { __do_it = __newval; }
+  void __defer () { pthread_setcanceltype (PTHREAD_CANCEL_DEFERRED,
+        &__cancel_type); }
+  void __restore () const { pthread_setcanceltype (__cancel_type, 0); }
+};
+# 766 "/usr/include/pthread.h" 3 4
+extern int __sigsetjmp_cancel (struct __cancel_jmp_buf_tag __env[1], int __savemask) noexcept (true) __asm__ ("" "__sigsetjmp")
+
+
+                     __attribute__ ((__returns_twice__));
+# 781 "/usr/include/pthread.h" 3 4
+extern int pthread_mutex_init (pthread_mutex_t *__mutex,
+          const pthread_mutexattr_t *__mutexattr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutex_destroy (pthread_mutex_t *__mutex)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutex_trylock (pthread_mutex_t *__mutex)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutex_lock (pthread_mutex_t *__mutex)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern int pthread_mutex_timedlock (pthread_mutex_t *__restrict __mutex,
+        const struct timespec *__restrict
+        __abstime) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+# 817 "/usr/include/pthread.h" 3 4
+extern int pthread_mutex_clocklock (pthread_mutex_t *__restrict __mutex,
+        clockid_t __clockid,
+        const struct timespec *__restrict
+        __abstime) noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+# 835 "/usr/include/pthread.h" 3 4
+extern int pthread_mutex_unlock (pthread_mutex_t *__mutex)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_mutex_getprioceiling (const pthread_mutex_t *
+      __restrict __mutex,
+      int *__restrict __prioceiling)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern int pthread_mutex_setprioceiling (pthread_mutex_t *__restrict __mutex,
+      int __prioceiling,
+      int *__restrict __old_ceiling)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+
+
+
+
+extern int pthread_mutex_consistent (pthread_mutex_t *__mutex)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutex_consistent_np (pthread_mutex_t *) noexcept (true) __asm__ ("" "pthread_mutex_consistent")
+                                __attribute__ ((__nonnull__ (1)))
+  __attribute__ ((__deprecated__ ("pthread_mutex_consistent_np is deprecated, use pthread_mutex_consistent")))
+                                                                         ;
+# 874 "/usr/include/pthread.h" 3 4
+extern int pthread_mutexattr_init (pthread_mutexattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutexattr_destroy (pthread_mutexattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutexattr_getpshared (const pthread_mutexattr_t *
+      __restrict __attr,
+      int *__restrict __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_mutexattr_setpshared (pthread_mutexattr_t *__attr,
+      int __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_mutexattr_gettype (const pthread_mutexattr_t *__restrict
+          __attr, int *__restrict __kind)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern int pthread_mutexattr_settype (pthread_mutexattr_t *__attr, int __kind)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_mutexattr_getprotocol (const pthread_mutexattr_t *
+       __restrict __attr,
+       int *__restrict __protocol)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+extern int pthread_mutexattr_setprotocol (pthread_mutexattr_t *__attr,
+       int __protocol)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutexattr_getprioceiling (const pthread_mutexattr_t *
+          __restrict __attr,
+          int *__restrict __prioceiling)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_mutexattr_setprioceiling (pthread_mutexattr_t *__attr,
+          int __prioceiling)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_mutexattr_getrobust (const pthread_mutexattr_t *__attr,
+     int *__robustness)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_mutexattr_getrobust_np (pthread_mutexattr_t *, int *) noexcept (true) __asm__ ("" "pthread_mutexattr_getrobust")
+
+                                   __attribute__ ((__nonnull__ (1)))
+  __attribute__ ((__deprecated__ ("pthread_mutexattr_getrobust_np is deprecated, use pthread_mutexattr_getrobust")))
+                                                                               ;
+
+
+
+
+
+
+extern int pthread_mutexattr_setrobust (pthread_mutexattr_t *__attr,
+     int __robustness)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_mutexattr_setrobust_np (pthread_mutexattr_t *, int) noexcept (true) __asm__ ("" "pthread_mutexattr_setrobust")
+
+                                   __attribute__ ((__nonnull__ (1)))
+  __attribute__ ((__deprecated__ ("pthread_mutexattr_setrobust_np is deprecated, use pthread_mutexattr_setrobust")))
+                                                                               ;
+# 967 "/usr/include/pthread.h" 3 4
+extern int pthread_rwlock_init (pthread_rwlock_t *__restrict __rwlock,
+    const pthread_rwlockattr_t *__restrict
+    __attr) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock)
+  noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern int pthread_rwlock_timedrdlock (pthread_rwlock_t *__restrict __rwlock,
+           const struct timespec *__restrict
+           __abstime) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+# 1004 "/usr/include/pthread.h" 3 4
+extern int pthread_rwlock_clockrdlock (pthread_rwlock_t *__restrict __rwlock,
+           clockid_t __clockid,
+           const struct timespec *__restrict
+           __abstime) noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+# 1023 "/usr/include/pthread.h" 3 4
+extern int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+extern int pthread_rwlock_timedwrlock (pthread_rwlock_t *__restrict __rwlock,
+           const struct timespec *__restrict
+           __abstime) noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+# 1051 "/usr/include/pthread.h" 3 4
+extern int pthread_rwlock_clockwrlock (pthread_rwlock_t *__restrict __rwlock,
+           clockid_t __clockid,
+           const struct timespec *__restrict
+           __abstime) noexcept (true) __attribute__ ((__nonnull__ (1, 3)));
+# 1071 "/usr/include/pthread.h" 3 4
+extern int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern int pthread_rwlockattr_init (pthread_rwlockattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *
+       __restrict __attr,
+       int *__restrict __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_rwlockattr_setpshared (pthread_rwlockattr_t *__attr,
+       int __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_rwlockattr_getkind_np (const pthread_rwlockattr_t *
+       __restrict __attr,
+       int *__restrict __pref)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_rwlockattr_setkind_np (pthread_rwlockattr_t *__attr,
+       int __pref) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+
+extern int pthread_cond_init (pthread_cond_t *__restrict __cond,
+         const pthread_condattr_t *__restrict __cond_attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_cond_destroy (pthread_cond_t *__cond)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_cond_signal (pthread_cond_t *__cond)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_cond_broadcast (pthread_cond_t *__cond)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern int pthread_cond_wait (pthread_cond_t *__restrict __cond,
+         pthread_mutex_t *__restrict __mutex)
+     __attribute__ ((__nonnull__ (1, 2)));
+# 1145 "/usr/include/pthread.h" 3 4
+extern int pthread_cond_timedwait (pthread_cond_t *__restrict __cond,
+       pthread_mutex_t *__restrict __mutex,
+       const struct timespec *__restrict __abstime)
+     __attribute__ ((__nonnull__ (1, 2, 3)));
+# 1171 "/usr/include/pthread.h" 3 4
+extern int pthread_cond_clockwait (pthread_cond_t *__restrict __cond,
+       pthread_mutex_t *__restrict __mutex,
+       __clockid_t __clock_id,
+       const struct timespec *__restrict __abstime)
+     __attribute__ ((__nonnull__ (1, 2, 4)));
+# 1194 "/usr/include/pthread.h" 3 4
+extern int pthread_condattr_init (pthread_condattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_condattr_destroy (pthread_condattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_condattr_getpshared (const pthread_condattr_t *
+     __restrict __attr,
+     int *__restrict __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_condattr_setpshared (pthread_condattr_t *__attr,
+     int __pshared) noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_condattr_getclock (const pthread_condattr_t *
+          __restrict __attr,
+          __clockid_t *__restrict __clock_id)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_condattr_setclock (pthread_condattr_t *__attr,
+          __clockid_t __clock_id)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 1230 "/usr/include/pthread.h" 3 4
+extern int pthread_spin_init (pthread_spinlock_t *__lock, int __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_spin_destroy (pthread_spinlock_t *__lock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_spin_lock (pthread_spinlock_t *__lock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_spin_trylock (pthread_spinlock_t *__lock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_spin_unlock (pthread_spinlock_t *__lock)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+
+extern int pthread_barrier_init (pthread_barrier_t *__restrict __barrier,
+     const pthread_barrierattr_t *__restrict
+     __attr, unsigned int __count)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_barrier_destroy (pthread_barrier_t *__barrier)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_barrier_wait (pthread_barrier_t *__barrier)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+
+extern int pthread_barrierattr_init (pthread_barrierattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_barrierattr_destroy (pthread_barrierattr_t *__attr)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_barrierattr_getpshared (const pthread_barrierattr_t *
+        __restrict __attr,
+        int *__restrict __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int pthread_barrierattr_setpshared (pthread_barrierattr_t *__attr,
+        int __pshared)
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+# 1297 "/usr/include/pthread.h" 3 4
+extern int pthread_key_create (pthread_key_t *__key,
+          void (*__destr_function) (void *))
+     noexcept (true) __attribute__ ((__nonnull__ (1)));
+
+
+extern int pthread_key_delete (pthread_key_t __key) noexcept (true);
+
+
+extern void *pthread_getspecific (pthread_key_t __key) noexcept (true);
+
+
+extern int pthread_setspecific (pthread_key_t __key,
+    const void *__pointer)
+  noexcept (true) __attribute__ ((__access__ (__none__, 2)));
+
+
+
+
+extern int pthread_getcpuclockid (pthread_t __thread_id,
+      __clockid_t *__clock_id)
+     noexcept (true) __attribute__ ((__nonnull__ (2)));
+# 1332 "/usr/include/pthread.h" 3 4
+extern int pthread_atfork (void (*__prepare) (void),
+      void (*__parent) (void),
+      void (*__child) (void)) noexcept (true);
+# 1346 "/usr/include/pthread.h" 3 4
+}
+# 14 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 2
+
+
+
+
+
+
+
+# 20 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+const char* ResultString(eLeapRS r);
+
+
+
+void* serviceMessageLoop(void * unused);
+
+void setFrame(const LEAP_TRACKING_EVENT *frame);
+void setDevice(const LEAP_DEVICE_INFO *deviceProps);
+
+
+bool IsConnected = false;
+
+
+bool _isRunning = false;
+LEAP_CONNECTION connectionHandle;
+LEAP_TRACKING_EVENT *lastFrame = 
+# 35 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 3 4
+                                __null
+# 35 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+                                    ;
+LEAP_DEVICE_INFO *lastDevice = 
+# 36 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 3 4
+                              __null
+# 36 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+                                  ;
+
+
+struct Callbacks ConnectionCallbacks;
+
+
+
+
+
+
+pthread_t pollingThread;
+pthread_mutex_t dataLock;
+
+
+
+
+
+
+LEAP_CONNECTION* OpenConnection(){
+  eLeapRS result = LeapCreateConnection(
+# 55 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 3 4
+                                       __null
+# 55 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+                                           , &connectionHandle);
+  if(result == eLeapRS_Success){
+    result = LeapOpenConnection(connectionHandle);
+    if(result == eLeapRS_Success){
+      _isRunning = true;
+
+
+
+
+      pthread_create(&pollingThread, 
+# 64 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 3 4
+                                    __null
+# 64 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+                                        , serviceMessageLoop, 
+# 64 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 3 4
+                                                              __null
+# 64 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+                                                                  );
+
+    }
+  }
+  return &connectionHandle;
+}
+
+void CloseConnection(){
+  CloseConnectionHandle(&connectionHandle);
+}
+
+
+void CloseConnectionHandle(LEAP_CONNECTION* connectionHandle){
+  LeapDestroyConnection(*connectionHandle);
+  _isRunning = false;
+}
+
+
+void handleConnectionEvent(const LEAP_CONNECTION_EVENT *connection_event){
+  IsConnected = true;
+  if(ConnectionCallbacks.on_connection){
+    ConnectionCallbacks.on_connection();
+  }
+}
+
+
+void handleConnectionLostEvent(const LEAP_CONNECTION_LOST_EVENT *connection_lost_event){
+  IsConnected = false;
+  if(ConnectionCallbacks.on_connection_lost){
+    ConnectionCallbacks.on_connection_lost();
+  }
+}
+
+
+
+
+
+void handleDeviceEvent(const LEAP_DEVICE_EVENT *device_event){
+  LEAP_DEVICE deviceHandle;
+
+  eLeapRS result = LeapOpenDevice(device_event->device, &deviceHandle);
+  if(result != eLeapRS_Success){
+    printf("Could not open device %s.\n", ResultString(result));
+    return;
+  }
+
+
+  LEAP_DEVICE_INFO deviceProperties = { sizeof(deviceProperties) };
+
+
+  deviceProperties.serial_length = 1;
+  deviceProperties.serial = malloc(deviceProperties.serial_length);
+
+
+  result = LeapGetDeviceInfo(deviceHandle, &deviceProperties);
+  if(result == eLeapRS_InsufficientBuffer){
+
+    free(deviceProperties.serial);
+    deviceProperties.serial = malloc(deviceProperties.serial_length);
+    result = LeapGetDeviceInfo(deviceHandle, &deviceProperties);
+    if(result != eLeapRS_Success){
+      printf("Failed to get device info %s.\n", ResultString(result));
+      free(deviceProperties.serial);
+      return;
+    }
+  }
+  setDevice(&deviceProperties);
+  if(ConnectionCallbacks.on_device_found){
+    ConnectionCallbacks.on_device_found(&deviceProperties);
+  }
+
+  free(deviceProperties.serial);
+  LeapCloseDevice(deviceHandle);
+}
+
+
+void handleDeviceLostEvent(const LEAP_DEVICE_EVENT *device_event){
+  if(ConnectionCallbacks.on_device_lost){
+    ConnectionCallbacks.on_device_lost();
+  }
+}
+
+
+void handleDeviceFailureEvent(const LEAP_DEVICE_FAILURE_EVENT *device_failure_event){
+  if(ConnectionCallbacks.on_device_failure){
+    ConnectionCallbacks.on_device_failure(device_failure_event->status, device_failure_event->hDevice);
+  }
+}
+
+
+void handleTrackingEvent(const LEAP_TRACKING_EVENT *tracking_event){
+  setFrame(tracking_event);
+  if(ConnectionCallbacks.on_frame){
+    ConnectionCallbacks.on_frame(tracking_event);
+  }
+}
+
+
+void handleImageCompleteEvent(const LEAP_IMAGE_COMPLETE_EVENT *image_complete_event){
+  if(ConnectionCallbacks.on_image_complete){
+    ConnectionCallbacks.on_image_complete(image_complete_event);
+  }
+}
+
+
+void handleImageRequestErrorEvent(const LEAP_IMAGE_FRAME_REQUEST_ERROR_EVENT *image_request_error_event){
+  if(ConnectionCallbacks.on_image_request_error){
+    ConnectionCallbacks.on_image_request_error(image_request_error_event);
+  }
+}
+
+
+void handleLogEvent(const LEAP_LOG_EVENT *log_event){
+  if(ConnectionCallbacks.on_log_message){
+    ConnectionCallbacks.on_log_message(log_event->Severity, log_event->Timestamp, log_event->Message);
+  }
+}
+
+
+void handlePolicyEvent(const LEAP_POLICY_EVENT *policy_event){
+  if(ConnectionCallbacks.on_policy){
+    ConnectionCallbacks.on_policy(policy_event->current_policy);
+  }
+}
+
+
+void handleConfigChangeEvent(const LEAP_CONFIG_CHANGE_EVENT *config_change_event){
+  if(ConnectionCallbacks.on_config_change){
+    ConnectionCallbacks.on_config_change(config_change_event->requestID, config_change_event->status);
+  }
+}
+
+
+void handleConfigResponseEvent(const LEAP_CONFIG_RESPONSE_EVENT *config_response_event){
+  if(ConnectionCallbacks.on_config_response){
+    ConnectionCallbacks.on_config_response(config_response_event->requestID, config_response_event->value);
+  }
+}
+# 210 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+void* serviceMessageLoop(void * unused){
+
+  eLeapRS result;
+  LEAP_CONNECTION_MESSAGE msg;
+  while(_isRunning){
+    unsigned int timeout = 1000;
+    result = LeapPollConnection(connectionHandle, timeout, &msg);
+
+    if (result != eLeapRS_Success) {
+      printf("LeapC PollConnection call was %s.\n", ResultString(result));
+      continue;
+    }
+
+    switch (msg.type){
+      case eLeapEventType_Connection:
+        handleConnectionEvent(msg.connection_event);
+        break;
+      case eLeapEventType_ConnectionLost:
+        handleConnectionLostEvent(msg.connection_lost_event);
+        break;
+      case eLeapEventType_Device:
+        handleDeviceEvent(msg.device_event);
+        break;
+      case eLeapEventType_DeviceLost:
+        handleDeviceLostEvent(msg.device_event);
+        break;
+      case eLeapEventType_DeviceFailure:
+        handleDeviceFailureEvent(msg.device_failure_event);
+        break;
+      case eLeapEventType_Tracking:
+        handleTrackingEvent(msg.tracking_event);
+        break;
+      case eLeapEventType_ImageComplete:
+        handleImageCompleteEvent(msg.image_complete_event);
+        break;
+      case eLeapEventType_ImageRequestError:
+        handleImageRequestErrorEvent(msg.image_request_error_event);
+        break;
+      case eLeapEventType_LogEvent:
+        handleLogEvent(msg.log_event);
+        break;
+      case eLeapEventType_Policy:
+        handlePolicyEvent(msg.policy_event);
+        break;
+      case eLeapEventType_ConfigChange:
+        handleConfigChangeEvent(msg.config_change_event);
+        break;
+      case eLeapEventType_ConfigResponse:
+        handleConfigResponseEvent(msg.config_response_event);
+        break;
+      default:
+
+        printf("Unhandled message type %i.\n", msg.type);
+    }
+  }
+
+  return 
+# 266 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp" 3 4
+        __null
+# 266 "/home/cecile/Documents/surgeon_recording/source/surgeon_recording/surgeon_recording/data_analysis/LeapMotion.cpp"
+            ;
+
+}
+
+
+
+
+
+
+
+void setFrame(const LEAP_TRACKING_EVENT *frame){
+  pthread_mutex_lock(&dataLock);
+  if(!lastFrame) lastFrame = malloc(sizeof(*frame));
+  *lastFrame = *frame;
+  pthread_mutex_unlock(&dataLock);
+}
+
+
+LEAP_TRACKING_EVENT* GetFrame(){
+  LEAP_TRACKING_EVENT *currentFrame;
+
+  pthread_mutex_lock(&dataLock);
+  currentFrame = lastFrame;
+  pthread_mutex_unlock(&dataLock);
+
+  return currentFrame;
+}
+
+
+
+
+
+void setDevice(const LEAP_DEVICE_INFO *deviceProps){
+  pthread_mutex_lock(&dataLock);
+  if(lastDevice){
+    free(lastDevice->serial);
+  } else {
+    lastDevice = malloc(sizeof(*deviceProps));
+  }
+  *lastDevice = *deviceProps;
+  lastDevice->serial = malloc(deviceProps->serial_length);
+  memcpy(lastDevice->serial, deviceProps->serial, deviceProps->serial_length);
+  pthread_mutex_unlock(&dataLock);
+}
+
+
+LEAP_DEVICE_INFO* GetDeviceProperties(){
+  LEAP_DEVICE_INFO *currentDevice;
+  pthread_mutex_lock(&dataLock);
+  currentDevice = lastDevice;
+  pthread_mutex_unlock(&dataLock);
+  return currentDevice;
+}
+
+
+
+
+const char* ResultString(eLeapRS r) {
+  switch(r){
+    case eLeapRS_Success: return "eLeapRS_Success";
+    case eLeapRS_UnknownError: return "eLeapRS_UnknownError";
+    case eLeapRS_InvalidArgument: return "eLeapRS_InvalidArgument";
+    case eLeapRS_InsufficientResources: return "eLeapRS_InsufficientResources";
+    case eLeapRS_InsufficientBuffer: return "eLeapRS_InsufficientBuffer";
+    case eLeapRS_Timeout: return "eLeapRS_Timeout";
+    case eLeapRS_NotConnected: return "eLeapRS_NotConnected";
+    case eLeapRS_HandshakeIncomplete: return "eLeapRS_HandshakeIncomplete";
+    case eLeapRS_BufferSizeOverflow: return "eLeapRS_BufferSizeOverflow";
+    case eLeapRS_ProtocolError: return "eLeapRS_ProtocolError";
+    case eLeapRS_InvalidClientID: return "eLeapRS_InvalidClientID";
+    case eLeapRS_UnexpectedClosed: return "eLeapRS_UnexpectedClosed";
+    case eLeapRS_UnknownImageFrameRequest: return "eLeapRS_UnknownImageFrameRequest";
+    case eLeapRS_UnknownTrackingFrameID: return "eLeapRS_UnknownTrackingFrameID";
+    case eLeapRS_RoutineIsNotSeer: return "eLeapRS_RoutineIsNotSeer";
+    case eLeapRS_TimestampTooEarly: return "eLeapRS_TimestampTooEarly";
+    case eLeapRS_ConcurrentPoll: return "eLeapRS_ConcurrentPoll";
+    case eLeapRS_NotAvailable: return "eLeapRS_NotAvailable";
+    case eLeapRS_NotStreaming: return "eLeapRS_NotStreaming";
+    case eLeapRS_CannotOpenDevice: return "eLeapRS_CannotOpenDevice";
+    default: return "unknown result type.";
+  }
+}
+
+void millisleep(int milliseconds){
+
+
+
+    usleep(milliseconds*1000);
+
+  }
