@@ -34,7 +34,8 @@ class EMGHandler:
         autopy.mouse.move(1100, 664)
         autopy.mouse.click()
     
-    def write_config_file(self, folder_name, subject, task, emg_file_label):
+    def write_config_file(self, folder_name, subject, task, emg_file_label, sensor_test=False):
+        # Update config file for emgAcquire 
         # args are path for data file
         # emg_label to name csv file correctly
 
@@ -44,8 +45,12 @@ class EMGHandler:
         # Read config file
         with open(config_file_path, 'r') as f :
             config = json.load(f)
-            print(os.path.join("..","..","exp_data",folder_name,subject,task,"emg_data_"+emg_file_label))
-            config["saveFile"] = os.path.join("..","..","exp_data",folder_name,subject,task,"emg_data_"+emg_file_label)
+            if sensor_test : # 
+                print(os.path.join("..","..","exp_data",folder_name,subject,task,"sensor_test","emg_data_"+emg_file_label))
+                config["saveFile"] = os.path.join("..","..","exp_data",folder_name,subject,task,"sensor_test","emg_data_"+emg_file_label)
+            else:
+                print(os.path.join("..","..","exp_data",folder_name,subject,task,"emg_data_"+emg_file_label))
+                config["saveFile"] = os.path.join("..","..","exp_data",folder_name,subject,task,"emg_data_"+emg_file_label)
 
         # Remove old config file
         os.remove(config_file_path)

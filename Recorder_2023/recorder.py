@@ -1,5 +1,6 @@
 from threading import Thread, Event, Lock
 import os
+import sys
 from os.path import join
 import time
 import keyboard
@@ -15,48 +16,134 @@ from sensor_handlers.tps_calib import TPScalibration
 from emg_calibration_app.calib_app import openApp
 from sensor_handlers.gopro_handler import GoProHandler
 
+path_to_plot_module = join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(path_to_plot_module)
+from data_analysis.modules.emg_utils import *
+from data_analysis.modules.tps_utils import * 
 
 class Recorder():
     def __init__(self):
 
         # Read data structure info from json file 
-        filepath = os.path.abspath(os.path.dirname(__file__))
-        f = open(join(filepath, 'config', 'data_dir_info.json'))
+        self.filepath = os.path.abspath(os.path.dirname(__file__))
+        f = open(join(self.filepath, 'config', 'data_dir_info.json'))
         data_dir_info = json.load(f)
         self.folder_input = str(data_dir_info["folder_name"])
         self.subject_nb = str(data_dir_info["subject_nb"])
         self.task_input = str(data_dir_info["run_nb"])
      
-        self.folder = join(filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
+        self.folder = join(self.filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input, 'sensor_test')
 
         print("Data folder for this recording is : \n", self.folder)
 
-        if not os.path.exists(self.folder):
-            os.makedirs(self.folder)
-        self.csv_path_optitrack1 = join(self.folder, "optitrack_stats.csv")
-        self.csv_path_optitrack2 = join(self.folder, "optitrack.csv")
-        self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv")
-        self.csv_path_tps_cal = join(self.folder, "TPS_calibrated.csv")
-        self.csv_path_emg = join(self.folder, "emg_duration_task.csv")
-        self.csv_path_emg_cal = join(self.folder, "emg_duration_calibration.csv")
-        self.csv_path_gopro = join(self.folder, "gopro_duration.csv")
+        self.update_data_paths(self.folder)
 
-    
-    def start_threads(self):
+        #Set path for emg calibration to be in correct folder 
+        folder = join(self.filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
+        self.csv_path_emg_cal = join(folder, "emg_duration_calibration.csv")
 
-        # self.copy_calibration_files()
+    def update_data_paths(self, folder):
+        # Set up path to csv for test recording and task recording 
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        self.csv_path_optitrack_stats = join(folder, "optitrack_stats.csv")
+        self.csv_path_optitrack_data = join(folder, "optitrack.csv")
+        self.csv_path_tps_raw = join(folder, "TPS_recording_raw.csv")
+        self.csv_path_tps_cal = join(folder, "TPS_calibrated.csv")
+        self.csv_path_emg_task = join(folder, "emg_duration_task.csv")
+        self.csv_path_gopro = join(folder, "gopro_duration.csv")
+
+    def test_sensors_and_plot(self):
+        
+        is_testing = True
+
+        self.copy_calibration_files()
 
         time.sleep(1)
 
         self.stop_event = Event()
-        # recording_thread_gopro = Thread(target=self.gopro_thread)
-        # recording_thread_gopro.start()
         self.lock = Lock()
         
-        # recording_thread_opti = Thread(target=self.optitrack_thread)
-        # recording_thread_opti.start()
+        recording_thread_opti = Thread(target=self.optitrack_thread)
+        recording_thread_opti.start()
 
-        # time.sleep(2)        
+        time.sleep(2) 
+
+        recording_thread_tps = Thread(target=self.tps_thread)
+        recording_thread_tps.start()
+
+        time.sleep(8)
+
+        sensor_test =True
+        recording_thread_emg = Thread(target=self.emg_thread, args=[sensor_test])
+        recording_thread_emg.start()
+
+        while is_testing is True:
+            # Wait for closing signal
+            
+            if keyboard.is_pressed('q'):
+                print('Stopping recording, now plotting...')
+                is_testing = False
+
+                time.sleep(5)
+
+                # call plot functions here 
+                self.plot_emg_tps_opti()
+    
+    def plot_emg_tps_opti(self):
+        # EMG + TPS
+        emg_placement = 'Jarque-Bou'
+
+        cleantpsDF = clean_tps(self.csv_path_tps_cal)
+        cleanemgDF = clean_emg(self.csv_path_emg_task, emg_placement)  
+
+        plot_tpsDF(cleantpsDF, title_str='Calibrated TPS', time_for_plot='relative time', nb_rec_channels=6, show_plot=False)
+        start_time = get_starting_time(cleantpsDF)
+        plot_emgDF(cleanemgDF, title_str='Raw EMG', time_for_plot='relative time', nb_rec_channels=16, plot_from_time=start_time)
+        
+        # PLOTS BOTH TOGETHER -> more compact but too small to read probably
+        # time_range = [40, 440] # seconds
+        # labels_for_emg = ['Extensor Digitorum L',
+        #         'Flexor Digitorum Superficialis L',
+        #         'Abductor Pollicis longus and extensor pollicis brevis L',
+        #         'Abductor Pollicis Brevis L']
+
+        # labels_for_tps = ['Left Index', 'Left Thumb']
+
+        # plot_tps_emg(cleantpsDF, cleanemgDF, labels_for_tps, labels_for_emg, time_range)
+
+        # OPTITRACK
+        optiDF = pd.read_csv(self.csv_path_optitrack_data, header=0)    
+        nb_frames_total = len(optiDF.index)
+        nb_zero_tweezers = (optiDF['tweezers_x'] == 0).sum(axis=0)
+        nb_zero_needle_holder = (optiDF['needle_holder_x'] == 0).sum(axis=0)
+        print("TOTAL nb of frames : ", nb_frames_total)
+        print("Missed frames tweezers : ", nb_zero_tweezers, f",  {100*nb_zero_tweezers/nb_frames_total:.2f}% " )
+        print("Missed frames needle hodler : ", nb_zero_needle_holder, f", { 100*nb_zero_needle_holder/nb_frames_total:.2f}%")
+
+        print("\n FINISHED PLOTTING-> CLOSE PLOTS TO CONTINUE\n")
+
+    def start_threads(self):
+
+        # update data folder path and csv paths
+        self.folder = join(self.filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
+        self.update_data_paths(self.folder)
+
+        time.sleep(1)
+
+        self.copy_calibration_files()
+
+        time.sleep(1)
+
+        self.stop_event = Event()
+        recording_thread_gopro = Thread(target=self.gopro_thread)
+        recording_thread_gopro.start()
+        self.lock = Lock()
+        
+        recording_thread_opti = Thread(target=self.optitrack_thread)
+        recording_thread_opti.start()
+
+        time.sleep(2)        
         recording_thread_tps = Thread(target=self.tps_thread)
         recording_thread_tps.start()
 
@@ -64,7 +151,6 @@ class Recorder():
 
         recording_thread_emg = Thread(target=self.emg_thread)
         recording_thread_emg.start()
-
 
     def gopro_thread(self):
         # Start recording with go pro
@@ -94,7 +180,7 @@ class Recorder():
 
     def optitrack_thread(self):
         is_looping = True
-        handler_opti = OptitrackHandler(self.csv_path_optitrack1,self.csv_path_optitrack2 )
+        handler_opti = OptitrackHandler(self.csv_path_optitrack_stats,self.csv_path_optitrack_data )
 
         print("Hello optitrack")
         while is_looping is True:
@@ -103,11 +189,11 @@ class Recorder():
                 is_looping = False
                 handler_opti.shutdown_optitrack()
     
-    def emg_thread(self): 
+    def emg_thread(self, sensor_test=False): 
         is_looping_emg = True
 
-        handler_emg = EMGHandler(self.csv_path_emg)
-        handler_emg.write_config_file(self.folder_input,self.subject_nb, self.task_input, "task")
+        handler_emg = EMGHandler(self.csv_path_emg_task)
+        handler_emg.write_config_file(self.folder_input,self.subject_nb, self.task_input, "task", sensor_test)
         handler_emg.start_emg()
  
         while is_looping_emg is True:
@@ -126,6 +212,7 @@ class Recorder():
 
         # Call calibration app
         openApp(handler_emg_calib)
+        # closing the app kills EMG recording
 
     def tps_thread(self):
         # Start WatchCapture to record TPS
@@ -178,14 +265,16 @@ def main():
         recorder.emg_calib()
     else :
         print("Skipped EMG calibration. \n")
-    
-    # TODO : Add start_test which will : 
-    # start tps+emg+optitrack for 1 min
-    # then plot everything when user press q (same as start_threads)
 
+    input("Do the TPS calibration using Chameleon software now ! \n Then press Enter to continue. \n")
+    test_sensors = input("Test sensors and plot ? [y/n] \n")
+    if test_sensors == 'y' or test_sensors == 'Y' or test_sensors == 'yes':
+        recorder.test_sensors_and_plot()
+    else : 
+        print("SKipped sensor testing. \n")
 
     print("\n Make sure you are connected to the GOPRO's wifi !! \n")
-    input("Do the TPS calibration using Chameleon software now ! \n Then press Enter to continue. \n")
+    input("Redo the TPS calibration using Chameleon software now ! \n Then press Enter to continue. \n")
     
     recorder.start_threads()
     

@@ -11,8 +11,8 @@ import json
 class OptitrackHandler:
     def __init__(self, csv_path1, csv_path2):
         # the csv  files are desifned in the main recorder
-        self.csv_path_optitrack1 = csv_path1
-        self.csv_path_optitrack2 = csv_path2
+        self.csv_path_optitrack1 = csv_path1 # stats
+        self.csv_path_optitrack2 = csv_path2 # data
         
         self.data_dict = []
         self.index_optitrack = []
