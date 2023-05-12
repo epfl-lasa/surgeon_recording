@@ -135,6 +135,8 @@ class Recorder():
 
         time.sleep(1)
 
+        is_recording = True
+
         self.stop_event = Event()
         recording_thread_gopro = Thread(target=self.gopro_thread)
         recording_thread_gopro.start()
@@ -151,6 +153,18 @@ class Recorder():
 
         recording_thread_emg = Thread(target=self.emg_thread)
         recording_thread_emg.start()
+
+        while is_recording is True:
+            # Wait for closing signal
+            
+            if keyboard.is_pressed('q'):
+                print('Stopping recording, now plotting...')
+                is_recording = False
+
+                time.sleep(5)
+
+                # call plot functions here 
+                self.plot_emg_tps_opti()
 
     def gopro_thread(self):
         # Start recording with go pro
