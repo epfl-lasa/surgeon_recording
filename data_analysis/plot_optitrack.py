@@ -1,7 +1,12 @@
-from modules.tps_utils import * 
+from modules.optitrack_utils import * 
 
-data_dir = 'exp_data/50523/1/2/'
+data_dir = 'exp_data/170423/1/1/'
 path_to_opti = data_dir + 'optitrack.csv'
+
+plot_optitrack_csv(path_to_opti)
+
+# tweezerDF, needle_holderDF = clean_optitrack(path_to_opti)
+# plot_optitrackDF(tweezerDF, needle_holderDF)
 
 optiDF = pd.read_csv(path_to_opti, header=0)
 

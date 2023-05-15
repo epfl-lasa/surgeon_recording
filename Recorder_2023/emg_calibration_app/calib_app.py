@@ -38,9 +38,9 @@ class Window(QMainWindow):
 
 		self.gif_path_dict = [
 			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Flexors_activation.gif'),
-			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Extensors_activation.gif'),
+			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Thumb_flexion.gif'),
 			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Thumb_extension.gif'),
-			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Thumb_flexion.gif')
+			os.path.join(os.path.dirname(os.path.abspath(__file__)), 'audio_video_files', 'Extensors_activation.gif')
 		]
 
 		self.dict_index = 0
