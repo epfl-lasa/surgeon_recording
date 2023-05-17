@@ -65,10 +65,12 @@ class EMGHandler:
     def shutdown_emg(self):
         # Save duration in separate file
         self.emgAcq_process.terminate()
+        self.emgAcq_process.kill()
         end_time = time.time()
         time_to_save = [['Start time', self.start_time, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(self.start_time))], 
                         ['End time', end_time, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))], 
                         ['Duration', end_time-self.start_time, 'seconds']]
         np.savetxt(self.csv_path_emg_time, time_to_save, delimiter =", ", fmt ='% s')
+        time.sleep(1)
         print("EMG closed cleanly. \n")
      

@@ -1,6 +1,6 @@
 from modules.optitrack_utils import * 
 
-data_dir = 'exp_data/170423/1/1/'
+data_dir = 'exp_data/260423/1/2/'
 path_to_opti = data_dir + 'optitrack.csv'
 
 plot_optitrack_csv(path_to_opti)

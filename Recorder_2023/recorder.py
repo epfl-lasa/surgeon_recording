@@ -38,9 +38,12 @@ class Recorder():
 
         self.update_data_paths(self.folder)
 
-        #Set path for emg calibration to be in correct folder 
-        folder = join(self.filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
-        self.csv_path_emg_cal = join(folder, "emg_duration_calibration.csv")
+        # update folder for tps_calib
+        self.folder = join(self.filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
+        
+        # Set path for emg calibration to be in correct folder      
+        self.csv_path_emg_cal = join(self.folder, "emg_duration_calibration.csv")
+        self.csv_path_tps_raw = join(self.folder, "TPS_recording_raw.csv") # Always in this folder regardless of sensor_test (due to WatchCapture.exe)
 
     def update_data_paths(self, folder):
         # Set up path to csv for test recording and task recording 
@@ -48,7 +51,6 @@ class Recorder():
             os.makedirs(folder)
         self.csv_path_optitrack_stats = join(folder, "optitrack_stats.csv")
         self.csv_path_optitrack_data = join(folder, "optitrack.csv")
-        self.csv_path_tps_raw = join(folder, "TPS_recording_raw.csv")
         self.csv_path_tps_cal = join(folder, "TPS_calibrated.csv")
         self.csv_path_emg_task = join(folder, "emg_duration_task.csv")
         self.csv_path_gopro = join(folder, "gopro_duration.csv")
@@ -56,6 +58,7 @@ class Recorder():
     def test_sensors_and_plot(self):
         
         is_testing = True
+        sensor_test = True
 
         self.copy_calibration_files()
 
@@ -69,12 +72,11 @@ class Recorder():
 
         time.sleep(2) 
 
-        recording_thread_tps = Thread(target=self.tps_thread)
+        recording_thread_tps = Thread(target=self.tps_thread, args=[sensor_test])
         recording_thread_tps.start()
 
         time.sleep(8)
 
-        sensor_test =True
         recording_thread_emg = Thread(target=self.emg_thread, args=[sensor_test])
         recording_thread_emg.start()
 
@@ -85,17 +87,20 @@ class Recorder():
                 print('Stopping recording, now plotting...')
                 is_testing = False
 
-                time.sleep(5)
+                time.sleep(10)
 
                 # call plot functions here 
-                self.plot_emg_tps_opti()
+                self.plot_emg_tps_opti(sensor_test=True)
     
-    def plot_emg_tps_opti(self):
+    def plot_emg_tps_opti(self, sensor_test=False):
         # EMG + TPS
         emg_placement = 'Jarque-Bou'
 
         cleantpsDF = clean_tps(self.csv_path_tps_cal)
-        cleanemgDF = clean_emg(self.csv_path_emg_task, emg_placement)  
+        if sensor_test:
+            cleanemgDF = clean_emg(join(self.folder,"sensor_test", "emg_data_task.csv"), emg_placement)
+        else:
+            cleanemgDF = clean_emg(join(self.folder, "emg_data_task.csv"), emg_placement)  
 
         plot_tpsDF(cleantpsDF, title_str='Calibrated TPS', time_for_plot='relative time', nb_rec_channels=6, show_plot=False)
         start_time = get_starting_time(cleantpsDF)
@@ -126,7 +131,6 @@ class Recorder():
     def start_threads(self):
 
         # update data folder path and csv paths
-        self.folder = join(self.filepath, '..', 'exp_data', self.folder_input, self.subject_nb, self.task_input)
         self.update_data_paths(self.folder)
 
         time.sleep(1)
@@ -138,8 +142,8 @@ class Recorder():
         is_recording = True
 
         self.stop_event = Event()
-        recording_thread_gopro = Thread(target=self.gopro_thread)
-        recording_thread_gopro.start()
+        # recording_thread_gopro = Thread(target=self.gopro_thread)
+        # recording_thread_gopro.start()
         self.lock = Lock()
         
         recording_thread_opti = Thread(target=self.optitrack_thread)
@@ -161,7 +165,7 @@ class Recorder():
                 print('Stopping recording, now plotting...')
                 is_recording = False
 
-                time.sleep(5)
+                time.sleep(10)
 
                 # call plot functions here 
                 self.plot_emg_tps_opti()
@@ -228,14 +232,26 @@ class Recorder():
         openApp(handler_emg_calib)
         # closing the app kills EMG recording
 
-    def tps_thread(self):
+    def tps_thread(self, sensor_test=False):
         # Start WatchCapture to record TPS
         filename = "/Users/LASA/Documents/Recordings/SAHR_data_recording-master_test/bin/x64/WatchCapture.exe"
         run([filename])
 
         if os.path.exists(self.csv_path_tps_raw):
-            calib_tps = TPScalibration(folder_path = self.folder, csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
+            if sensor_test:
+                # copy raw data to sensor_test folder for safety 
+                copyfile(self.csv_path_tps_raw, join(self.folder,"sensor_test", "TPS_recording_raw.csv"))
+                # make folder tps_calib in sensor_test and copy calibration files there
+                if not os.path.exists(join(self.folder, "sensor_test", "tps_calib")):
+                    os.makedirs(join(self.folder, "sensor_test", "tps_calib"))
+                calibration_file = 'FingerTPS_EPFL2-cal.txt'
+                copyfile(join(self.folder, "tps_calib", calibration_file), join(self.folder, "sensor_test", "tps_calib", calibration_file))
 
+            calib_tps = TPScalibration(folder_path = self.folder, csv_path = self.csv_path_tps_cal, folder_input = self.folder_input, subject_nb=self.subject_nb, csv_raw_data=self.csv_path_tps_raw)
+            
+            if sensor_test:
+                # Remove raw
+                os.remove(self.csv_path_tps_raw)
         else:
             print("WARNING: CALIBRATION NOT OK (raw file not found)")
 
@@ -254,21 +270,21 @@ class Recorder():
             os.remove(join(destination_dir, calibration_file))
 
         # Copy to config folder 
-        if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 2000: 
-            copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
-            print("OK: " + calibration_file + ' copied in config folder')
-        else:
-            print("WARNING: calibration file " + calibration_file+ " not copied in config folder, too old")
+        # if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 20000: 
+        copyfile(join(calibration_dir, calibration_file), join(destination_dir, calibration_file))
+        print("OK: " + calibration_file + ' copied in config folder')
+        # else:
+        #     print("WARNING: calibration file " + calibration_file+ " not copied in config folder, too old")
         
         if os.path.exists(join(destination_dir_tps, calibration_file)):
             os.remove(join(destination_dir_tps, calibration_file))
 
         # Copy to exp_data folder, inside correct run 
-        if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 2000: # file not older than 30 minutes
-            copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
-            print("OK: " + calibration_file + ' copied in data folder')
-        else:
-            print("WARNING: calibration file " + calibration_file + " not copied in data folder, too old")
+        # if time.time() - os.path.getmtime(join(calibration_dir, calibration_file)) < 20000: # file not older than 30 minutes
+        copyfile(join(calibration_dir, calibration_file), join(destination_dir_tps, calibration_file))
+        print("OK: " + calibration_file + ' copied in data folder')
+        # else:
+        #     print("WARNING: calibration file " + calibration_file + " not copied in data folder, too old")
 
 def main():
     recorder = Recorder()
@@ -292,6 +308,5 @@ def main():
     
     recorder.start_threads()
     
-
 if __name__ == '__main__':
     main()
