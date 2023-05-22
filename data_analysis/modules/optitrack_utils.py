@@ -40,7 +40,7 @@ def get_starting_time(cleanDF):
 
     return start_time_in_secs
 
-# TODO : adapt for raw TPS 
+# TODO : adapt for raw optitrack
 def interpolate_clean_optitrack(cleanDF, start_idx=0, sr=1500, nb_rec_channels=6):
     # Input : Clean emg DF, index at which to start interpolation (remove first points if needed), Sampling rate of emg
     # Output : interp emg DF with relative time an dinterpolated data
@@ -73,6 +73,21 @@ def interpolate_clean_optitrack(cleanDF, start_idx=0, sr=1500, nb_rec_channels=6
 
     return interpDF
 
+def count_missed_frames(path_to_csv):
+    # Count numbre of received frames that are 0 
+    optiDF = pd.read_csv(path_to_csv, header=0)
+
+    nb_frames_total = len(optiDF.index)
+
+    nb_zero_tweezers = (optiDF['tweezers_x'] == 0).sum(axis=0)
+
+    nb_zero_needle_holder = (optiDF['needle_holder_x'] == 0).sum(axis=0)
+
+    print("TOTAL nb of frames : ", nb_frames_total)
+    print("Missed frames tweezers : ", nb_zero_tweezers, f",  {100*nb_zero_tweezers/nb_frames_total:.2f}% " )
+    print("Missed frames needle hodler : ", nb_zero_needle_holder, f", { 100*nb_zero_needle_holder/nb_frames_total:.2f}%")
+
+
 def remove_zeros_for_plots(optiDF):
 
     # Copy DF and separate for each tool
@@ -95,7 +110,7 @@ def remove_zeros_for_plots(optiDF):
 
     return tweezerDF, needle_holderDF
 
-def plot_optitrack_csv(mydata_path, title_str='Optitrack 3D position', nb_tools=2 ):
+def plot_optitrack_csv(mydata_path, title_str='Optitrack 3D position', nb_tools=2, show_plot=True ):
     # Plots raw data from optitrack, removing any row wiht 0 value
 
     df = pd.read_csv(mydata_path, header=0)
@@ -125,7 +140,8 @@ def plot_optitrack_csv(mydata_path, title_str='Optitrack 3D position', nb_tools=
 
     ax.plot(df['needle_holder_x'], df['needle_holder_y'], df['needle_holder_z'] )
     
-    plt.show()
+    if show_plot :
+        plt.show()
     
 
 def plot_optitrackDF(tweezerDF, needle_holderDF, title_str='Optitrack 3D positions', show_plot=True):
@@ -182,17 +198,16 @@ def main():
     # Example of function calls 
     # TODO (?) : put functions in an object for easier import, can put data_path and some variables as properties in init
 
-    # Path to mydata.csv folder
-    data_dir = '/home/maxime/Workspace/surgeon_recording/exp_data/170423/1/1/'
+    # Path to data.csv folder
+    data_dir = 'exp_data/260423/1/2/'
     path_to_opti = data_dir + 'optitrack.csv'
 
-    cleanDF = clean_optitrack(path_to_opti)   
-    # plot_emgDF(cleanemgDF)
-    print(f"Recording duration : {cleanDF['relative time'].iloc[-1]:.2f} s" )
+    plot_optitrack_csv(path_to_opti)
 
-    # Might not be necessary for data analysis
-    # interpDF = interpolate_clean_tps(cleanDF, sr=500, start_idx=50)
-    plot_optitrackDF(cleanDF, title_str='Calibrated TPS', time_for_plot='relative time', nb_rec_channels=6)
+    # tweezerDF, needle_holderDF = clean_optitrack(path_to_opti)
+    # plot_optitrackDF(tweezerDF, needle_holderDF)
+
+    count_missed_frames(path_to_opti)
 
     return
 

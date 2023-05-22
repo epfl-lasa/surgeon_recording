@@ -19,7 +19,8 @@ from sensor_handlers.gopro_handler import GoProHandler
 path_to_plot_module = join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(path_to_plot_module)
 from data_analysis.modules.emg_utils import *
-from data_analysis.modules.tps_utils import * 
+from data_analysis.modules.tps_utils import *
+from data_analysis.modules.optitrack_utils import *
 
 class Recorder():
     def __init__(self):
@@ -104,7 +105,7 @@ class Recorder():
 
         plot_tpsDF(cleantpsDF, title_str='Calibrated TPS', time_for_plot='relative time', nb_rec_channels=6, show_plot=False)
         start_time = get_starting_time(cleantpsDF)
-        plot_emgDF(cleanemgDF, title_str='Raw EMG', time_for_plot='relative time', nb_rec_channels=16, plot_from_time=start_time)
+        plot_emgDF(cleanemgDF, title_str='Raw EMG', time_for_plot='relative time', nb_rec_channels=16, plot_from_time=start_time, show_plot=False)
         
         # PLOTS BOTH TOGETHER -> more compact but too small to read probably
         # time_range = [40, 440] # seconds
@@ -118,13 +119,8 @@ class Recorder():
         # plot_tps_emg(cleantpsDF, cleanemgDF, labels_for_tps, labels_for_emg, time_range)
 
         # OPTITRACK
-        optiDF = pd.read_csv(self.csv_path_optitrack_data, header=0)    
-        nb_frames_total = len(optiDF.index)
-        nb_zero_tweezers = (optiDF['tweezers_x'] == 0).sum(axis=0)
-        nb_zero_needle_holder = (optiDF['needle_holder_x'] == 0).sum(axis=0)
-        print("TOTAL nb of frames : ", nb_frames_total)
-        print("Missed frames tweezers : ", nb_zero_tweezers, f",  {100*nb_zero_tweezers/nb_frames_total:.2f}% " )
-        print("Missed frames needle hodler : ", nb_zero_needle_holder, f", { 100*nb_zero_needle_holder/nb_frames_total:.2f}%")
+        count_missed_frames(self.csv_path_optitrack_data)
+        plot_optitrack_csv(self.csv_path_optitrack_data)
 
         print("\n FINISHED PLOTTING-> CLOSE PLOTS TO CONTINUE\n")
 
