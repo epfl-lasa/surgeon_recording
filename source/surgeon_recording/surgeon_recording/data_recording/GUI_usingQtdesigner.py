@@ -18,6 +18,7 @@ class MyWindow(QDialog):
         cb.addItem("Usually right hand")
         cb.addItem("No preference")
         cb.addItem("Usualy left hand")
+        cb.addItem("Always left hand")
         return(cb)
     
     def convertDdmToNumber(self, ddm):
