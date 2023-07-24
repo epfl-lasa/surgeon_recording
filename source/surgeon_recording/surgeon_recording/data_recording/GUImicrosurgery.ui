@@ -6,31 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1035</width>
-    <height>1018</height>
+    <width>1022</width>
+    <height>920</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QLabel" name="label_intro_2">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1029</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Bla bla introduction to the questionnaire</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_form">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>60</y>
+     <y>50</y>
      <width>261</width>
      <height>20</height>
     </rect>
@@ -50,7 +37,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>390</y>
+     <y>310</y>
      <width>261</width>
      <height>20</height>
     </rect>
@@ -69,8 +56,8 @@
   <widget class="QLabel" name="label_age">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>90</y>
+     <x>10</x>
+     <y>80</y>
      <width>161</width>
      <height>17</height>
     </rect>
@@ -82,8 +69,8 @@
   <widget class="QLabel" name="label_sex">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>120</y>
+     <x>500</x>
+     <y>80</y>
      <width>191</width>
      <height>17</height>
     </rect>
@@ -95,8 +82,8 @@
   <widget class="QLabel" name="label_occupation">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>150</y>
+     <x>10</x>
+     <y>110</y>
      <width>271</width>
      <height>17</height>
     </rect>
@@ -108,8 +95,8 @@
   <widget class="QLabel" name="label_exp_microsurg">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>180</y>
+     <x>10</x>
+     <y>140</y>
      <width>271</width>
      <height>17</height>
     </rect>
@@ -121,8 +108,8 @@
   <widget class="QTextEdit" name="age">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>90</y>
+     <x>140</x>
+     <y>80</y>
      <width>104</width>
      <height>21</height>
     </rect>
@@ -131,8 +118,8 @@
   <widget class="QComboBox" name="sex_cb">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>120</y>
+     <x>710</x>
+     <y>80</y>
      <width>51</width>
      <height>21</height>
     </rect>
@@ -141,8 +128,8 @@
   <widget class="QTextEdit" name="occupation">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>150</y>
+     <x>280</x>
+     <y>110</y>
      <width>401</width>
      <height>21</height>
     </rect>
@@ -151,8 +138,8 @@
   <widget class="QTextEdit" name="exp_microsurg">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>180</y>
+     <x>250</x>
+     <y>140</y>
      <width>91</width>
      <height>21</height>
     </rect>
@@ -161,8 +148,8 @@
   <widget class="QLabel" name="label_tweezers">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>210</y>
+     <x>10</x>
+     <y>170</y>
      <width>331</width>
      <height>17</height>
     </rect>
@@ -174,8 +161,8 @@
   <widget class="QComboBox" name="tweezer_cb">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>210</y>
+     <x>340</x>
+     <y>170</y>
      <width>51</width>
      <height>21</height>
     </rect>
@@ -184,8 +171,8 @@
   <widget class="QLabel" name="label_needleholder">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>240</y>
+     <x>500</x>
+     <y>170</y>
      <width>361</width>
      <height>17</height>
     </rect>
@@ -197,8 +184,8 @@
   <widget class="QComboBox" name="needleholder_cb">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>240</y>
+     <x>860</x>
+     <y>170</y>
      <width>51</width>
      <height>21</height>
     </rect>
@@ -207,8 +194,8 @@
   <widget class="QLabel" name="label_anastomosis">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>270</y>
+     <x>10</x>
+     <y>200</y>
      <width>361</width>
      <height>17</height>
     </rect>
@@ -220,8 +207,8 @@
   <widget class="QComboBox" name="anastomosis_cb">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>270</y>
+     <x>250</x>
+     <y>200</y>
      <width>61</width>
      <height>21</height>
     </rect>
@@ -230,8 +217,8 @@
   <widget class="QLabel" name="label_nbAnastomosis">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>300</y>
+     <x>500</x>
+     <y>200</y>
      <width>371</width>
      <height>17</height>
     </rect>
@@ -243,8 +230,8 @@
   <widget class="QComboBox" name="nbAnastomosis_cb">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>300</y>
+     <x>880</x>
+     <y>200</y>
      <width>61</width>
      <height>21</height>
     </rect>
@@ -253,8 +240,8 @@
   <widget class="QLabel" name="label_nbCourses">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>327</y>
+     <x>10</x>
+     <y>227</y>
      <width>511</width>
      <height>20</height>
     </rect>
@@ -266,8 +253,8 @@
   <widget class="QComboBox" name="nbCourses_cb">
    <property name="geometry">
     <rect>
-     <x>510</x>
-     <y>330</y>
+     <x>520</x>
+     <y>230</y>
      <width>61</width>
      <height>21</height>
     </rect>
@@ -276,8 +263,8 @@
   <widget class="QLabel" name="label_confidenceAnastomosis">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>360</y>
+     <x>10</x>
+     <y>260</y>
      <width>581</width>
      <height>16</height>
     </rect>
@@ -289,8 +276,8 @@
   <widget class="QComboBox" name="confidenceAnastomosis_cb">
    <property name="geometry">
     <rect>
-     <x>590</x>
-     <y>360</y>
+     <x>600</x>
+     <y>260</y>
      <width>161</width>
      <height>21</height>
     </rect>
@@ -300,7 +287,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>30</y>
+     <y>10</y>
      <width>111</width>
      <height>17</height>
     </rect>
@@ -313,7 +300,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>30</y>
+     <y>10</y>
      <width>104</width>
      <height>21</height>
     </rect>
@@ -323,7 +310,7 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>30</y>
+     <y>10</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -336,7 +323,7 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>30</y>
+     <y>10</y>
      <width>104</width>
      <height>21</height>
     </rect>
@@ -346,7 +333,7 @@
    <property name="geometry">
     <rect>
      <x>520</x>
-     <y>30</y>
+     <y>10</y>
      <width>111</width>
      <height>17</height>
     </rect>
@@ -359,7 +346,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>30</y>
+     <y>10</y>
      <width>104</width>
      <height>21</height>
     </rect>
@@ -368,92 +355,26 @@
   <widget class="QLabel" name="label_questionaire_description">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>410</y>
+     <x>10</x>
+     <y>340</y>
      <width>1021</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>Please indicate which hand you prefer for each of the following activities. If sometime you use the other hand select &quot;[Lelf or Right] preferred&quot;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please indicate which hand you prefer for each of the following activities. &lt;span style=&quot; font-weight:600;&quot;&gt;If sometime you use the other hand select &amp;quot;&lt;/span&gt;&lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;Usually &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;[Lelf or Right]&amp;quot;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>430</y>
-     <width>871</width>
+     <x>20</x>
+     <y>360</y>
+     <width>911</width>
      <height>572</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QLabel" name="im_writing">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_writing.jpg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QComboBox" name="ddm4"/>
-    </item>
-    <item row="1" column="2">
-     <widget class="QComboBox" name="ddm2"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_scissors">
-      <property name="text">
-       <string>4. Using scissors</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_throwing">
-      <property name="text">
-       <string>3. Throwing</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QComboBox" name="ddm5"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_drawing">
-      <property name="text">
-       <string>2. Drawing</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_writing">
-      <property name="text">
-       <string>1. Writing</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <widget class="QLabel" name="label_knife">
-      <property name="text">
-       <string>6. Using knife (without fork)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QComboBox" name="ddm3"/>
-    </item>
     <item row="1" column="1">
      <widget class="QLabel" name="im_drawing">
       <property name="maximumSize">
@@ -473,15 +394,38 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_teeth">
+    <item row="2" column="4">
+     <widget class="QLabel" name="label_broom">
       <property name="text">
-       <string>5. Brushing teeth</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;8. Using a broom &lt;/p&gt;&lt;p&gt;(dominant hand)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="4">
-     <widget class="QLabel" name="im_knife">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_drawing">
+      <property name="text">
+       <string>2. Drawing</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QComboBox" name="ddm1"/>
+    </item>
+    <item row="2" column="2">
+     <widget class="QComboBox" name="ddm3"/>
+    </item>
+    <item row="2" column="6">
+     <widget class="QComboBox" name="ddm8"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_throwing">
+      <property name="text">
+       <string>3. Throwing</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="im_teeth">
       <property name="maximumSize">
        <size>
         <width>100</width>
@@ -492,7 +436,168 @@
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>images GUI/im_knife.jpg</pixmap>
+       <pixmap>images GUI/im_teeth.jpeg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QComboBox" name="ddm2"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_scissors">
+      <property name="text">
+       <string>4. Using scissors</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="im_throwing">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_throwing.jpg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_teeth">
+      <property name="text">
+       <string>5. Brushing teeth</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="im_writing">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_writing.jpg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="5">
+     <widget class="QLabel" name="im_match">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_match.jpg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5">
+     <widget class="QLabel" name="im_broom">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_broom.jpg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="5">
+     <widget class="QLabel" name="im_jar">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_jar.jpg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_writing">
+      <property name="text">
+       <string>1. Writing</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="6">
+     <widget class="QComboBox" name="ddm9"/>
+    </item>
+    <item row="1" column="6">
+     <widget class="QComboBox" name="ddm7"/>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLabel" name="label_knife">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;6. Using knife&lt;/p&gt;&lt;p&gt;    (without fork)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QLabel" name="label_spoon">
+      <property name="text">
+       <string>7. Using a spoon</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6">
+     <widget class="QComboBox" name="ddm6"/>
+    </item>
+    <item row="1" column="5">
+     <widget class="QLabel" name="im_spoon">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_spoon.jpg</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -518,165 +623,63 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
-     <widget class="QComboBox" name="ddm1"/>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="im_throwing">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_throwing.jpg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="im_teeth">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_teeth.jpeg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QComboBox" name="ddm6"/>
-    </item>
-    <item row="1" column="3">
-     <widget class="QLabel" name="label_spoon">
-      <property name="text">
-       <string>7. Using a spoon</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="4">
-     <widget class="QLabel" name="im_spoon">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_spoon.jpg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="4">
-     <widget class="QLabel" name="im_broom">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_broom.jpg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
+    <item row="4" column="2">
+     <widget class="QComboBox" name="ddm5"/>
     </item>
     <item row="3" column="4">
-     <widget class="QLabel" name="im_match">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_match.jpg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="4">
-     <widget class="QLabel" name="im_jar">
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>90</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap>images GUI/im_jar.jpg</pixmap>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="5">
-     <widget class="QComboBox" name="ddm7"/>
-    </item>
-    <item row="2" column="5">
-     <widget class="QComboBox" name="ddm8"/>
-    </item>
-    <item row="3" column="5">
-     <widget class="QComboBox" name="ddm9"/>
-    </item>
-    <item row="4" column="5">
-     <widget class="QComboBox" name="ddm10"/>
-    </item>
-    <item row="2" column="3">
-     <widget class="QLabel" name="label_broom">
-      <property name="text">
-       <string>8. Using a broom (dominant hand)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="3">
      <widget class="QLabel" name="label_match">
       <property name="text">
        <string>9. Striking a match</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="3">
+    <item row="3" column="2">
+     <widget class="QComboBox" name="ddm4"/>
+    </item>
+    <item row="4" column="4">
      <widget class="QLabel" name="label_jar">
       <property name="text">
        <string>10. Opening a jar</string>
       </property>
      </widget>
+    </item>
+    <item row="4" column="6">
+     <widget class="QComboBox" name="ddm10"/>
+    </item>
+    <item row="0" column="5">
+     <widget class="QLabel" name="im_knife">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>90</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>images GUI/im_knife.jpg</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
@@ -684,7 +687,7 @@
    <property name="geometry">
     <rect>
      <x>940</x>
-     <y>980</y>
+     <y>880</y>
      <width>80</width>
      <height>25</height>
     </rect>
