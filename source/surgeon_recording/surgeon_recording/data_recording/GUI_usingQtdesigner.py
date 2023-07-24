@@ -25,7 +25,7 @@ class MyWindow(QDialog):
     #     window_height = int(screen_height * 0.9)  #90% of screen height
     #     self.resize(window_width, window_height)
                       
-    def dropdownmenu(self, cb):
+    def dropdownmenu(self, cb): #passes the options for the handedness combo boxes
         # cb.addItem("< Choose options >")
         cb.addItem("Always right hand")
         cb.addItem("Usually right hand")
@@ -109,12 +109,12 @@ class MyWindow(QDialog):
     def on_clicked(self): #save the information and says thanks
         data = np.zeros(23)
         
-        #
+        #save entered data
         data[self.id_subjectnb] = self.getText(self.subjectnb)
         data[self.id_date] = self.getText(self.date)
         data[self.id_starttime] = self.getText(self.starttime)
         data[self.id_age] = self.getText(self.age)
-        data[self.id_sex_cb] = self.sex_cb.currentText()
+        data[self.id_sex_cb] = self.sex_cb.currentText.toPlainText()
         data[self.id_occupation] = self.getText(occupation)
         data[self.id_expmicrosurg] = self.getText(self.exp_microsurg)
         data[self.id_tweezer_cb] = self.tweezer_cb.currentText()
@@ -134,11 +134,10 @@ class MyWindow(QDialog):
         data[self.id_ddm9] = self.ddm9.currentText()
         data[self.id_ddm10] = self.ddm10.currentText()
         
-    
+        #save the created array ina .npy format
         np.save("S_" + self.getText(self.subjectnb) + "_general_info.npy", data)
         
         message = QMessageBox()
-        # message.setText(msg)
         message.setText("Thanks for your participation!")
         message.exec_()
         print("data saved")
@@ -227,8 +226,6 @@ class MyWindow(QDialog):
         #Use button save to save data
         # self.saveButton.clicked.connect(lambda: self.on_clicked(data.toPlainText()))
         self.saveButton.clicked.connect(lambda: self.on_clicked())
-
-        
 
     
 if __name__ == '__main__':
