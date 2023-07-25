@@ -409,13 +409,13 @@
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QComboBox" name="ddm1"/>
+     <widget class="QComboBox" name="ddm_writing"/>
     </item>
     <item row="2" column="2">
-     <widget class="QComboBox" name="ddm3"/>
+     <widget class="QComboBox" name="ddm_throwing"/>
     </item>
     <item row="2" column="6">
-     <widget class="QComboBox" name="ddm8"/>
+     <widget class="QComboBox" name="ddm_broom"/>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label_throwing">
@@ -444,7 +444,7 @@
      </widget>
     </item>
     <item row="1" column="2">
-     <widget class="QComboBox" name="ddm2"/>
+     <widget class="QComboBox" name="ddm_drawing"/>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_scissors">
@@ -563,10 +563,10 @@
      </widget>
     </item>
     <item row="3" column="6">
-     <widget class="QComboBox" name="ddm9"/>
+     <widget class="QComboBox" name="ddm_match"/>
     </item>
     <item row="1" column="6">
-     <widget class="QComboBox" name="ddm7"/>
+     <widget class="QComboBox" name="ddm_spoon"/>
     </item>
     <item row="0" column="4">
      <widget class="QLabel" name="label_knife">
@@ -583,7 +583,7 @@
      </widget>
     </item>
     <item row="0" column="6">
-     <widget class="QComboBox" name="ddm6"/>
+     <widget class="QComboBox" name="ddm_knife"/>
     </item>
     <item row="1" column="5">
      <widget class="QLabel" name="im_spoon">
@@ -624,7 +624,7 @@
      </widget>
     </item>
     <item row="4" column="2">
-     <widget class="QComboBox" name="ddm5"/>
+     <widget class="QComboBox" name="ddm_teeth"/>
     </item>
     <item row="3" column="4">
      <widget class="QLabel" name="label_match">
@@ -634,7 +634,7 @@
      </widget>
     </item>
     <item row="3" column="2">
-     <widget class="QComboBox" name="ddm4"/>
+     <widget class="QComboBox" name="ddm_scissors"/>
     </item>
     <item row="4" column="4">
      <widget class="QLabel" name="label_jar">
@@ -644,7 +644,7 @@
      </widget>
     </item>
     <item row="4" column="6">
-     <widget class="QComboBox" name="ddm10"/>
+     <widget class="QComboBox" name="ddm_jar"/>
     </item>
     <item row="0" column="5">
      <widget class="QLabel" name="im_knife">

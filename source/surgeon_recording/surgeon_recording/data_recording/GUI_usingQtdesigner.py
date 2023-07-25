@@ -1,14 +1,17 @@
-from PyQt5.QtWidgets import * 
-from PyQt5.QtGui import QFont, QIcon
+#IMPORTS
 import sys
 import numpy as np
+
+from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 
-class MyWindow(QDialog): 
+
+# class to create the GUI
+class MyWindow(QDialog):
         
     def __init__(self):
         super().__init__() #calls the __init__() method of the parent class, which is QWidget here. 
-                          #It ensures that the necessary initialization from the parent class is 
+                            #It ensures that the necessary initialization from the parent class is 
                           #performed before any additional initialization specific to MyWindow is done.
         
         self.initUI() #to initialize the user interface of the window. It is defined in the MyWindow class, 
@@ -26,21 +29,20 @@ class MyWindow(QDialog):
     #     self.resize(window_width, window_height)
                       
     def dropdownmenu(self, cb): #passes the options for the handedness combo boxes
-        # cb.addItem("< Choose options >")
         cb.addItem("Always right hand")
         cb.addItem("Usually right hand")
         cb.addItem("No preference")
         cb.addItem("Usualy left hand")
         cb.addItem("Always left hand")
-        return(cb)
+        return cb
 
     def convertDdmToNumber(self, ddm): #converts the preferenced entered by the user into a number 
-        R = 0 
+        R = 0
         L = 0
         if ddm == "Always right hand" :
-            R = 2 
+            R = 2
         elif ddm == "Usually right hand":
-            R = 1  
+            R = 1 
         elif ddm == "No preference":
             L = 1
             R = 1
@@ -51,27 +53,27 @@ class MyWindow(QDialog):
         return ( L, R)
         
     def Edinburgh_handedness(self): # computes the handedness
-        selected_ddm1 = self.ddm1.currentText()
-        selected_ddm2 = self.ddm2.currentText()
-        selected_ddm3 = self.ddm3.currentText()
-        selected_ddm4 = self.ddm4.currentText()
-        selected_ddm5 = self.ddm5.currentText()
-        selected_ddm6 = self.ddm6.currentText()
-        selected_ddm7 = self.ddm7.currentText()
-        selected_ddm8 = self.ddm8.currentText()
-        selected_ddm9 = self.ddm9.currentText()
-        selected_ddm10 = self.ddm10.currentText()
+        selected_ddm_writing = self.ddm_writing.currentText()
+        selected_ddm_drawing = self.ddm_drawing.currentText()
+        selected_ddm_throwing = self.ddm_throwing.currentText()
+        selected_ddm_scissors = self.ddm_scissors.currentText()
+        selected_ddm_teeth = self.ddm_teeth.currentText()
+        selected_ddm_knife = self.ddm_knife.currentText()
+        selected_ddm_spoon = self.ddm_spoon.currentText()
+        selected_ddm_broom = self.ddm_broom.currentText()
+        selected_ddm_match = self.ddm_match.currentText()
+        selected_ddm_jar = self.ddm_jar.currentText()
                 
-        L1, R1 = self.convertDdmToNumber(selected_ddm1)
-        L2, R2 = self.convertDdmToNumber(selected_ddm2)
-        L3, R3 = self.convertDdmToNumber(selected_ddm3)
-        L4, R4 = self.convertDdmToNumber(selected_ddm4)
-        L5, R5 = self.convertDdmToNumber(selected_ddm5)
-        L6, R6 = self.convertDdmToNumber(selected_ddm6)
-        L7, R7 = self.convertDdmToNumber(selected_ddm7)
-        L8, R8 = self.convertDdmToNumber(selected_ddm8)
-        L9, R9 = self.convertDdmToNumber(selected_ddm9)
-        L10, R10 = self.convertDdmToNumber(selected_ddm10)
+        L1, R1 = self.convertDdmToNumber(selected_ddm_writing)
+        L2, R2 = self.convertDdmToNumber(selected_ddm_drawing)
+        L3, R3 = self.convertDdmToNumber(selected_ddm_throwing)
+        L4, R4 = self.convertDdmToNumber(selected_ddm_scissors)
+        L5, R5 = self.convertDdmToNumber(selected_ddm_teeth)
+        L6, R6 = self.convertDdmToNumber(selected_ddm_knife)
+        L7, R7 = self.convertDdmToNumber(selected_ddm_spoon)
+        L8, R8 = self.convertDdmToNumber(selected_ddm_broom)
+        L9, R9 = self.convertDdmToNumber(selected_ddm_match)
+        L10, R10 = self.convertDdmToNumber(selected_ddm_jar)
         
         sum_R = R1 + R2 + R3 + R4 + R5 + R6 + R7 + R8 + R9 + R10 # sum of right scores 
         sum_L = L1 + L2 + L3 + L4 + L5 + L6 + L7 + L8 + L9 + L10 # sum of left scores
@@ -79,7 +81,7 @@ class MyWindow(QDialog):
         handedness_formula = 100 *((sum_R - sum_L) / (sum_R + sum_L)) #formula to compute handedness
         print("handedness = ", handedness_formula)
 
-        return (handedness_formula)
+        return handedness_formula
     
     def updateHandedness(self):
         self.handedness = self.Edinburgh_handedness()
@@ -103,36 +105,35 @@ class MyWindow(QDialog):
                 print("Invalid input. Please enter a valid integer.")
         else:
             print("The "+ str(qTextEdit) +" box is empty.")
-        return (text)
+        return text
         
     
     def on_clicked(self): #save the information and says thanks
-        data = np.zeros(23)
-        
         #save entered data
-        data[self.id_subjectnb] = self.getText(self.subjectnb)
-        data[self.id_date] = self.getText(self.date)
-        data[self.id_starttime] = self.getText(self.starttime)
-        data[self.id_age] = self.getText(self.age)
-        data[self.id_sex_cb] = self.sex_cb.currentText.toPlainText()
-        data[self.id_occupation] = self.getText(occupation)
-        data[self.id_expmicrosurg] = self.getText(self.exp_microsurg)
-        data[self.id_tweezer_cb] = self.tweezer_cb.currentText()
-        data[self.id_needleholder_cb] = self.needleholder_cb.currentText()
-        data[self.id_anastomosis_cb] = self.anastomosis_cb.currentText()
-        data[self.id_nbAnastomosis_cb] = self.nbAnastomosis_cb.currentText()
-        data[self.id_nbCourses_cb] = self.nbCourses_cb.currentText()
-        data[self.id_confidenceAnastomosis_cb] = self.confidenceAnastomosis_cb.currentText() 
-        data[self.id_ddm1] = self.ddm1.currentText()
-        data[self.id_ddm2] = self.ddm2.currentText()
-        data[self.id_ddm3] = self.ddm3.currentText()
-        data[self.id_ddm4] = self.ddm4.currentText()
-        data[self.id_ddm5] = self.ddm5.currentText()
-        data[self.id_ddm6] = self.ddm6.currentText()
-        data[self.id_ddm7] = self.ddm7.currentText()
-        data[self.id_ddm8] = self.ddm8.currentText()
-        data[self.id_ddm9] = self.ddm9.currentText()
-        data[self.id_ddm10] = self.ddm10.currentText()
+        data = np.array([self.getText(self.subjectnb),                #0
+                         self.getText(self.date),                     #1
+                         self.getText(self.starttime),                #2
+                         self.getText(self.age),                      #3
+                         self.sex_cb.currentText(),                   #4
+                         self.getText(self.occupation),               #5
+                         self.getText(self.exp_microsurg),            #6
+                         self.tweezer_cb.currentText(),               #7
+                         self.needleholder_cb.currentText(),          #8
+                         self.anastomosis_cb.currentText(),           #9
+                         self.nbAnastomosis_cb.currentText(),         #10
+                         self.nbCourses_cb.currentText(),             #11
+                         self.confidenceAnastomosis_cb.currentText(), #12
+                        self.ddm_writing.currentText(),               #13
+                        self.ddm_drawing.currentText(),               #14
+                        self.ddm_throwing.currentText(),              #15
+                        self.ddm_scissors.currentText(),              #16
+                        self.ddm_teeth.currentText(),                 #17
+                        self.ddm_knife.currentText(),                 #18
+                        self.ddm_spoon.currentText(),                 #19
+                        self.ddm_broom.currentText(),                 #20
+                        self.ddm_match.currentText(),                 #21
+                        self.ddm_jar.currentText()                    #22
+                        ])
         
         #save the created array ina .npy format
         np.save("S_" + self.getText(self.subjectnb) + "_general_info.npy", data)
@@ -142,17 +143,19 @@ class MyWindow(QDialog):
         message.exec_()
         print("data saved")
 
+    #Creates and displa the GUI
     def initUI(self):
         
         #WINDOW PARAMETERS
         loadUi("GUImicrosurgery.ui", self) # Load the .ui file into the MyWindow
         # self.adjustWindowSize() #adjust window size to fit the screen
+        
                         
         #WINDODW CONTENT 
         sex_list = ["F", "M"]
         self.sex_cb.addItems(sex_list)
         
-        tweezer_list = ["L", "R"]
+        tweezer_list = [" ", "L", "R"]
         self.tweezer_cb.addItems(tweezer_list)
         self.tweezer_cb.currentIndexChanged.connect(self.updateNeedleHolder_cb) # Connect signal to updateNeedleHolder_cb method
     
@@ -169,62 +172,46 @@ class MyWindow(QDialog):
         self.confidenceAnastomosis_cb.addItems(confidenceAnastomosis_list)
     
         #Handedness questionnaire
-        self.ddm1 = self.dropdownmenu(self.ddm1)
-        self.ddm2 = self.dropdownmenu(self.ddm2)
-        self.ddm3 = self.dropdownmenu(self.ddm3)
-        self.ddm4 = self.dropdownmenu(self.ddm4)
-        self.ddm5 = self.dropdownmenu(self.ddm5)
-        self.ddm6 = self.dropdownmenu(self.ddm6)
-        self.ddm7 = self.dropdownmenu(self.ddm7)
-        self.ddm8 = self.dropdownmenu(self.ddm8)
-        self.ddm9 = self.dropdownmenu(self.ddm9)
-        self.ddm10 = self.dropdownmenu(self.ddm10)
+        ## Defining variables 
+        self.handedness_list =[self.ddm_writing, self.ddm_drawing, self.ddm_throwing, self.ddm_scissors, 
+                               self.ddm_teeth, self.ddm_knife, self.ddm_spoon, self.ddm_broom, self.ddm_match, self.ddm_jar]
+        # self.id_handednesss_list = [self.id_ddm_writing, self.id_ddm_drawing, self.id_ddm_throwing, self.id_ddm_scissors, 
+        #                        self.id_ddm_teeth, self.id_ddm_knife, self.id_ddm_spoon, self.id_ddm_broom, self.id_ddm_match, self.id_ddm_jar]
+        
+        for i in range (10):            
+            self.handedness_list[i]= self.dropdownmenu(self.handedness_list[i]) #add the dropdownmenu to each item of the handedness questionnaire
+            self.handedness_list[i].currentIndexChanged.connect(self.updateHandedness) # Connect signals to update Handedness method
+        
+        
+        # self.ddm_writing = self.dropdownmenu(self.ddm_writing)
+        # self.ddm_drawing = self.dropdownmenu(self.ddm_drawing)
+        # self.ddm_throwing = self.dropdownmenu(self.ddm_throwing)
+        # self.ddm_scissors = self.dropdownmenu(self.ddm_scissors)
+        # self.ddm_teeth = self.dropdownmenu(self.ddm_teeth)
+        # self.ddm_knife = self.dropdownmenu(self.ddm_knife)
+        # self.ddm_spoon = self.dropdownmenu(self.ddm_spoon)
+        # self.ddm_broom = self.dropdownmenu(self.ddm_broom)
+        # self.ddm_match = self.dropdownmenu(self.ddm_match)
+        # self.ddm_jar = self.dropdownmenu(self.ddm_jar)
         
         # Connect signals to update Handedness method
-        self.ddm1.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm2.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm3.currentIndexChanged.connect(self.updateHandedness)
-        self.ddm4.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm5.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm6.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm7.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm8.currentIndexChanged.connect(self.updateHandedness)
-        self.ddm9.currentIndexChanged.connect(self.updateHandedness) 
-        self.ddm10.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_writing.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_drawing.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_throwing.currentIndexChanged.connect(self.updateHandedness)
+        # self.ddm_scissors.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_teeth.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_knife.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_spoon.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_broom.currentIndexChanged.connect(self.updateHandedness)
+        # self.ddm_match.currentIndexChanged.connect(self.updateHandedness) 
+        # self.ddm_jar.currentIndexChanged.connect(self.updateHandedness) 
 
         #Compute handedness
         self.handedness = self.Edinburgh_handedness()
         
         
-        #SAVE DATA ENTERED BU USER
-        # give names to index
-        self.id_subjectnb = 0
-        self.id_date = 1
-        self.id_starttime = 2
-        self.id_age = 3
-        self.id_sex_cb = 4
-        self.id_occupation = 5
-        self.id_expmicrosurg = 6
-        self.id_tweezer_cb = 7
-        self.id_needleholder_cb = 8
-        self.id_anastomosis_cb = 9
-        self.id_nbAnastomosis_cb = 10
-        self.id_nbCourses_cb = 11
-        self.id_confidenceAnastomosis_cb = 12
-        self.id_ddm1 = 13
-        self.id_ddm2 = 14
-        self.id_ddm3 = 15
-        self.id_ddm4 = 16
-        self.id_ddm5 = 17
-        self.id_ddm6 = 18
-        self.id_ddm7 = 19
-        self.id_ddm8 = 20
-        self.id_ddm9 = 21
-        self.id_ddm10 = 22
-
-
+        #SAVE DATA ENTERED BY USER
         #Use button save to save data
-        # self.saveButton.clicked.connect(lambda: self.on_clicked(data.toPlainText()))
         self.saveButton.clicked.connect(lambda: self.on_clicked())
 
     
