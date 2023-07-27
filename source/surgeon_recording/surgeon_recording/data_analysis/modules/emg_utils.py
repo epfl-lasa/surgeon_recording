@@ -20,6 +20,9 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
     # Output : Format mydata to structured panda DataFrame 
 
     rawmydataDF = pd.read_csv(mydata_path, sep=';', header=0)
+    
+    # Parcourir toutes les colonnes et exclure les valeurs str
+    rawmydataDF = rawmydataDF.applymap(lambda x: x if not isinstance(x, str) else None)
         
     # Convert channels labels to muscle labels
     channel_list = rawmydataDF.columns.values.tolist()[2:nb_rec_channels+2]
@@ -32,8 +35,14 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
 
     # Get absolute value for each channel and write to new DF
     for channel_nbr in range(len(channel_list)):
+        #if first value is NaN put a 0 
+        if rawmydataDF[channel_list[channel_nbr]][0] == np.nan :
+            rawmydataDF[channel_list[channel_nbr]][0] = 0
+        # Fill NaN with the previous non-NaN value in the same column
+        rawmydataDF[channel_list[channel_nbr]].fillna(method = 'ffill', inplace = True) 
+        rawmydataDF[channel_list[channel_nbr]] = rawmydataDF[channel_list[channel_nbr]].values
         # Clip data
-        rawmydataDF[channel_list[channel_nbr]].clip(-1500, 1500, inplace=True)
+        rawmydataDF[channel_list[channel_nbr]].clip(-1500, 2000, inplace=True)
         # copy to new DF + RECTIFY
         cleanDF[muscle_list[channel_nbr]] = abs(rawmydataDF[channel_list[channel_nbr]])
         #correction of EMG signal by removing DC offset
@@ -47,8 +56,8 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
     # Copy absolute time
     cleanDF['absolute time'] = rawmydataDF['absolute time [s]']
                 
-    # Fill NaN with the previous non-NaN value in the same column
-    cleanDF.fillna(method = 'ffill', inplace = True)
+    
+    
 
     # Complicates matter smore than anything, kept comented for possible later use to ease readability
     # Convert absolute time to datetime format
