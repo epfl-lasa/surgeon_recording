@@ -15,7 +15,7 @@ import pywt
 import plotly.io as pio
 pio.renderers.default='browser'
 
-def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
+def clean_emg(mydata_path, emg_placement, nb_rec_channels=16):
     # Input : raw EMG signal
     # Output : Format mydata to structured panda DataFrame 
 
@@ -33,7 +33,7 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
     # Get absolute value for each channel and write to new DF
     for channel_nbr in range(len(channel_list)):
         # Clip data
-        rawmydataDF[channel_list[channel_nbr]].clip(-5000, 5000, inplace=True)
+        rawmydataDF[channel_list[channel_nbr]].clip(-1500, 1500, inplace=True)
         # copy to new DF + RECTIFY
         cleanDF[muscle_list[channel_nbr]] = abs(rawmydataDF[channel_list[channel_nbr]])
         #correction of EMG signal by removing DC offset
@@ -46,10 +46,6 @@ def clean_emg(mydata_path, emg_placement, nb_rec_channels=16,clip_upper = 3000):
 
     # Copy absolute time
     cleanDF['absolute time'] = rawmydataDF['absolute time [s]']
-    
-    #Replace values higher than clip_upper by nan 
-    cleanDF.clip(upper = clip_upper)
-    cleanDF = cleanDF.replace(clip_upper, np.nan)
                 
     # Fill NaN with the previous non-NaN value in the same column
     cleanDF.fillna(method = 'ffill', inplace = True)
