@@ -65,6 +65,14 @@ class Emg_analysis_features:
     
     
     #FEATURE EXTRACTION
+    #Median filter
+    def median(self, df, window_length = 450):
+        medianDF = pd.DataFrame(columns = self.labels_list[2:])
+        for label in self.labels_list[2:]:
+            medianDF[label] = df[label].rolling(window_length, center=True).median()
+        self.medianDF = medianDF
+        return medianDF
+    
     # Integrated EMG - pre-activation index for muscle activity
     def iemg(self, df) :
         iemgDF = pd.DataFrame(columns = self.labels_list[2:])
@@ -146,6 +154,7 @@ class Emg_analysis_features:
     
     #Function that call every feature 
     def all_features(self, df, window_length):
+        medianDF = self.median(df)
         iemgDF = self.iemg(df)
         mavDF = self.mav(df, window_length)
         ssiDF = self.ssi(df)
@@ -155,4 +164,4 @@ class Emg_analysis_features:
         f, psdDF, RMSamplitude = self.psd(df)
         fmdDF = self.fmd(df)
         fmnDF = self.fmn(df)
-        return iemgDF, mavDF, ssiDF, varDf, rmsDF, wlDF, f, psdDF, RMSamplitude, fmdDF, fmnDF
+        return medianDF, iemgDF, mavDF, ssiDF, varDf, rmsDF, wlDF, f, psdDF, RMSamplitude, fmdDF, fmnDF

@@ -4,36 +4,50 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from textwrap import wrap
 
-cecile = Emg_analysis_features(data_dir = r'../emg_recordings/13-01-2023/', 
-                               file_calibration = 'calib_cecile/mydata.csv', 
-                               file_mydata = 'cecile_task_2/cecile_task_2/mydata.csv', 
+S1 = Emg_analysis_features(data_dir = r'E:/Surgeon_Skill_Assessment/Data_Cluj_June_2023/S_4_090623/TSK_1/TRL_1/', 
+                               file_calibration = 'emg_data_calibration.csv', 
+                               file_mydata = 'emg_data_task.csv', 
                                start_idx = 89, 
                                end_idx = 147,
                                )
 
-torstein = Emg_analysis_features(data_dir = r'../emg_recordings/12-01-2023/', 
-                               file_calibration = 'torstein_calib_half/mydata.csv', 
-                               file_mydata = 'torstein_task_2/mydata.csv', 
-                               start_idx = 76,
-                               end_idx =  124,
-                               )
+medianDF = S1.median(S1.normDF)
 
-cecile.all_features(cecile.normDF, cecile.normDF.shape[0])
-torstein.all_features(torstein.normDF, torstein.normDF.shape[0])
+# Plot DataFrame 1
+for channel in S1.normDF.columns:
+    plt.plot(S1.normDF.index, S1.normDF[channel], label=f'normDF - {channel}')
 
-#plot mavDFs
-plt.figure()
-plotmav = pd.DataFrame({"mav Cécile" : cecile.mavDF.values.tolist()[0], 
-                         "mav Torstein" : torstein.mavDF.values.tolist()[0]}, index = cecile.labels_list[2:])
+# Plot DataFrame 2
+for channel in medianDF.columns:
+    plt.plot(medianDF.index,[channel], label=f'medianDF - {channel}', linestyle='dashed')
 
-ax = plotmav.plot.bar(rot=0)
-ax.set_title("Mean absolute value", fontsize = 25)
-ax.set_xlabel("Muscles", fontsize = 20)
-ax.set_ylabel("mavDF", fontsize = 20)
+# Customize the plot as needed
+plt.xlabel('Index')
+plt.ylabel('EMG data')
+plt.title('Normalized EMG values of subject 1')
+plt.legend()
+plt.grid(True)
 
-#to wrap text on xlabels
-labels = [ '\n'.join(wrap(l, 10)) for l in cecile.labels_list[2:]] 
-ax.set_xticklabels(labels, rotation=45, fontsize = 15)
+plt.show()
+
+
+# #plot mavDFs
+# plt.figure()
+# # plotmav = pd.DataFrame({"mav Cécile" : cecile.mavDF.values.tolist()[0], 
+# #                          "mav Torstein" : torstein.mavDF.values.tolist()[0]}, index = cecile.labels_list[2:])
+# # plotmedian = pd.DataFrame({"normDF" : S1.normDF.values.tolist()[0], "median S1" : S1.median.values.tolist()[0]}, index = S1.labels_list[2:])
+# plotmedian = pd.DataFrame({"normDF" : S1.normDF.values.tolist(), 
+#                            "median S1" : S1.median.values.tolist()}, 
+#                            index = S1.labels_list[2:])
+
+# ax = plotmedian.plot.bar(rot=0)
+# ax.set_title("Mean absolute value", fontsize = 25)
+# ax.set_xlabel("Muscles", fontsize = 20)
+# ax.set_ylabel("mavDF", fontsize = 20)
+
+# #to wrap text on xlabels
+# labels = [ '\n'.join(wrap(l, 10)) for l in S1.labels_list[2:]] 
+# ax.set_xticklabels(labels, rotation=45, fontsize = 15)
 
 
 
