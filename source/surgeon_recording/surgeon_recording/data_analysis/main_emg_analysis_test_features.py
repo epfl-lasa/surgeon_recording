@@ -4,21 +4,24 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from textwrap import wrap
 
-S1 = Emg_analysis_features(data_dir = r'E:/Surgeon_Skill_Assessment/Data_Cluj_June_2023/S_4_090623/TSK_1/TRL_1/', 
+S7 = Emg_analysis_features(data_dir = r'/home/cecile/Documents/', 
                                file_calibration = 'emg_data_calibration.csv', 
                                file_mydata = 'emg_data_task.csv', 
-                               start_idx = 89, 
-                               end_idx = 147,
+                               start_idx = 100, 
+                               end_idx = 200,
                                )
 
-medianDF = S1.median(S1.normDF)
+normDF = S7.normDF
+medianDF = S7.median(S7.normDF, window_length=S7.normDF.shape[0])
 
 # Plot DataFrame 1
-for channel in S1.normDF.columns:
-    plt.plot(S1.normDF.index, S1.normDF[channel], label=f'normDF - {channel}')
+for channel in S7.normDF.columns:
+    plt.plot(S7.normDF.index, S7.normDF[channel], label=f'normDF - {channel}')
 
 # Plot DataFrame 2
 for channel in medianDF.columns:
+    print('column m= ', channel)
+    print('shape m= ', medianDF.index,[channel].shape)
     plt.plot(medianDF.index,[channel], label=f'medianDF - {channel}', linestyle='dashed')
 
 # Customize the plot as needed
@@ -35,10 +38,10 @@ plt.show()
 # plt.figure()
 # # plotmav = pd.DataFrame({"mav Cécile" : cecile.mavDF.values.tolist()[0], 
 # #                          "mav Torstein" : torstein.mavDF.values.tolist()[0]}, index = cecile.labels_list[2:])
-# # plotmedian = pd.DataFrame({"normDF" : S1.normDF.values.tolist()[0], "median S1" : S1.median.values.tolist()[0]}, index = S1.labels_list[2:])
-# plotmedian = pd.DataFrame({"normDF" : S1.normDF.values.tolist(), 
-#                            "median S1" : S1.median.values.tolist()}, 
-#                            index = S1.labels_list[2:])
+# # plotmedian = pd.DataFrame({"normDF" : S7.normDF.values.tolist()[0], "median S7" : S7.median.values.tolist()[0]}, index = S7.labels_list[2:])
+# plotmedian = pd.DataFrame({"normDF" : S7.normDF.values.tolist(), 
+#                            "median S7" : S7.median.values.tolist()}, 
+#                            index = S7.labels_list[2:])
 
 # ax = plotmedian.plot.bar(rot=0)
 # ax.set_title("Mean absolute value", fontsize = 25)
@@ -46,7 +49,7 @@ plt.show()
 # ax.set_ylabel("mavDF", fontsize = 20)
 
 # #to wrap text on xlabels
-# labels = [ '\n'.join(wrap(l, 10)) for l in S1.labels_list[2:]] 
+# labels = [ '\n'.join(wrap(l, 10)) for l in S7.labels_list[2:]] 
 # ax.set_xticklabels(labels, rotation=45, fontsize = 15)
 
 

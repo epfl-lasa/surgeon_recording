@@ -38,9 +38,9 @@ class Emg_analysis_features:
         butt = myfct.butterworth_filter(cleanemgDF)
         
         #Interpolation and rectification
-        interp_calib = myfct.interpolate_clean_emg(butt_calib, start_idx=0)
+        interp_calib = myfct.interpolate_clean_emg(butt_calib, start_idx=0, sr=1500)
         interp_calib = abs(interp_calib) #rectify 
-        interpDF = myfct.interpolate_clean_emg(butt, start_idx=50)
+        interpDF = myfct.interpolate_clean_emg(butt, start_idx=50, sr = 1500)
         interpDF = abs(interpDF) # rectify
         
         #Amplitude normalization

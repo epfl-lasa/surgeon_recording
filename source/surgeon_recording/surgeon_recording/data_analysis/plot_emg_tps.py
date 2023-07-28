@@ -8,7 +8,7 @@ sys.path.append(subfolder_path)
 from emg_utils import *
 from tps_utils import * 
 
-data_dir = 'E:/Surgeon_Skill_Assessment/Data_Cluj_June_2023/S_37_120623/TSK_1/TRL_1/'
+data_dir = '/home/cecile/Documents/'
 # path_to_tps = data_dir + 'TPS_calibrated.csv'
 path_to_mydata = data_dir + 'emg_data_task.csv'
 path_to_mydata_calib = data_dir + 'emg_data_calibration.csv'
@@ -48,7 +48,7 @@ cleanemgDF = clean_emg(path_to_mydata, emg_placement, nb_rec_channels=15)
 plot_emgDF(cleanemgDF[100:3000000])
 
 cleanemgDF_calib = clean_emg(path_to_mydata_calib, emg_placement, nb_rec_channels=15)
-plot_emgDF(cleanemgDF_calib[100:1000000])
+plot_emgDF(cleanemgDF_calib[100:980000])
 
 # print(f"Recording duration : {cleanemgDF['relative time'].iloc[-1]:.2f} s" )
 # plot_emgDF(cleanemgDF, title_str='Interpolated EMG', time_for_plot='absolute time', nb_rec_channels=16, plot_from_time=start_time)

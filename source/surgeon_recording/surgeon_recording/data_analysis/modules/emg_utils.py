@@ -78,8 +78,9 @@ def interpolate_clean_emg(cleanDF, start_idx=0, sr=1500, nb_rec_channels=16):
 
     # Create time array
     start_time = cleanDF['absolute time'].iloc[start_idx]
-    end_time =  cleanDF['absolute time'].iloc[-1]
-    duration = end_time - start_time
+    end_time =  cleanDF['absolute time'].iloc[-2]
+    duration = abs(end_time - start_time)
+
     nb_samples = int(sr*duration)
     time_array = np.linspace(cleanDF['relative time'][start_idx], duration, nb_samples)
 
