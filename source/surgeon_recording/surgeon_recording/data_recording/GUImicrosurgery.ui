@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1022</width>
-    <height>920</height>
+    <height>928</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>310</y>
+     <y>330</y>
      <width>261</width>
      <height>20</height>
     </rect>
@@ -277,7 +277,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>260</y>
+     <y>250</y>
      <width>161</width>
      <height>21</height>
     </rect>
@@ -356,7 +356,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>340</y>
+     <y>350</y>
      <width>1021</width>
      <height>21</height>
     </rect>
@@ -369,7 +369,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>360</y>
+     <y>370</y>
      <width>911</width>
      <height>572</height>
     </rect>
@@ -687,7 +687,7 @@
    <property name="geometry">
     <rect>
      <x>940</x>
-     <y>880</y>
+     <y>890</y>
      <width>80</width>
      <height>25</height>
     </rect>
@@ -698,6 +698,29 @@ color: white;</string>
    </property>
    <property name="text">
     <string>SAVE</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_eye">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>290</y>
+     <width>311</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Which eye do you use when using only one?</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="eye_cb">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>290</y>
+     <width>201</width>
+     <height>25</height>
+    </rect>
    </property>
   </widget>
  </widget>

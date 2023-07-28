@@ -132,7 +132,8 @@ class MyWindow(QDialog):
                         self.ddm_spoon.currentText(),                 #19
                         self.ddm_broom.currentText(),                 #20
                         self.ddm_match.currentText(),                 #21
-                        self.ddm_jar.currentText()                    #22
+                        self.ddm_jar.currentText(),                   #22
+                        self.eye_cb.currentText()                     #23
                         ])
         
         #save the created array ina .npy format
@@ -182,6 +183,7 @@ class MyWindow(QDialog):
             self.handedness_list[i]= self.dropdownmenu(self.handedness_list[i]) #add the dropdownmenu to each item of the handedness questionnaire
             self.handedness_list[i].currentIndexChanged.connect(self.updateHandedness) # Connect signals to update Handedness method
         
+        self.eye_cb = self.dropdownmenu(self.eye_cb)
         
         # self.ddm_writing = self.dropdownmenu(self.ddm_writing)
         # self.ddm_drawing = self.dropdownmenu(self.ddm_drawing)
